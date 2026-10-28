@@ -14,8 +14,9 @@ import { Header } from '@/components/Header';
 import { ListingCard } from '@/components/ListingCard';
 import { ParkMap, ParkMapPin } from '@/components/ParkMap';
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
-import { SpotType, VehicleType } from '@/types';
+import { VehicleType } from '@/types';
 
 export default function ExploreScreen() {
   const router = useRouter();
@@ -33,19 +34,30 @@ export default function ExploreScreen() {
     setMaxPriceFilter,
   } = useParkStore();
 
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    chipGap,
+    tabScrollBottomPad,
+    contentMaxWidth,
+    numColumns,
+    mapHeight,
+    isSmallPhone,
+    isWide,
+  } = useResponsive();
+
   const [selectedPinId, setSelectedPinId] = useState<string | null>('spot-1');
   const [cctvOnly, setCctvOnly] = useState(false);
 
   // Filter listings based on active controls
   const filteredListings = useMemo(() => {
     return listings.filter((item) => {
-      // Type filter
       if (item.type !== selectedSpotType) return false;
-
-      // Active state
       if (item.isActive === false) return false;
 
-      // Search query
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase();
         const matches =
@@ -55,20 +67,14 @@ export default function ExploreScreen() {
         if (!matches) return false;
       }
 
-      // Vehicle filter
       if (selectedVehicleFilter !== 'all') {
         if (!item.vehicleTypes.includes(selectedVehicleFilter as VehicleType)) {
           return false;
         }
       }
 
-      // Covered filter
       if (coveredFilter && !item.isCovered) return false;
-
-      // CCTV filter
       if (cctvOnly && !item.cctv) return false;
-
-      // Max price filter
       if (maxPriceFilter !== null && item.pricePerHour > maxPriceFilter) {
         return false;
       }
@@ -95,7 +101,10 @@ export default function ExploreScreen() {
       lat: l.lat,
       lng: l.lng,
       isCovered: l.isCovered,
-      vehicleType: l.vehicleTypes.includes('bike') && l.vehicleTypes.length === 1 ? 'bike' : 'car',
+      vehicleType:
+        l.vehicleTypes.includes('bike') && l.vehicleTypes.length === 1
+          ? 'bike'
+          : 'car',
     }));
   }, [filteredListings]);
 
@@ -106,222 +115,305 @@ export default function ExploreScreen() {
 
       <ScrollView
         style={styles.mainScroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: tabScrollBottomPad },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Floating Top Controls Section */}
-        <View style={styles.controlsSection}>
-          {/* Search Input Box */}
-          <View style={styles.searchBar}>
-            <MaterialIcons name="search" size={22} color={ParkColors.secondary} />
-            <View style={styles.searchInner}>
-              <Text style={styles.searchLabel}>Where in Lahore?</Text>
-              <TextInput
-                style={styles.searchInput}
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                placeholder="Gulberg III, near Liberty Market"
-                placeholderTextColor={ParkColors.textMuted}
-              />
-            </View>
-            {searchQuery ? (
-              <TouchableOpacity onPress={() => setSearchQuery('')}>
-                <MaterialIcons name="cancel" size={18} color={ParkColors.textMuted} />
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.tuneButton}>
-                <MaterialIcons name="tune" size={18} color={ParkColors.primary} />
-              </View>
-            )}
-          </View>
-
-          {/* Mode Selector: Private Driveways vs Public & Corporate */}
-          <View style={styles.modeSelector}>
-            <TouchableOpacity
-              style={[
-                styles.modeButton,
-                selectedSpotType === 'private' && styles.modeButtonActive,
-              ]}
-              activeOpacity={0.85}
-              onPress={() => setSelectedSpotType('private')}
-            >
-              <MaterialIcons
-                name="garage"
-                size={16}
-                color={selectedSpotType === 'private' ? '#FFFFFF' : ParkColors.textMuted}
-              />
-              <Text
-                style={[
-                  styles.modeButtonText,
-                  selectedSpotType === 'private' && styles.modeButtonTextActive,
-                ]}
-              >
-                Private Driveways
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.modeButton,
-                selectedSpotType === 'public' && styles.modeButtonActive,
-              ]}
-              activeOpacity={0.85}
-              onPress={() => setSelectedSpotType('public')}
-            >
-              <MaterialIcons
-                name="local-parking"
-                size={16}
-                color={selectedSpotType === 'public' ? '#FFFFFF' : ParkColors.textMuted}
-              />
-              <Text
-                style={[
-                  styles.modeButtonText,
-                  selectedSpotType === 'public' && styles.modeButtonTextActive,
-                ]}
-              >
-                Public & Corporate
-              </Text>
-              <View style={styles.publicLotsPill}>
-                <Text style={styles.publicLotsPillText}>24 lots</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-
-          {/* Horizontal Quick Filter Chips */}
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filterChipsRow}
+        <View style={styles.controlsOuter}>
+          <View
+            style={[
+              styles.controlsSection,
+              {
+                maxWidth: contentMaxWidth,
+                paddingHorizontal: hPad,
+                paddingTop: vs(8),
+                paddingBottom: vs(12),
+                gap: vs(10),
+              },
+            ]}
           >
-            {/* Car Chip */}
-            <TouchableOpacity
+            {/* Search Input Box */}
+            <View
               style={[
-                styles.filterChip,
-                selectedVehicleFilter === 'car' && styles.filterChipActive,
+                styles.searchBar,
+                {
+                  paddingHorizontal: s(14),
+                  paddingVertical: vs(6),
+                },
               ]}
-              onPress={() =>
-                setSelectedVehicleFilter(
-                  selectedVehicleFilter === 'car' ? 'all' : 'car'
-                )
-              }
             >
               <MaterialIcons
-                name="directions-car"
-                size={16}
-                color={selectedVehicleFilter === 'car' ? '#FFFFFF' : ParkColors.text}
+                name="search"
+                size={ms(21)}
+                color={ParkColors.secondary}
               />
-              <Text
-                style={[
-                  styles.filterChipText,
-                  selectedVehicleFilter === 'car' && styles.filterChipTextActive,
-                ]}
-              >
-                Car
-              </Text>
-              {selectedVehicleFilter === 'car' && (
-                <MaterialIcons name="check" size={14} color="#FFFFFF" />
+              <View style={[styles.searchInner, { marginLeft: s(10) }]}>
+                <Text style={[styles.searchLabel, { fontSize: ms(10) }]}>
+                  Where in Lahore?
+                </Text>
+                <TextInput
+                  style={[styles.searchInput, { fontSize: ms(13.5) }]}
+                  value={searchQuery}
+                  onChangeText={setSearchQuery}
+                  placeholder="Gulberg III, near Liberty Market"
+                  placeholderTextColor={ParkColors.textMuted}
+                />
+              </View>
+              {searchQuery ? (
+                <TouchableOpacity onPress={() => setSearchQuery('')}>
+                  <MaterialIcons
+                    name="cancel"
+                    size={ms(18)}
+                    color={ParkColors.textMuted}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <View
+                  style={[
+                    styles.tuneButton,
+                    {
+                      width: ms(32),
+                      height: ms(32),
+                      borderRadius: ms(16),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="tune"
+                    size={ms(17)}
+                    color={ParkColors.primary}
+                  />
+                </View>
               )}
-            </TouchableOpacity>
+            </View>
 
-            {/* Covered Chip */}
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                coveredFilter && styles.filterChipActive,
-              ]}
-              onPress={() => setCoveredFilter(!coveredFilter)}
-            >
-              <MaterialIcons
-                name="roofing"
-                size={16}
-                color={coveredFilter ? '#FFFFFF' : ParkColors.text}
-              />
-              <Text
+            {/* Mode Selector: Private Driveways vs Public & Corporate */}
+            <View style={styles.modeSelector}>
+              <TouchableOpacity
                 style={[
-                  styles.filterChipText,
-                  coveredFilter && styles.filterChipTextActive,
+                  styles.modeButton,
+                  { paddingVertical: vs(8), gap: s(5) },
+                  selectedSpotType === 'private' && styles.modeButtonActive,
                 ]}
+                activeOpacity={0.85}
+                onPress={() => setSelectedSpotType('private')}
               >
-                Covered
-              </Text>
-              {coveredFilter && (
-                <MaterialIcons name="check" size={14} color="#FFFFFF" />
-              )}
-            </TouchableOpacity>
+                <MaterialIcons
+                  name="garage"
+                  size={ms(15)}
+                  color={
+                    selectedSpotType === 'private'
+                      ? '#FFFFFF'
+                      : ParkColors.textMuted
+                  }
+                />
+                <Text
+                  style={[
+                    styles.modeButtonText,
+                    { fontSize: ms(11.5) },
+                    selectedSpotType === 'private' && styles.modeButtonTextActive,
+                  ]}
+                  numberOfLines={1}
+                >
+                  Private Driveways
+                </Text>
+              </TouchableOpacity>
 
-            {/* Under Rs 200 Chip */}
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                maxPriceFilter === 200 && styles.filterChipActive,
-              ]}
-              onPress={() =>
-                setMaxPriceFilter(maxPriceFilter === 200 ? null : 200)
-              }
-            >
-              <Text
+              <TouchableOpacity
                 style={[
-                  styles.filterChipText,
-                  maxPriceFilter === 200 && styles.filterChipTextActive,
+                  styles.modeButton,
+                  { paddingVertical: vs(8), gap: s(5) },
+                  selectedSpotType === 'public' && styles.modeButtonActive,
                 ]}
+                activeOpacity={0.85}
+                onPress={() => setSelectedSpotType('public')}
               >
-                Under Rs 200
-              </Text>
-              {maxPriceFilter === 200 && (
-                <MaterialIcons name="check" size={14} color="#FFFFFF" />
-              )}
-            </TouchableOpacity>
+                <MaterialIcons
+                  name="local-parking"
+                  size={ms(15)}
+                  color={
+                    selectedSpotType === 'public'
+                      ? '#FFFFFF'
+                      : ParkColors.textMuted
+                  }
+                />
+                <Text
+                  style={[
+                    styles.modeButtonText,
+                    { fontSize: ms(11.5) },
+                    selectedSpotType === 'public' && styles.modeButtonTextActive,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {isSmallPhone ? 'Public Lots' : 'Public & Corporate'}
+                </Text>
+                <View style={styles.publicLotsPill}>
+                  <Text style={[styles.publicLotsPillText, { fontSize: ms(8.5) }]}>
+                    24 lots
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            </View>
 
-            {/* Bike Chip */}
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                selectedVehicleFilter === 'bike' && styles.filterChipActive,
-              ]}
-              onPress={() =>
-                setSelectedVehicleFilter(
-                  selectedVehicleFilter === 'bike' ? 'all' : 'bike'
-                )
-              }
+            {/* Horizontal Quick Filter Chips */}
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={[styles.filterChipsRow, { gap: chipGap }]}
             >
-              <MaterialIcons
-                name="two-wheeler"
-                size={16}
-                color={selectedVehicleFilter === 'bike' ? '#FFFFFF' : ParkColors.text}
-              />
-              <Text
+              {/* Car Chip */}
+              <TouchableOpacity
                 style={[
-                  styles.filterChipText,
-                  selectedVehicleFilter === 'bike' && styles.filterChipTextActive,
+                  styles.filterChip,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6.5) },
+                  selectedVehicleFilter === 'car' && styles.filterChipActive,
                 ]}
+                onPress={() =>
+                  setSelectedVehicleFilter(
+                    selectedVehicleFilter === 'car' ? 'all' : 'car'
+                  )
+                }
               >
-                Bike
-              </Text>
-            </TouchableOpacity>
+                <MaterialIcons
+                  name="directions-car"
+                  size={ms(15)}
+                  color={
+                    selectedVehicleFilter === 'car'
+                      ? '#FFFFFF'
+                      : ParkColors.text
+                  }
+                />
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    { fontSize: ms(12) },
+                    selectedVehicleFilter === 'car' &&
+                      styles.filterChipTextActive,
+                  ]}
+                >
+                  Car
+                </Text>
+                {selectedVehicleFilter === 'car' && (
+                  <MaterialIcons name="check" size={ms(13)} color="#FFFFFF" />
+                )}
+              </TouchableOpacity>
 
-            {/* CCTV Chip */}
-            <TouchableOpacity
-              style={[
-                styles.filterChip,
-                cctvOnly && styles.filterChipActive,
-              ]}
-              onPress={() => setCctvOnly(!cctvOnly)}
-            >
-              <MaterialIcons
-                name="videocam"
-                size={16}
-                color={cctvOnly ? '#FFFFFF' : ParkColors.text}
-              />
-              <Text
+              {/* Covered Chip */}
+              <TouchableOpacity
                 style={[
-                  styles.filterChipText,
-                  cctvOnly && styles.filterChipTextActive,
+                  styles.filterChip,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6.5) },
+                  coveredFilter && styles.filterChipActive,
                 ]}
+                onPress={() => setCoveredFilter(!coveredFilter)}
               >
-                CCTV Verified
-              </Text>
-            </TouchableOpacity>
-          </ScrollView>
+                <MaterialIcons
+                  name="roofing"
+                  size={ms(15)}
+                  color={coveredFilter ? '#FFFFFF' : ParkColors.text}
+                />
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    { fontSize: ms(12) },
+                    coveredFilter && styles.filterChipTextActive,
+                  ]}
+                >
+                  Covered
+                </Text>
+                {coveredFilter && (
+                  <MaterialIcons name="check" size={ms(13)} color="#FFFFFF" />
+                )}
+              </TouchableOpacity>
+
+              {/* Under Rs 200 Chip */}
+              <TouchableOpacity
+                style={[
+                  styles.filterChip,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6.5) },
+                  maxPriceFilter === 200 && styles.filterChipActive,
+                ]}
+                onPress={() =>
+                  setMaxPriceFilter(maxPriceFilter === 200 ? null : 200)
+                }
+              >
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    { fontSize: ms(12) },
+                    maxPriceFilter === 200 && styles.filterChipTextActive,
+                  ]}
+                >
+                  Under Rs 200
+                </Text>
+                {maxPriceFilter === 200 && (
+                  <MaterialIcons name="check" size={ms(13)} color="#FFFFFF" />
+                )}
+              </TouchableOpacity>
+
+              {/* Bike Chip */}
+              <TouchableOpacity
+                style={[
+                  styles.filterChip,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6.5) },
+                  selectedVehicleFilter === 'bike' && styles.filterChipActive,
+                ]}
+                onPress={() =>
+                  setSelectedVehicleFilter(
+                    selectedVehicleFilter === 'bike' ? 'all' : 'bike'
+                  )
+                }
+              >
+                <MaterialIcons
+                  name="two-wheeler"
+                  size={ms(15)}
+                  color={
+                    selectedVehicleFilter === 'bike'
+                      ? '#FFFFFF'
+                      : ParkColors.text
+                  }
+                />
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    { fontSize: ms(12) },
+                    selectedVehicleFilter === 'bike' &&
+                      styles.filterChipTextActive,
+                  ]}
+                >
+                  Bike
+                </Text>
+              </TouchableOpacity>
+
+              {/* CCTV Chip */}
+              <TouchableOpacity
+                style={[
+                  styles.filterChip,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6.5) },
+                  cctvOnly && styles.filterChipActive,
+                ]}
+                onPress={() => setCctvOnly(!cctvOnly)}
+              >
+                <MaterialIcons
+                  name="videocam"
+                  size={ms(15)}
+                  color={cctvOnly ? '#FFFFFF' : ParkColors.text}
+                />
+                <Text
+                  style={[
+                    styles.filterChipText,
+                    { fontSize: ms(12) },
+                    cctvOnly && styles.filterChipTextActive,
+                  ]}
+                >
+                  CCTV Verified
+                </Text>
+              </TouchableOpacity>
+            </ScrollView>
+          </View>
         </View>
 
         {/* Lahore Map Canvas Layer */}
@@ -330,66 +422,138 @@ export default function ExploreScreen() {
           selectedId={selectedPinId}
           onSelectPin={(id) => {
             setSelectedPinId(id);
-            // Quick scroll or tap opens listing
             if (id.startsWith('spot-pub')) {
               router.push(`/public-spot/${id}` as any);
             } else {
               router.push(`/listing/${id}` as any);
             }
           }}
-          height={380}
+          height={mapHeight}
         />
 
         {/* Bottom Sheet List of Verified Spots */}
-        <View style={styles.bottomSheetArea}>
-          <View style={styles.sheetHeaderRow}>
-            <View style={styles.sheetTitleGroup}>
-              <Text style={styles.sheetTitle}>Nearby Verified Spots</Text>
-              <View style={styles.areaBadge}>
-                <Text style={styles.areaBadgeText}>Gulberg III</Text>
-              </View>
-            </View>
-            <TouchableOpacity activeOpacity={0.7}>
-              <View style={styles.viewAllRow}>
-                <Text style={styles.viewAllText}>
-                  View all ({filteredListings.length})
+        <View style={styles.bottomSheetOuter}>
+          <View
+            style={[
+              styles.bottomSheetArea,
+              {
+                maxWidth: contentMaxWidth,
+                paddingHorizontal: hPad,
+                paddingTop: vs(16),
+                gap: vGap,
+              },
+            ]}
+          >
+            <View style={styles.sheetHeaderRow}>
+              <View style={[styles.sheetTitleGroup, { gap: s(8) }]}>
+                <Text style={[styles.sheetTitle, { fontSize: ms(16) }]}>
+                  Nearby Verified Spots
                 </Text>
-                <MaterialIcons name="arrow-forward" size={14} color={ParkColors.secondary} />
+                <View style={styles.areaBadge}>
+                  <Text style={[styles.areaBadgeText, { fontSize: ms(11) }]}>
+                    Gulberg III
+                  </Text>
+                </View>
               </View>
-            </TouchableOpacity>
-          </View>
+              <TouchableOpacity activeOpacity={0.7}>
+                <View style={styles.viewAllRow}>
+                  <Text style={[styles.viewAllText, { fontSize: ms(12) }]}>
+                    View all ({filteredListings.length})
+                  </Text>
+                  <MaterialIcons
+                    name="arrow-forward"
+                    size={ms(14)}
+                    color={ParkColors.secondary}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
 
-          {/* Cards List */}
-          <View style={styles.cardsStack}>
+            {/* Cards List / Responsive Grid */}
             {filteredListings.length === 0 ? (
-              <View style={styles.emptyState}>
-                <MaterialIcons name="search-off" size={42} color={ParkColors.textMuted} />
-                <Text style={styles.emptyTitle}>No parking spots match your filters</Text>
-                <Text style={styles.emptySubtitle}>
-                  Try clearing filter chips or searching for Gulberg, DHA, or Model Town.
+              <View style={[styles.emptyState, { padding: s(28) }]}>
+                <MaterialIcons
+                  name="search-off"
+                  size={ms(40)}
+                  color={ParkColors.textMuted}
+                />
+                <Text style={[styles.emptyTitle, { fontSize: ms(15) }]}>
+                  No parking spots match your filters
+                </Text>
+                <Text style={[styles.emptySubtitle, { fontSize: ms(12) }]}>
+                  Try clearing filter chips or searching for Gulberg, DHA, or
+                  Model Town.
                 </Text>
               </View>
             ) : (
-              filteredListings.map((listing, index) => (
-                <ListingCard
-                  key={listing.id}
-                  listing={listing}
-                  featured={index === 0}
-                />
-              ))
-            )}
-          </View>
+              <View style={{ gap: vGap }}>
+                {/* Featured top spot */}
+                <ListingCard listing={filteredListings[0]} featured />
 
-          {/* P2P Safety Guarantee Banner */}
-          <View style={styles.safetyGuaranteeBanner}>
-            <View style={styles.safetyShieldCircle}>
-              <MaterialIcons name="verified-user" size={22} color="#FFFFFF" />
-            </View>
-            <View style={styles.safetyTextGroup}>
-              <Text style={styles.safetyTitle}>ParkYaar Safety Guarantee</Text>
-              <Text style={styles.safetySubtitle}>
-                All Lahore driveways are physically inspected & CNIC vetted for 100% vehicle peace of mind.
-              </Text>
+                {/* Remaining spots in responsive grid (1 col on phone, 2-3 cols on tablet/desktop) */}
+                {filteredListings.length > 1 && (
+                  <View
+                    style={[
+                      styles.cardsGrid,
+                      {
+                        gap: vGap,
+                        flexDirection: isWide ? 'row' : 'column',
+                        flexWrap: isWide ? 'wrap' : 'nowrap',
+                      },
+                    ]}
+                  >
+                    {filteredListings.slice(1).map((listing) => (
+                      <ListingCard
+                        key={listing.id}
+                        listing={listing}
+                        style={
+                          isWide
+                            ? {
+                                flexBasis:
+                                  numColumns >= 3 ? '31.5%' : '48.2%',
+                                flexGrow: 1,
+                              }
+                            : undefined
+                        }
+                      />
+                    ))}
+                  </View>
+                )}
+              </View>
+            )}
+
+            {/* P2P Safety Guarantee Banner */}
+            <View
+              style={[
+                styles.safetyGuaranteeBanner,
+                { padding: s(14), gap: s(12), marginTop: vs(4) },
+              ]}
+            >
+              <View
+                style={[
+                  styles.safetyShieldCircle,
+                  {
+                    width: ms(40),
+                    height: ms(40),
+                    borderRadius: ms(20),
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="verified-user"
+                  size={ms(21)}
+                  color="#FFFFFF"
+                />
+              </View>
+              <View style={styles.safetyTextGroup}>
+                <Text style={[styles.safetyTitle, { fontSize: ms(13) }]}>
+                  ParkYaar Safety Guarantee
+                </Text>
+                <Text style={[styles.safetySubtitle, { fontSize: ms(11.5) }]}>
+                  All Lahore driveways are physically inspected & CNIC vetted
+                  for 100% vehicle peace of mind.
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -407,48 +571,41 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120,
+    flexGrow: 1,
   },
-  controlsSection: {
-    paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 12,
+  controlsOuter: {
+    width: '100%',
     backgroundColor: 'rgba(255, 255, 255, 0.96)',
-    gap: 10,
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
+  },
+  controlsSection: {
+    width: '100%',
+    alignSelf: 'center',
   },
   searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: 9999,
-    paddingHorizontal: 14,
-    paddingVertical: 6,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.md,
   },
   searchInner: {
     flex: 1,
-    marginLeft: 10,
   },
   searchLabel: {
-    fontSize: 10,
     color: ParkColors.textMuted,
     fontWeight: '600',
   },
   searchInput: {
-    fontSize: 14,
     fontWeight: '700',
     color: ParkColors.text,
     padding: 0,
     margin: 0,
   },
   tuneButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
@@ -464,18 +621,17 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 8,
     borderRadius: 9999,
-    gap: 6,
+    paddingHorizontal: 6,
   },
   modeButtonActive: {
     backgroundColor: ParkColors.secondary,
     ...ParkShadows.sm,
   },
   modeButtonText: {
-    fontSize: 12,
     fontWeight: '600',
     color: ParkColors.textMuted,
+    flexShrink: 1,
   },
   modeButtonTextActive: {
     color: '#FFFFFF',
@@ -488,25 +644,21 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   publicLotsPillText: {
-    fontSize: 9,
     fontWeight: '800',
     color: '#291800',
   },
   filterChipsRow: {
     flexDirection: 'row',
-    gap: 8,
     paddingVertical: 2,
   },
   filterChip: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 5,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 12,
-    paddingVertical: 7,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 5,
     ...ParkShadows.sm,
   },
   filterChipActive: {
@@ -514,33 +666,40 @@ const styles = StyleSheet.create({
     borderColor: ParkColors.primary,
   },
   filterChipText: {
-    fontSize: 12,
     fontWeight: '600',
     color: ParkColors.text,
   },
   filterChipTextActive: {
     color: '#FFFFFF',
+    fontWeight: '700',
+  },
+  bottomSheetOuter: {
+    width: '100%',
+    backgroundColor: ParkColors.background,
+    borderTopLeftRadius: ParkRadii.sheet,
+    borderTopRightRadius: ParkRadii.sheet,
+    marginTop: -16,
+    ...ParkShadows.sheet,
   },
   bottomSheetArea: {
-    paddingHorizontal: 16,
-    paddingTop: 16,
-    gap: 12,
+    width: '100%',
+    alignSelf: 'center',
   },
   sheetHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    flexWrap: 'wrap',
+    gap: 8,
   },
   sheetTitleGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    flexShrink: 1,
   },
   sheetTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   areaBadge: {
     backgroundColor: ParkColors.surfaceHigh,
@@ -549,40 +708,35 @@ const styles = StyleSheet.create({
     borderRadius: 9999,
   },
   areaBadgeText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   viewAllRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 3,
   },
   viewAllText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
-  cardsStack: {
-    gap: 14,
+  cardsGrid: {
+    width: '100%',
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 32,
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
     borderWidth: 1,
     borderColor: ParkColors.border,
   },
   emptyTitle: {
-    fontSize: 15,
     fontWeight: '700',
     color: ParkColors.text,
     marginTop: 12,
   },
   emptySubtitle: {
-    fontSize: 12,
     color: ParkColors.textMuted,
     textAlign: 'center',
     marginTop: 4,
@@ -592,34 +746,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: ParkColors.surfaceLow,
-    padding: 14,
     borderRadius: ParkRadii.lg,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
-    marginTop: 8,
   },
   safetyShieldCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   safetyTextGroup: {
     flex: 1,
+    gap: 2,
   },
   safetyTitle: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   safetySubtitle: {
-    fontSize: 11,
-    color: ParkColors.textVariant,
+    color: ParkColors.textMuted,
     lineHeight: 16,
-    marginTop: 2,
   },
 });
-

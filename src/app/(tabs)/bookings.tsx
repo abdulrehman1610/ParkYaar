@@ -3,7 +3,6 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +12,7 @@ import {
 
 import { Header } from '@/components/Header';
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 import { Booking } from '@/types';
 
@@ -22,6 +22,17 @@ export default function BookingsTabScreen() {
   const router = useRouter();
   const { bookings } = useParkStore();
   const [activeTab, setActiveTab] = useState<TabFilter>('upcoming');
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    tabScrollBottomPad,
+    contentMaxWidth,
+    isWide,
+  } = useResponsive();
 
   const filteredBookings = bookings.filter((b) => {
     if (activeTab === 'upcoming') {
@@ -36,15 +47,33 @@ export default function BookingsTabScreen() {
   const getStatusColor = (status: Booking['status']) => {
     switch (status) {
       case 'confirmed':
-        return { bg: ParkColors.successLight, text: ParkColors.success, label: 'Confirmed' };
+        return {
+          bg: ParkColors.successLight,
+          text: ParkColors.success,
+          label: 'Confirmed',
+        };
       case 'pending':
-        return { bg: ParkColors.amberDim, text: '#633F00', label: 'Pending Approval' };
+        return {
+          bg: ParkColors.amberDim,
+          text: '#633F00',
+          label: 'Pending Approval',
+        };
       case 'completed':
-        return { bg: ParkColors.surfaceHigh, text: ParkColors.primary, label: 'Completed' };
+        return {
+          bg: ParkColors.surfaceHigh,
+          text: ParkColors.primary,
+          label: 'Completed',
+        };
       case 'cancelled':
-        return { bg: '#FEE2E2', text: ParkColors.error, label: 'Cancelled' };
+        return {
+          bg: '#FEE2E2',
+          text: ParkColors.error,
+          label: 'Cancelled',
+        };
     }
   };
+
+  const thumbSize = ms(68);
 
   return (
     <View style={styles.container}>
@@ -52,137 +81,270 @@ export default function BookingsTabScreen() {
       <Header />
 
       {/* Segmented Filter Control */}
-      <View style={styles.filterSection}>
-        <View style={styles.segmentedControl}>
-          <TouchableOpacity
-            style={[
-              styles.segmentBtn,
-              activeTab === 'upcoming' && styles.segmentBtnActive,
-            ]}
-            onPress={() => setActiveTab('upcoming')}
-          >
-            <Text
+      <View style={styles.filterSectionOuter}>
+        <View
+          style={[
+            styles.filterSection,
+            {
+              maxWidth: contentMaxWidth,
+              paddingHorizontal: hPad,
+              paddingVertical: vs(10),
+            },
+          ]}
+        >
+          <View style={styles.segmentedControl}>
+            <TouchableOpacity
               style={[
-                styles.segmentText,
-                activeTab === 'upcoming' && styles.segmentTextActive,
+                styles.segmentBtn,
+                { paddingVertical: vs(8) },
+                activeTab === 'upcoming' && styles.segmentBtnActive,
               ]}
+              onPress={() => setActiveTab('upcoming')}
             >
-              Upcoming ({bookings.filter((b) => b.status === 'confirmed' || b.status === 'pending').length})
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.segmentText,
+                  { fontSize: ms(12) },
+                  activeTab === 'upcoming' && styles.segmentTextActive,
+                ]}
+                numberOfLines={1}
+              >
+                Upcoming (
+                {
+                  bookings.filter(
+                    (b) => b.status === 'confirmed' || b.status === 'pending'
+                  ).length
+                }
+                )
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.segmentBtn,
-              activeTab === 'past' && styles.segmentBtnActive,
-            ]}
-            onPress={() => setActiveTab('past')}
-          >
-            <Text
+            <TouchableOpacity
               style={[
-                styles.segmentText,
-                activeTab === 'past' && styles.segmentTextActive,
+                styles.segmentBtn,
+                { paddingVertical: vs(8) },
+                activeTab === 'past' && styles.segmentBtnActive,
               ]}
+              onPress={() => setActiveTab('past')}
             >
-              Past ({bookings.filter((b) => b.status === 'completed').length})
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.segmentText,
+                  { fontSize: ms(12) },
+                  activeTab === 'past' && styles.segmentTextActive,
+                ]}
+                numberOfLines={1}
+              >
+                Past ({bookings.filter((b) => b.status === 'completed').length})
+              </Text>
+            </TouchableOpacity>
 
-          <TouchableOpacity
-            style={[
-              styles.segmentBtn,
-              activeTab === 'cancelled' && styles.segmentBtnActive,
-            ]}
-            onPress={() => setActiveTab('cancelled')}
-          >
-            <Text
+            <TouchableOpacity
               style={[
-                styles.segmentText,
-                activeTab === 'cancelled' && styles.segmentTextActive,
+                styles.segmentBtn,
+                { paddingVertical: vs(8) },
+                activeTab === 'cancelled' && styles.segmentBtnActive,
               ]}
+              onPress={() => setActiveTab('cancelled')}
             >
-              Cancelled
-            </Text>
-          </TouchableOpacity>
+              <Text
+                style={[
+                  styles.segmentText,
+                  { fontSize: ms(12) },
+                  activeTab === 'cancelled' && styles.segmentTextActive,
+                ]}
+                numberOfLines={1}
+              >
+                Cancelled
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          {
+            maxWidth: contentMaxWidth,
+            paddingHorizontal: hPad,
+            paddingTop: vGap,
+            gap: vGap,
+            paddingBottom: tabScrollBottomPad,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {filteredBookings.length === 0 ? (
-          <View style={styles.emptyCard}>
-            <View style={styles.emptyIconCircle}>
-              <MaterialIcons name="confirmation-number" size={32} color={ParkColors.textMuted} />
+          <View style={[styles.emptyCard, { padding: s(28) }]}>
+            <View
+              style={[
+                styles.emptyIconCircle,
+                {
+                  width: ms(60),
+                  height: ms(60),
+                  borderRadius: ms(30),
+                },
+              ]}
+            >
+              <MaterialIcons
+                name="confirmation-number"
+                size={ms(30)}
+                color={ParkColors.textMuted}
+              />
             </View>
-            <Text style={styles.emptyTitle}>No {activeTab} bookings</Text>
-            <Text style={styles.emptySubtitle}>
-              Reserve a verified driveway or commercial bay in Lahore in under 60 seconds.
+            <Text style={[styles.emptyTitle, { fontSize: ms(16) }]}>
+              No {activeTab} bookings
+            </Text>
+            <Text style={[styles.emptySubtitle, { fontSize: ms(13) }]}>
+              Reserve a verified driveway or commercial bay in Lahore in under
+              60 seconds.
             </Text>
             <TouchableOpacity
-              style={styles.findSpotBtn}
+              style={[
+                styles.findSpotBtn,
+                {
+                  paddingHorizontal: s(20),
+                  paddingVertical: vs(11),
+                },
+              ]}
               onPress={() => router.push('/(tabs)' as any)}
             >
-              <Text style={styles.findSpotBtnText}>Find Parking Spot</Text>
+              <Text style={[styles.findSpotBtnText, { fontSize: ms(13) }]}>
+                Find Parking Spot
+              </Text>
             </TouchableOpacity>
           </View>
         ) : (
-          filteredBookings.map((b) => {
-            const st = getStatusColor(b.status);
-            return (
-              <TouchableOpacity
-                key={b.id}
-                style={styles.bookingCard}
-                activeOpacity={0.88}
-                onPress={() => router.push(`/booking-confirmed/${b.id}` as any)}
-              >
-                <View style={styles.cardTop}>
-                  <Image source={{ uri: b.listingPhoto }} style={styles.cardImage} />
-                  <View style={styles.cardTopInfo}>
-                    <View style={styles.idStatusRow}>
-                      <Text style={styles.bookingId}>#{b.id}</Text>
-                      <View style={[styles.statusBadge, { backgroundColor: st.bg }]}>
-                        <Text style={[styles.statusText, { color: st.text }]}>
-                          {st.label}
+          <View
+            style={[
+              styles.cardsGrid,
+              {
+                gap: vGap,
+                flexDirection: isWide ? 'row' : 'column',
+                flexWrap: isWide ? 'wrap' : 'nowrap',
+              },
+            ]}
+          >
+            {filteredBookings.map((b) => {
+              const st = getStatusColor(b.status);
+              return (
+                <TouchableOpacity
+                  key={b.id}
+                  style={[
+                    styles.bookingCard,
+                    { padding: cardPad },
+                    isWide && { flexBasis: '48.2%', flexGrow: 1 },
+                  ]}
+                  activeOpacity={0.88}
+                  onPress={() =>
+                    router.push(`/booking-confirmed/${b.id}` as any)
+                  }
+                >
+                  <View style={[styles.cardTop, { gap: s(12) }]}>
+                    <Image
+                      source={{ uri: b.listingPhoto }}
+                      style={[
+                        styles.cardImage,
+                        { width: thumbSize, height: thumbSize },
+                      ]}
+                    />
+                    <View style={styles.cardTopInfo}>
+                      <View style={styles.idStatusRow}>
+                        <Text style={[styles.bookingId, { fontSize: ms(11) }]}>
+                          #{b.id}
                         </Text>
+                        <View
+                          style={[
+                            styles.statusBadge,
+                            { backgroundColor: st.bg },
+                          ]}
+                        >
+                          <Text
+                            style={[
+                              styles.statusText,
+                              { color: st.text, fontSize: ms(10) },
+                            ]}
+                          >
+                            {st.label}
+                          </Text>
+                        </View>
                       </View>
-                    </View>
-                    <Text style={styles.cardTitle} numberOfLines={1}>
-                      {b.listingTitle}
-                    </Text>
-                    <Text style={styles.cardArea}>{b.listingArea}</Text>
-                  </View>
-                </View>
-
-                <View style={styles.cardDivider} />
-
-                <View style={styles.cardBottom}>
-                  <View style={styles.detailsCol}>
-                    <View style={styles.detailRow}>
-                      <MaterialIcons name="schedule" size={13} color={ParkColors.textMuted} />
-                      <Text style={styles.detailText}>{b.durationLabel}</Text>
-                    </View>
-                    <View style={styles.detailRow}>
-                      <MaterialIcons name="directions-car" size={13} color={ParkColors.textMuted} />
-                      <Text style={styles.detailText}>
-                        {b.vehicle.model} • {b.vehicle.plate}
+                      <Text
+                        style={[styles.cardTitle, { fontSize: ms(15) }]}
+                        numberOfLines={1}
+                      >
+                        {b.listingTitle}
+                      </Text>
+                      <Text
+                        style={[styles.cardArea, { fontSize: ms(12) }]}
+                        numberOfLines={1}
+                      >
+                        {b.listingArea}
                       </Text>
                     </View>
                   </View>
 
-                  <View style={styles.priceActionCol}>
-                    <Text style={styles.cardPrice}>Rs {b.total}</Text>
-                    <View style={styles.passBtnPill}>
-                      <Text style={styles.passBtnPillText}>View Pass</Text>
-                      <MaterialIcons name="chevron-right" size={14} color={ParkColors.secondary} />
+                  <View
+                    style={[styles.cardDivider, { marginVertical: vs(11) }]}
+                  />
+
+                  <View style={styles.cardBottom}>
+                    <View style={styles.detailsCol}>
+                      <View style={styles.detailRow}>
+                        <MaterialIcons
+                          name="schedule"
+                          size={ms(13)}
+                          color={ParkColors.textMuted}
+                        />
+                        <Text
+                          style={[styles.detailText, { fontSize: ms(12) }]}
+                          numberOfLines={1}
+                        >
+                          {b.durationLabel}
+                        </Text>
+                      </View>
+                      <View style={styles.detailRow}>
+                        <MaterialIcons
+                          name="directions-car"
+                          size={ms(13)}
+                          color={ParkColors.textMuted}
+                        />
+                        <Text
+                          style={[styles.detailText, { fontSize: ms(12) }]}
+                          numberOfLines={1}
+                        >
+                          {b.vehicle.model} • {b.vehicle.plate}
+                        </Text>
+                      </View>
+                    </View>
+
+                    <View style={styles.priceActionCol}>
+                      <Text style={[styles.cardPrice, { fontSize: ms(16) }]}>
+                        Rs {b.total}
+                      </Text>
+                      <View style={styles.passBtnPill}>
+                        <Text
+                          style={[
+                            styles.passBtnPillText,
+                            { fontSize: ms(11.5) },
+                          ]}
+                        >
+                          View Pass
+                        </Text>
+                        <MaterialIcons
+                          name="chevron-right"
+                          size={ms(14)}
+                          color={ParkColors.secondary}
+                        />
+                      </View>
                     </View>
                   </View>
-                </View>
-              </TouchableOpacity>
-            );
-          })
+                </TouchableOpacity>
+              );
+            })}
+          </View>
         )}
       </ScrollView>
     </View>
@@ -194,12 +356,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: ParkColors.background,
   },
-  filterSection: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  filterSectionOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
+  },
+  filterSection: {
+    width: '100%',
+    alignSelf: 'center',
   },
   segmentedControl: {
     flexDirection: 'row',
@@ -209,17 +374,16 @@ const styles = StyleSheet.create({
   },
   segmentBtn: {
     flex: 1,
-    paddingVertical: 8,
     borderRadius: 9999,
     alignItems: 'center',
     justifyContent: 'center',
+    paddingHorizontal: 4,
   },
   segmentBtnActive: {
     backgroundColor: ParkColors.secondary,
     ...ParkShadows.sm,
   },
   segmentText: {
-    fontSize: 12,
     fontWeight: '600',
     color: ParkColors.textMuted,
   },
@@ -231,14 +395,15 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    gap: 14,
-    paddingBottom: 120,
+    width: '100%',
+    alignSelf: 'center',
+  },
+  cardsGrid: {
+    width: '100%',
   },
   bookingCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
@@ -246,58 +411,49 @@ const styles = StyleSheet.create({
   cardTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
   },
   cardImage: {
-    width: 64,
-    height: 64,
     borderRadius: ParkRadii.md,
     backgroundColor: ParkColors.surfaceHigh,
   },
   cardTopInfo: {
     flex: 1,
-    justifyContent: 'center',
+    gap: 3,
   },
   idStatusRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 2,
+    gap: 6,
   },
   bookingId: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
   },
   statusBadge: {
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: 9999,
   },
   statusText: {
-    fontSize: 10,
     fontWeight: '700',
   },
   cardTitle: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   cardArea: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 2,
   },
   cardDivider: {
     height: 1,
     backgroundColor: ParkColors.border,
-    marginVertical: 10,
   },
   cardBottom: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 8,
   },
   detailsCol: {
     gap: 4,
@@ -306,77 +462,69 @@ const styles = StyleSheet.create({
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
   },
   detailText: {
-    fontSize: 11,
     color: ParkColors.textVariant,
+    fontWeight: '500',
+    flexShrink: 1,
   },
   priceActionCol: {
     alignItems: 'flex-end',
     gap: 4,
   },
   cardPrice: {
-    fontSize: 16,
     fontWeight: '800',
     color: ParkColors.primary,
   },
   passBtnPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 1,
     backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 9999,
+    gap: 2,
   },
   passBtnPillText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   emptyCard: {
     backgroundColor: '#FFFFFF',
-    borderRadius: ParkRadii.lg,
-    padding: 32,
+    borderRadius: ParkRadii.xl,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 12,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    marginTop: 20,
     ...ParkShadows.sm,
   },
   emptyIconCircle: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 14,
   },
   emptyTitle: {
-    fontSize: 16,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   emptySubtitle: {
-    fontSize: 12,
     color: ParkColors.textMuted,
     textAlign: 'center',
+    lineHeight: 19,
     marginTop: 6,
-    lineHeight: 18,
-    maxWidth: 240,
+    marginBottom: 20,
+    maxWidth: 320,
   },
   findSpotBtn: {
-    marginTop: 20,
     backgroundColor: ParkColors.secondary,
-    paddingHorizontal: 20,
-    paddingVertical: 10,
     borderRadius: 9999,
+    ...ParkShadows.sm,
   },
   findSpotBtnText: {
-    fontSize: 13,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '700',
   },
 });

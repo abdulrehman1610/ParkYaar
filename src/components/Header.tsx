@@ -8,10 +8,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DemoToolsModal } from '@/components/DemoToolsModal';
 import { ParkColors, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 interface HeaderProps {
@@ -25,73 +25,161 @@ export const Header: React.FC<HeaderProps> = ({
   title,
   showBack = false,
   onBack,
-  showSearch = true,
 }) => {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { user } = useParkStore();
   const [demoToolsVisible, setDemoToolsVisible] = useState(false);
+  const {
+    s,
+    ms,
+    hPad,
+    headerHeight,
+    headerTopPad,
+    contentMaxWidth,
+    isSmallPhone,
+  } = useResponsive();
+
+  const logoSize = ms(32);
+  const avatarSize = ms(36);
+  const iconBtnSize = ms(38);
 
   return (
     <>
-      <View style={[styles.headerContainer, { paddingTop: Math.max(insets.top, 12) }]}>
-        <View style={styles.headerContent}>
+      <View style={[styles.headerContainer, { paddingTop: headerTopPad }]}>
+        <View
+          style={[
+            styles.headerContent,
+            {
+              height: headerHeight,
+              paddingHorizontal: hPad,
+              maxWidth: contentMaxWidth,
+            },
+          ]}
+        >
           {showBack ? (
-            <View style={styles.backGroup}>
+            <View style={[styles.backGroup, { gap: s(8) }]}>
               <TouchableOpacity
                 onPress={onBack ? onBack : () => router.back()}
-                style={styles.iconButton}
+                style={[
+                  styles.iconButton,
+                  {
+                    width: iconBtnSize,
+                    height: iconBtnSize,
+                    borderRadius: iconBtnSize / 2,
+                  },
+                ]}
                 activeOpacity={0.7}
               >
-                <MaterialIcons name="arrow-back" size={24} color={ParkColors.text} />
+                <MaterialIcons
+                  name="arrow-back"
+                  size={ms(22)}
+                  color={ParkColors.text}
+                />
               </TouchableOpacity>
-              {title && <Text style={styles.headerTitle}>{title}</Text>}
+              {title && (
+                <Text
+                  style={[styles.headerTitle, { fontSize: ms(17) }]}
+                  numberOfLines={1}
+                >
+                  {title}
+                </Text>
+              )}
             </View>
           ) : (
             <TouchableOpacity
               activeOpacity={0.8}
               onLongPress={() => setDemoToolsVisible(true)}
               onPress={() => setDemoToolsVisible(true)}
-              style={styles.brandGroup}
+              style={[styles.brandGroup, { gap: s(9) }]}
             >
               {/* ParkYaar Badge/Logo */}
-              <View style={styles.logoBadge}>
-                <Text style={styles.logoBadgeText}>P</Text>
+              <View
+                style={[
+                  styles.logoBadge,
+                  {
+                    width: logoSize,
+                    height: logoSize,
+                    borderRadius: ms(10),
+                  },
+                ]}
+              >
+                <Text style={[styles.logoBadgeText, { fontSize: ms(17) }]}>
+                  P
+                </Text>
               </View>
               <View style={styles.brandTextGroup}>
-                <Text style={styles.brandTitle}>ParkYaar</Text>
+                <Text style={[styles.brandTitle, { fontSize: ms(16) }]}>
+                  ParkYaar
+                </Text>
                 <View style={styles.locationDropdown}>
-                  <Text style={styles.locationText}>Lahore, PK</Text>
-                  <MaterialIcons name="expand-more" size={16} color={ParkColors.secondary} />
+                  <Text style={[styles.locationText, { fontSize: ms(11) }]}>
+                    Lahore, PK
+                  </Text>
+                  <MaterialIcons
+                    name="expand-more"
+                    size={ms(15)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
               </View>
             </TouchableOpacity>
           )}
 
           {/* Right Action Icons */}
-          <View style={styles.rightActions}>
+          <View style={[styles.rightActions, { gap: s(10) }]}>
             <TouchableOpacity
-              style={styles.demoPill}
+              style={[
+                styles.demoPill,
+                {
+                  paddingHorizontal: isSmallPhone ? 7 : s(9),
+                  paddingVertical: s(5),
+                  gap: s(4),
+                },
+              ]}
               activeOpacity={0.7}
               onPress={() => setDemoToolsVisible(true)}
             >
-              <MaterialIcons name="science" size={13} color={ParkColors.secondary} />
-              <Text style={styles.demoPillText}>Demo</Text>
+              <MaterialIcons
+                name="science"
+                size={ms(13)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.demoPillText, { fontSize: ms(11) }]}>
+                Demo
+              </Text>
             </TouchableOpacity>
 
             {/* Profile Avatar with Verified Badge */}
             <TouchableOpacity
-              style={styles.avatarButton}
+              style={[
+                styles.avatarButton,
+                {
+                  width: avatarSize,
+                  height: avatarSize,
+                  borderRadius: avatarSize / 2,
+                },
+              ]}
               activeOpacity={0.8}
               onPress={() => router.push('/(tabs)/profile' as any)}
             >
               <Image
                 source={{ uri: user.avatar }}
-                style={styles.avatarImage}
+                style={[
+                  styles.avatarImage,
+                  {
+                    width: avatarSize,
+                    height: avatarSize,
+                    borderRadius: avatarSize / 2,
+                  },
+                ]}
               />
               {user.verified && (
                 <View style={styles.verifiedDot}>
-                  <MaterialIcons name="verified" size={14} color={ParkColors.secondary} />
+                  <MaterialIcons
+                    name="verified"
+                    size={ms(13)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
               )}
             </TouchableOpacity>
@@ -110,45 +198,41 @@ export const Header: React.FC<HeaderProps> = ({
 
 const styles = StyleSheet.create({
   headerContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.95)',
+    width: '100%',
+    backgroundColor: 'rgba(255, 255, 255, 0.96)',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
     zIndex: 50,
     ...ParkShadows.sm,
   },
   headerContent: {
-    height: 56,
+    width: '100%',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
   },
   backGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    flex: 1,
+    marginRight: 8,
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 18,
     fontWeight: '700',
     color: ParkColors.primary,
+    flexShrink: 1,
   },
   brandGroup: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    flexShrink: 1,
   },
   logoBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
@@ -157,13 +241,11 @@ const styles = StyleSheet.create({
   logoBadgeText: {
     color: '#FFFFFF',
     fontWeight: '900',
-    fontSize: 18,
   },
   brandTextGroup: {
     flexDirection: 'column',
   },
   brandTitle: {
-    fontSize: 16,
     fontWeight: '800',
     color: ParkColors.primary,
     letterSpacing: -0.3,
@@ -174,40 +256,28 @@ const styles = StyleSheet.create({
     gap: 1,
   },
   locationText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   rightActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
   },
   demoPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
     backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 9,
-    paddingVertical: 5,
     borderRadius: 9999,
   },
   demoPillText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   avatarButton: {
     position: 'relative',
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     overflow: 'visible',
   },
   avatarImage: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: ParkColors.surfaceContainer,
   },
   verifiedDot: {
@@ -218,4 +288,3 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
 });
-

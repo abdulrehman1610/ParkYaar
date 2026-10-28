@@ -12,9 +12,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function QrScanScreen() {
@@ -23,21 +23,35 @@ export default function QrScanScreen() {
   const [isScanning, setIsScanning] = useState(false);
   const [manualCode, setManualCode] = useState('');
   const [flashOn, setFlashOn] = useState(false);
+  const {
+    width,
+    height,
+    s,
+    vs,
+    ms,
+    hPad,
+    headerHeight,
+    headerTopPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+  } = useResponsive();
 
   const handleSimulateScan = (codeToUse?: string) => {
     setIsScanning(true);
 
     setTimeout(() => {
       setIsScanning(false);
-      // Create quick commercial plaza entry booking
       const newBookingId = addBooking({
         listingId: 'spot-pub-1',
         listingTitle: 'Liberty Parking Plaza',
         listingArea: 'Gulberg III, Lahore',
-        listingAddress: 'Liberty Roundabout, Commercial Zone, Gulberg III, Lahore',
-        listingPhoto: 'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80',
+        listingAddress:
+          'Liberty Roundabout, Commercial Zone, Gulberg III, Lahore',
+        listingPhoto:
+          'https://images.unsplash.com/photo-1506521781263-d8422e82f27a?w=800&auto=format&fit=crop&q=80',
         hostName: 'Lahore Parking Company',
-        hostPhoto: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&auto=format&fit=crop&q=80',
+        hostPhoto:
+          'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=300&auto=format&fit=crop&q=80',
         hostPhone: '+92 42 111 537 275',
         vehicle: vehicles[0],
         date: 'Today, 24 Oct',
@@ -49,7 +63,7 @@ export default function QrScanScreen() {
         total: 110,
         status: 'confirmed',
         paymentMethod: 'JazzCash Wallet (0300-******7)',
-        qrCode: `SCAN-${Date.now()}`,
+        qrCode: codeToUse || `SCAN-${Date.now()}`,
         pin: '7721',
         bayNumber: 'Floor 2, Bay 18',
         durationLabel: 'Active Entry Pass',
@@ -59,36 +73,82 @@ export default function QrScanScreen() {
     }, 1800);
   };
 
+  const iconBtnSize = ms(38);
+  const viewfinderSize = Math.round(
+    Math.min(width * 0.62, height * 0.31, 250)
+  );
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => router.back()}
+        <View style={[styles.headerOuter, { paddingTop: headerTopPad }]}>
+          <View
+            style={[
+              styles.headerInner,
+              {
+                height: headerHeight,
+                paddingHorizontal: hPad,
+                maxWidth: formMaxWidth,
+              },
+            ]}
           >
-            <MaterialIcons name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Gate QR Scanner</Text>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => setFlashOn(!flashOn)}
-          >
-            <MaterialIcons
-              name={flashOn ? 'flash-on' : 'flash-off'}
-              size={22}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.iconButton,
+                {
+                  width: iconBtnSize,
+                  height: iconBtnSize,
+                  borderRadius: iconBtnSize / 2,
+                },
+              ]}
+              onPress={() => router.back()}
+            >
+              <MaterialIcons name="arrow-back" size={ms(22)} color="#FFFFFF" />
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { fontSize: ms(16.5) }]}>
+              Gate QR Scanner
+            </Text>
+            <TouchableOpacity
+              style={[
+                styles.iconButton,
+                {
+                  width: iconBtnSize,
+                  height: iconBtnSize,
+                  borderRadius: iconBtnSize / 2,
+                },
+              ]}
+              onPress={() => setFlashOn(!flashOn)}
+            >
+              <MaterialIcons
+                name={flashOn ? 'flash-on' : 'flash-off'}
+                size={ms(20)}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
 
         {/* Viewfinder Center Area */}
-        <View style={styles.viewfinderContainer}>
-          <View style={styles.viewfinderBox}>
+        <View
+          style={[
+            styles.viewfinderContainer,
+            {
+              paddingHorizontal: hPad,
+              gap: vs(16),
+              maxWidth: formMaxWidth,
+            },
+          ]}
+        >
+          <View
+            style={[
+              styles.viewfinderBox,
+              { width: viewfinderSize, height: viewfinderSize },
+            ]}
+          >
             {/* 4 Corner Markers */}
             <View style={[styles.corner, styles.topLeft]} />
             <View style={[styles.corner, styles.topRight]} />
@@ -98,58 +158,96 @@ export default function QrScanScreen() {
             {isScanning ? (
               <View style={styles.scanningIndicator}>
                 <ActivityIndicator size="large" color={ParkColors.secondary} />
-                <Text style={styles.scanningText}>Verifying Barrier QR...</Text>
+                <Text style={[styles.scanningText, { fontSize: ms(13) }]}>
+                  Verifying Barrier QR...
+                </Text>
               </View>
             ) : (
               <View style={styles.laserCenterLine} />
             )}
           </View>
 
-          <Text style={styles.instructionText}>
+          <Text style={[styles.instructionText, { fontSize: ms(13) }]}>
             Align QR code on parking meter or barrier gate within frame.
           </Text>
 
           {/* Quick Simulation Trigger Button */}
           <TouchableOpacity
-            style={styles.simulateScanBtn}
+            style={[
+              styles.simulateScanBtn,
+              {
+                paddingHorizontal: s(20),
+                paddingVertical: vs(12),
+              },
+            ]}
             activeOpacity={0.85}
             onPress={() => handleSimulateScan()}
             disabled={isScanning}
           >
-            <MaterialIcons name="qr-code-scanner" size={20} color="#FFFFFF" />
-            <Text style={styles.simulateScanBtnText}>
+            <MaterialIcons
+              name="qr-code-scanner"
+              size={ms(19)}
+              color="#FFFFFF"
+            />
+            <Text style={[styles.simulateScanBtnText, { fontSize: ms(13.5) }]}>
               Simulate Barrier Scan (Expo Demo)
             </Text>
           </TouchableOpacity>
         </View>
 
         {/* Manual Code Input Drawer */}
-        <View style={styles.manualCodeDrawer}>
-          <Text style={styles.manualCodeTitle}>Or Enter Gate Code Manually</Text>
-          <View style={styles.manualInputRow}>
-            <TextInput
-              style={styles.manualInput}
-              placeholder="e.g. LHR-GATE-42"
-              placeholderTextColor={ParkColors.textMuted}
-              value={manualCode}
-              onChangeText={setManualCode}
-            />
-            <TouchableOpacity
-              style={styles.submitCodeBtn}
-              onPress={() => {
-                if (manualCode.trim()) {
-                  handleSimulateScan(manualCode);
-                } else {
-                  Alert.alert('Manual Code', 'Please enter a code to submit.');
-                }
-              }}
-            >
-              <Text style={styles.submitCodeBtnText}>Submit</Text>
-            </TouchableOpacity>
+        <View
+          style={[
+            styles.manualCodeOuter,
+            {
+              paddingBottom: stickyFooterBottomPad,
+              paddingTop: vs(16),
+              paddingHorizontal: hPad,
+            },
+          ]}
+        >
+          <View style={[styles.manualCodeInner, { maxWidth: formMaxWidth }]}>
+            <Text style={[styles.manualCodeTitle, { fontSize: ms(13) }]}>
+              Or Enter Gate Code Manually
+            </Text>
+            <View style={[styles.manualInputRow, { gap: s(10) }]}>
+              <TextInput
+                style={[
+                  styles.manualInput,
+                  { height: ms(46), fontSize: ms(14) },
+                ]}
+                placeholder="e.g. LHR-GATE-42"
+                placeholderTextColor={ParkColors.textMuted}
+                value={manualCode}
+                onChangeText={setManualCode}
+              />
+              <TouchableOpacity
+                style={[
+                  styles.submitCodeBtn,
+                  { height: ms(46), paddingHorizontal: s(18) },
+                ]}
+                onPress={() => {
+                  if (manualCode.trim()) {
+                    handleSimulateScan(manualCode);
+                  } else {
+                    Alert.alert(
+                      'Manual Code',
+                      'Please enter a code to submit.'
+                    );
+                  }
+                }}
+              >
+                <Text
+                  style={[styles.submitCodeBtnText, { fontSize: ms(13.5) }]}
+                >
+                  Submit
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -162,35 +260,32 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-  header: {
+  headerOuter: {
+    width: '100%',
+  },
+  headerInner: {
+    width: '100%',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: 'rgba(255, 255, 255, 0.15)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   viewfinderContainer: {
+    width: '100%',
+    alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 24,
-    gap: 20,
   },
   viewfinderBox: {
-    width: 250,
-    height: 250,
     position: 'relative',
     backgroundColor: 'rgba(255, 255, 255, 0.04)',
     borderRadius: 16,
@@ -232,12 +327,12 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 12,
   },
   laserCenterLine: {
-    width: '90%',
+    width: '82%',
     height: 2,
     backgroundColor: ParkColors.secondary,
     shadowColor: ParkColors.secondary,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
+    shadowOpacity: 0.9,
     shadowRadius: 8,
   },
   scanningIndicator: {
@@ -246,61 +341,56 @@ const styles = StyleSheet.create({
   },
   scanningText: {
     color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '600',
+    fontWeight: '700',
   },
   instructionText: {
-    color: 'rgba(255, 255, 255, 0.75)',
-    fontSize: 13,
+    color: 'rgba(255, 255, 255, 0.78)',
     textAlign: 'center',
-    maxWidth: 260,
-    lineHeight: 18,
+    maxWidth: 280,
+    lineHeight: 19,
   },
   simulateScanBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
     backgroundColor: ParkColors.secondary,
-    paddingHorizontal: 20,
-    paddingVertical: 14,
     borderRadius: 9999,
     ...ParkShadows.md,
   },
   simulateScanBtnText: {
     color: '#FFFFFF',
-    fontSize: 14,
     fontWeight: '700',
   },
-  manualCodeDrawer: {
+  manualCodeOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: ParkRadii.xl,
-    borderTopRightRadius: ParkRadii.xl,
-    padding: 20,
-    gap: 12,
+    borderTopLeftRadius: ParkRadii.sheet,
+    borderTopRightRadius: ParkRadii.sheet,
+  },
+  manualCodeInner: {
+    width: '100%',
+    alignSelf: 'center',
+    gap: 10,
   },
   manualCodeTitle: {
-    fontSize: 13,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   manualInputRow: {
     flexDirection: 'row',
-    gap: 10,
+    alignItems: 'center',
   },
   manualInput: {
     flex: 1,
-    height: 48,
     backgroundColor: ParkColors.surfaceLow,
     borderRadius: ParkRadii.md,
     paddingHorizontal: 14,
-    fontSize: 14,
-    color: ParkColors.text,
     borderWidth: 1,
     borderColor: ParkColors.border,
+    fontWeight: '600',
+    color: ParkColors.text,
   },
   submitCodeBtn: {
-    paddingHorizontal: 18,
-    height: 48,
     backgroundColor: ParkColors.primary,
     borderRadius: ParkRadii.md,
     alignItems: 'center',
@@ -308,8 +398,6 @@ const styles = StyleSheet.create({
   },
   submitCodeBtnText: {
     color: '#FFFFFF',
-    fontSize: 13,
     fontWeight: '700',
   },
 });
-

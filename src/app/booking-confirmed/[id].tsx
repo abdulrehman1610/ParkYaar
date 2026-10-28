@@ -14,21 +14,35 @@ import {
   View,
 } from 'react-native';
 import QRCode from 'react-native-qrcode-svg';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatModal } from '@/components/ChatModal';
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function ActiveParkingPassScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
   const { bookings } = useParkStore();
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    headerHeight,
+    headerTopPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+    isSmallPhone,
+  } = useResponsive();
 
   const booking = bookings.find((b) => b.id === id) || bookings[0];
 
-  const [secondsRemaining, setSecondsRemaining] = useState(2 * 3600 + 48 * 60 + 15);
+  const [secondsRemaining, setSecondsRemaining] = useState(
+    2 * 3600 + 48 * 60 + 15
+  );
   const [pinCopied, setPinCopied] = useState(false);
   const [walletAdded, setWalletAdded] = useState(false);
   const [extended, setExtended] = useState(false);
@@ -47,7 +61,9 @@ export default function ActiveParkingPassScreen() {
     const hrs = Math.floor(totalSec / 3600);
     const mins = Math.floor((totalSec % 3600) / 60);
     const secs = totalSec % 60;
-    return `${hrs.toString().padStart(2, '0')}h ${mins.toString().padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
+    return `${hrs.toString().padStart(2, '0')}h ${mins
+      .toString()
+      .padStart(2, '0')}m ${secs.toString().padStart(2, '0')}s`;
   };
 
   const handleCopyPin = () => {
@@ -86,7 +102,7 @@ export default function ActiveParkingPassScreen() {
   };
 
   const handleExtendPass = () => {
-    setSecondsRemaining((s) => s + 3600);
+    setSecondsRemaining((sec) => sec + 3600);
     setExtended(true);
     setTimeout(() => setExtended(false), 3000);
   };
@@ -96,149 +112,290 @@ export default function ActiveParkingPassScreen() {
     setTimeout(() => setWalletAdded(false), 3000);
   };
 
+  const iconBtnSize = ms(38);
+  const qrSize = isSmallPhone ? 150 : ms(172);
+  const pinBoxW = isSmallPhone ? 38 : ms(44);
+  const pinBoxH = isSmallPhone ? 44 : ms(50);
+
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => router.replace('/(tabs)/bookings' as any)}
+      <View style={[styles.headerOuter, { paddingTop: headerTopPad }]}>
+        <View
+          style={[
+            styles.headerInner,
+            {
+              height: headerHeight,
+              paddingHorizontal: hPad,
+              maxWidth: formMaxWidth,
+            },
+          ]}
         >
-          <MaterialIcons name="arrow-back" size={24} color={ParkColors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Active Parking Pass</Text>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => router.replace('/(tabs)' as any)}
-        >
-          <MaterialIcons name="home" size={24} color={ParkColors.text} />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                width: iconBtnSize,
+                height: iconBtnSize,
+                borderRadius: iconBtnSize / 2,
+              },
+            ]}
+            onPress={() => router.replace('/(tabs)/bookings' as any)}
+          >
+            <MaterialIcons
+              name="arrow-back"
+              size={ms(22)}
+              color={ParkColors.text}
+            />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { fontSize: ms(16.5) }]}>
+            Active Parking Pass
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                width: iconBtnSize,
+                height: iconBtnSize,
+                borderRadius: iconBtnSize / 2,
+              },
+            ]}
+            onPress={() => router.replace('/(tabs)' as any)}
+          >
+            <MaterialIcons name="home" size={ms(22)} color={ParkColors.text} />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            maxWidth: formMaxWidth,
+            paddingHorizontal: hPad,
+            paddingTop: vGap,
+            gap: vGap,
+            paddingBottom: stickyFooterBottomPad + vs(20),
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Confirmed Hero Status Banner */}
-        <View style={styles.confirmedHero}>
-          <View style={styles.confirmedIconCircle}>
-            <MaterialIcons name="verified" size={28} color="#FFFFFF" />
+        <View style={[styles.confirmedHero, { padding: cardPad, gap: s(12) }]}>
+          <View
+            style={[
+              styles.confirmedIconCircle,
+              {
+                width: ms(46),
+                height: ms(46),
+                borderRadius: ms(23),
+              },
+            ]}
+          >
+            <MaterialIcons name="verified" size={ms(26)} color="#FFFFFF" />
           </View>
           <View style={styles.confirmedHeroText}>
             <View style={styles.confirmedNumberRow}>
-              <Text style={styles.confirmedTag}>CONFIRMED</Text>
+              <Text style={[styles.confirmedTag, { fontSize: ms(10.5) }]}>
+                CONFIRMED
+              </Text>
               <Text style={styles.dot}>•</Text>
-              <Text style={styles.bookingIdText}>#{booking.id}</Text>
+              <Text style={[styles.bookingIdText, { fontSize: ms(11) }]}>
+                #{booking.id}
+              </Text>
             </View>
-            <Text style={styles.confirmedTitle}>Booking Confirmed!</Text>
-            <Text style={styles.confirmedSubtitle}>Gate sensor auto-sync ready</Text>
+            <Text style={[styles.confirmedTitle, { fontSize: ms(18) }]}>
+              Booking Confirmed!
+            </Text>
+            <Text style={[styles.confirmedSubtitle, { fontSize: ms(12) }]}>
+              Gate sensor auto-sync ready
+            </Text>
           </View>
-          <View style={styles.celebrationCircle}>
-            <MaterialIcons name="celebration" size={20} color={ParkColors.secondary} />
+          <View
+            style={[
+              styles.celebrationCircle,
+              {
+                width: ms(36),
+                height: ms(36),
+                borderRadius: ms(18),
+              },
+            ]}
+          >
+            <MaterialIcons
+              name="celebration"
+              size={ms(18)}
+              color={ParkColors.secondary}
+            />
           </View>
         </View>
 
         {/* Digital QR Entry Pass Artifact */}
-        <View style={styles.qrPassContainer}>
+        <View style={[styles.qrPassContainer, { padding: s(18), gap: vs(14) }]}>
           {/* Active Pass Status Pill */}
-          <View style={styles.passStatusPill}>
+          <View
+            style={[
+              styles.passStatusPill,
+              { paddingHorizontal: s(12), paddingVertical: vs(6) },
+            ]}
+          >
             <View style={styles.pulseDot} />
-            <Text style={styles.passStatusText}>Active Pass</Text>
+            <Text style={[styles.passStatusText, { fontSize: ms(12) }]}>
+              Active Pass
+            </Text>
             <Text style={styles.dot}>•</Text>
-            <Text style={styles.countdownText}>
+            <Text style={[styles.countdownText, { fontSize: ms(12) }]}>
               {formatTimer(secondsRemaining)}
             </Text>
           </View>
 
           {/* High Contrast QR Code Box */}
-          <View style={styles.qrCodeBox}>
+          <View style={[styles.qrCodeBox, { padding: s(16), gap: vs(12) }]}>
             <QRCode
               value={`PARKYAAR-${booking.id}-${booking.pin}`}
-              size={180}
+              size={qrSize}
               color={ParkColors.primary}
               backgroundColor="#FFFFFF"
             />
-            <Text style={styles.qrInstructions}>
+            <Text style={[styles.qrInstructions, { fontSize: ms(11.5) }]}>
               Show this QR at gate camera or scan host device on arrival.
             </Text>
           </View>
 
           {/* Gate Manual Entry PIN Strip */}
-          <View style={styles.pinSection}>
-            <Text style={styles.pinLabel}>GATE MANUAL ENTRY PIN</Text>
-            <View style={styles.pinRow}>
-              <View style={styles.pinBoxes}>
+          <View style={[styles.pinSection, { gap: vs(6) }]}>
+            <Text style={[styles.pinLabel, { fontSize: ms(10.5) }]}>
+              GATE MANUAL ENTRY PIN
+            </Text>
+            <View style={[styles.pinRow, { gap: s(8) }]}>
+              <View style={[styles.pinBoxes, { gap: s(8) }]}>
                 {(booking.pin || '4892').split('').map((char, idx) => (
-                  <View key={idx} style={styles.pinDigitBox}>
-                    <Text style={styles.pinDigitText}>{char}</Text>
+                  <View
+                    key={idx}
+                    style={[
+                      styles.pinDigitBox,
+                      { width: pinBoxW, height: pinBoxH },
+                    ]}
+                  >
+                    <Text style={[styles.pinDigitText, { fontSize: ms(20) }]}>
+                      {char}
+                    </Text>
                   </View>
                 ))}
               </View>
               <TouchableOpacity
-                style={styles.copyPinBtn}
+                style={[
+                  styles.copyPinBtn,
+                  { width: pinBoxW, height: pinBoxH },
+                ]}
                 onPress={handleCopyPin}
               >
-                <MaterialIcons name="content-copy" size={18} color={ParkColors.secondary} />
+                <MaterialIcons
+                  name="content-copy"
+                  size={ms(18)}
+                  color={ParkColors.secondary}
+                />
               </TouchableOpacity>
             </View>
             {pinCopied && (
-              <Text style={styles.pinCopiedNotice}>PIN copied to clipboard!</Text>
+              <Text style={[styles.pinCopiedNotice, { fontSize: ms(11) }]}>
+                PIN copied to clipboard!
+              </Text>
             )}
           </View>
         </View>
 
         {/* Reservation Particulars Bento Grid */}
-        <View style={styles.particularsCard}>
+        <View style={[styles.particularsCard, { padding: cardPad, gap: vs(12) }]}>
           <View style={styles.particularsHeader}>
             <View style={styles.particularsTitleGroup}>
               <View style={styles.bayTagRow}>
-                <MaterialIcons name="garage" size={16} color={ParkColors.secondary} />
-                <Text style={styles.bayTagText}>COVERED BAY</Text>
+                <MaterialIcons
+                  name="garage"
+                  size={ms(15)}
+                  color={ParkColors.secondary}
+                />
+                <Text style={[styles.bayTagText, { fontSize: ms(10.5) }]}>
+                  COVERED BAY
+                </Text>
               </View>
-              <Text style={styles.particularsSpotTitle}>
+              <Text
+                style={[styles.particularsSpotTitle, { fontSize: ms(16) }]}
+                numberOfLines={1}
+              >
                 {booking.listingTitle}
               </Text>
-              <Text style={styles.particularsAddress}>
+              <Text
+                style={[styles.particularsAddress, { fontSize: ms(12) }]}
+                numberOfLines={2}
+              >
                 {booking.listingAddress}
               </Text>
             </View>
-            <View style={styles.slotSpotBox}>
-              <Text style={styles.slotSpotLabel}>Slot Spot</Text>
-              <Text style={styles.slotSpotValue}>{booking.bayNumber}</Text>
+            <View style={[styles.slotSpotBox, { padding: s(10) }]}>
+              <Text style={[styles.slotSpotLabel, { fontSize: ms(10) }]}>
+                Slot Spot
+              </Text>
+              <Text style={[styles.slotSpotValue, { fontSize: ms(14) }]}>
+                {booking.bayNumber}
+              </Text>
             </View>
           </View>
 
           {/* Mini Route Preview */}
           <TouchableOpacity
-            style={styles.routePreviewBox}
+            style={[styles.routePreviewBox, { padding: s(10) }]}
             activeOpacity={0.88}
             onPress={handleNavigate}
           >
             <View style={styles.routeBadge}>
-              <MaterialIcons name="navigation" size={14} color={ParkColors.secondary} />
-              <Text style={styles.routeBadgeText}>
+              <MaterialIcons
+                name="navigation"
+                size={ms(14)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.routeBadgeText, { fontSize: ms(12) }]}>
                 1.4 km away • 6 mins driving
               </Text>
             </View>
           </TouchableOpacity>
 
           {/* 2-Column Info Grid */}
-          <View style={styles.twoColGrid}>
-            <View style={styles.gridBox}>
+          <View style={[styles.twoColGrid, { gap: s(10) }]}>
+            <View style={[styles.gridBox, { padding: s(10) }]}>
               <View style={styles.gridBoxHeader}>
-                <MaterialIcons name="schedule" size={14} color={ParkColors.textMuted} />
-                <Text style={styles.gridBoxLabel}>Time Window</Text>
+                <MaterialIcons
+                  name="schedule"
+                  size={ms(13)}
+                  color={ParkColors.textMuted}
+                />
+                <Text style={[styles.gridBoxLabel, { fontSize: ms(11) }]}>
+                  Time Window
+                </Text>
               </View>
-              <Text style={styles.gridBoxValue}>{booking.durationLabel}</Text>
+              <Text
+                style={[styles.gridBoxValue, { fontSize: ms(12.5) }]}
+                numberOfLines={1}
+              >
+                {booking.durationLabel}
+              </Text>
             </View>
 
-            <View style={styles.gridBox}>
+            <View style={[styles.gridBox, { padding: s(10) }]}>
               <View style={styles.gridBoxHeader}>
-                <MaterialIcons name="directions-car" size={14} color={ParkColors.textMuted} />
-                <Text style={styles.gridBoxLabel}>Vehicle Assigned</Text>
+                <MaterialIcons
+                  name="directions-car"
+                  size={ms(13)}
+                  color={ParkColors.textMuted}
+                />
+                <Text style={[styles.gridBoxLabel, { fontSize: ms(11) }]}>
+                  Vehicle Assigned
+                </Text>
               </View>
-              <Text style={styles.gridBoxValue} numberOfLines={1}>
+              <Text
+                style={[styles.gridBoxValue, { fontSize: ms(12.5) }]}
+                numberOfLines={1}
+              >
                 {booking.vehicle.model} • {booking.vehicle.plate}
               </Text>
             </View>
@@ -246,123 +403,218 @@ export default function ActiveParkingPassScreen() {
         </View>
 
         {/* Verified Host Trust & Quick Actions */}
-        <View style={styles.hostCard}>
+        <View style={[styles.hostCard, { padding: cardPad, gap: vs(12) }]}>
           <View style={styles.hostCardTop}>
-            <View style={styles.hostAvatarRow}>
-              <Image source={{ uri: booking.hostPhoto }} style={styles.hostAvatar} />
-              <View>
+            <View style={[styles.hostAvatarRow, { gap: s(10) }]}>
+              <Image
+                source={{ uri: booking.hostPhoto }}
+                style={[
+                  styles.hostAvatar,
+                  {
+                    width: ms(44),
+                    height: ms(44),
+                    borderRadius: ms(22),
+                  },
+                ]}
+              />
+              <View style={{ flex: 1 }}>
                 <View style={styles.hostNameRow}>
-                  <Text style={styles.hostNameText}>{booking.hostName}</Text>
-                  <MaterialIcons name="verified" size={14} color={ParkColors.secondary} />
+                  <Text
+                    style={[styles.hostNameText, { fontSize: ms(14.5) }]}
+                    numberOfLines={1}
+                  >
+                    {booking.hostName}
+                  </Text>
+                  <MaterialIcons
+                    name="verified"
+                    size={ms(14)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
                 <View style={styles.hostRatingRow}>
-                  <MaterialIcons name="star" size={13} color={ParkColors.amber} />
-                  <Text style={styles.hostRatingText}>4.96 (112 stays) • Superhost</Text>
+                  <MaterialIcons
+                    name="star"
+                    size={ms(13)}
+                    color={ParkColors.amber}
+                  />
+                  <Text style={[styles.hostRatingText, { fontSize: ms(11.5) }]}>
+                    4.96 (112 stays) • Superhost
+                  </Text>
                 </View>
               </View>
             </View>
             <View style={styles.hostNearbyPill}>
-              <Text style={styles.hostNearbyText}>Host Nearby</Text>
+              <Text style={[styles.hostNearbyText, { fontSize: ms(10) }]}>
+                Host Nearby
+              </Text>
             </View>
           </View>
 
           {/* Action Cluster: Call, Chat, Navigate */}
-          <View style={styles.actionCluster}>
+          <View style={[styles.actionCluster, { gap: s(8) }]}>
             <TouchableOpacity
-              style={styles.clusterBtn}
+              style={[styles.clusterBtn, { paddingVertical: vs(10) }]}
               activeOpacity={0.75}
               onPress={handleCallHost}
             >
-              <MaterialIcons name="phone-in-talk" size={22} color={ParkColors.secondary} />
-              <Text style={styles.clusterBtnTitle}>Call Host</Text>
-              <Text style={styles.clusterBtnSub}>Masked</Text>
+              <MaterialIcons
+                name="phone-in-talk"
+                size={ms(20)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.clusterBtnTitle, { fontSize: ms(12) }]}>
+                Call Host
+              </Text>
+              <Text style={[styles.clusterBtnSub, { fontSize: ms(10) }]}>
+                Masked
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.clusterBtn}
+              style={[styles.clusterBtn, { paddingVertical: vs(10) }]}
               activeOpacity={0.75}
               onPress={() => setChatVisible(true)}
             >
-              <MaterialIcons name="chat" size={22} color={ParkColors.secondary} />
-              <Text style={styles.clusterBtnTitle}>Chat</Text>
-              <Text style={styles.clusterBtnSub}>Avg 2m reply</Text>
+              <MaterialIcons
+                name="chat"
+                size={ms(20)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.clusterBtnTitle, { fontSize: ms(12) }]}>
+                Chat
+              </Text>
+              <Text style={[styles.clusterBtnSub, { fontSize: ms(10) }]}>
+                Avg 2m reply
+              </Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.clusterBtn}
+              style={[styles.clusterBtn, { paddingVertical: vs(10) }]}
               activeOpacity={0.75}
               onPress={handleNavigate}
             >
-              <MaterialIcons name="near-me" size={22} color={ParkColors.secondary} />
-              <Text style={styles.clusterBtnTitle}>Navigate</Text>
-              <Text style={styles.clusterBtnSub}>Maps / Waze</Text>
+              <MaterialIcons
+                name="near-me"
+                size={ms(20)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.clusterBtnTitle, { fontSize: ms(12) }]}>
+                Navigate
+              </Text>
+              <Text style={[styles.clusterBtnSub, { fontSize: ms(10) }]}>
+                Maps / Waze
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
 
         {/* Payment Summary Drawer */}
-        <View style={styles.paymentReceiptCard}>
+        <View
+          style={[styles.paymentReceiptCard, { padding: cardPad, gap: vs(12) }]}
+        >
           <View style={styles.receiptHeader}>
-            <Text style={styles.receiptTitle}>Payment Summary</Text>
+            <Text style={[styles.receiptTitle, { fontSize: ms(15) }]}>
+              Payment Summary
+            </Text>
             <View style={styles.paidBadge}>
-              <Text style={styles.paidBadgeText}>PAID IN FULL</Text>
+              <Text style={[styles.paidBadgeText, { fontSize: ms(10) }]}>
+                PAID IN FULL
+              </Text>
             </View>
           </View>
 
-          <View style={styles.receiptRows}>
+          <View style={[styles.receiptRows, { gap: vs(8) }]}>
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>
+              <Text style={[styles.receiptLabel, { fontSize: ms(12.5) }]}>
                 Parking Duration ({booking.hours} hrs × Rs {booking.hourlyRate})
               </Text>
-              <Text style={styles.receiptVal}>
+              <Text style={[styles.receiptVal, { fontSize: ms(13) }]}>
                 Rs {booking.hours * booking.hourlyRate}
               </Text>
             </View>
             <View style={styles.receiptRow}>
-              <Text style={styles.receiptLabel}>Municipal Space Fee & SafePark</Text>
-              <Text style={styles.receiptVal}>Rs {booking.serviceFee}</Text>
+              <Text style={[styles.receiptLabel, { fontSize: ms(12.5) }]}>
+                Municipal Space Fee & SafePark
+              </Text>
+              <Text style={[styles.receiptVal, { fontSize: ms(13) }]}>
+                Rs {booking.serviceFee}
+              </Text>
             </View>
-            <View style={styles.receiptTotalRow}>
-              <Text style={styles.receiptTotalLabel}>Total Paid</Text>
-              <Text style={styles.receiptTotalVal}>Rs {booking.total}</Text>
+            <View style={[styles.receiptTotalRow, { paddingTop: vs(8) }]}>
+              <Text style={[styles.receiptTotalLabel, { fontSize: ms(14) }]}>
+                Total Paid
+              </Text>
+              <Text style={[styles.receiptTotalVal, { fontSize: ms(17) }]}>
+                Rs {booking.total}
+              </Text>
             </View>
           </View>
 
           {/* Payment Method Used */}
-          <View style={styles.methodStrip}>
-            <View style={styles.methodLeft}>
-              <View style={styles.methodBadge}>
-                <Text style={styles.methodBadgeText}>JC</Text>
+          <View style={[styles.methodStrip, { padding: s(10) }]}>
+            <View style={[styles.methodLeft, { gap: s(10) }]}>
+              <View
+                style={[
+                  styles.methodBadge,
+                  {
+                    width: ms(34),
+                    height: ms(34),
+                    borderRadius: ms(8),
+                  },
+                ]}
+              >
+                <Text style={[styles.methodBadgeText, { fontSize: ms(12) }]}>
+                  JC
+                </Text>
               </View>
-              <View>
-                <Text style={styles.methodName}>{booking.paymentMethod}</Text>
-                <Text style={styles.methodRef}>Ref: TXN-892144 Lahore</Text>
+              <View style={{ flex: 1 }}>
+                <Text
+                  style={[styles.methodName, { fontSize: ms(12.5) }]}
+                  numberOfLines={1}
+                >
+                  {booking.paymentMethod}
+                </Text>
+                <Text style={[styles.methodRef, { fontSize: ms(10.5) }]}>
+                  Ref: TXN-892144 Lahore
+                </Text>
               </View>
             </View>
-            <MaterialIcons name="check-circle" size={18} color={ParkColors.secondary} />
+            <MaterialIcons
+              name="check-circle"
+              size={ms(18)}
+              color={ParkColors.secondary}
+            />
           </View>
 
           <View style={styles.sandboxNote}>
-            <MaterialIcons name="science" size={14} color={ParkColors.textMuted} />
-            <Text style={styles.sandboxNoteText}>
+            <MaterialIcons
+              name="science"
+              size={ms(14)}
+              color={ParkColors.textMuted}
+            />
+            <Text style={[styles.sandboxNoteText, { fontSize: ms(11) }]}>
               Sandbox Mode: No real PKR charged to wallet.
             </Text>
           </View>
         </View>
 
         {/* Primary Control Buttons */}
-        <View style={styles.controlButtonsSection}>
+        <View style={[styles.controlButtonsSection, { gap: vs(10) }]}>
           <TouchableOpacity
-            style={[styles.walletBtn, walletAdded && styles.walletBtnSuccess]}
+            style={[
+              styles.walletBtn,
+              { height: ms(48) },
+              walletAdded && styles.walletBtnSuccess,
+            ]}
             activeOpacity={0.85}
             onPress={handleAddToWallet}
           >
             <MaterialIcons
               name={walletAdded ? 'check-circle' : 'wallet'}
-              size={20}
+              size={ms(19)}
               color="#FFFFFF"
             />
-            <Text style={styles.walletBtnText}>
+            <Text style={[styles.walletBtnText, { fontSize: ms(14) }]}>
               {walletAdded
                 ? 'Pass Saved to Wallet!'
                 : 'Add Pass to Google / Apple Wallet'}
@@ -370,18 +622,23 @@ export default function ActiveParkingPassScreen() {
           </TouchableOpacity>
 
           <TouchableOpacity
-            style={[styles.extendBtn, extended && styles.extendBtnSuccess]}
+            style={[
+              styles.extendBtn,
+              { height: ms(48) },
+              extended && styles.extendBtnSuccess,
+            ]}
             activeOpacity={0.85}
             onPress={handleExtendPass}
           >
             <MaterialIcons
               name={extended ? 'check' : 'more-time'}
-              size={20}
+              size={ms(19)}
               color={extended ? ParkColors.success : ParkColors.secondary}
             />
             <Text
               style={[
                 styles.extendBtnText,
+                { fontSize: ms(14) },
                 extended && { color: ParkColors.success },
               ]}
             >
@@ -409,26 +666,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: ParkColors.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+  headerOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
-    ...ParkShadows.sm,
+  },
+  headerInner: {
+    width: '100%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 17,
     fontWeight: '700',
     color: ParkColors.primary,
   },
@@ -436,31 +691,26 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 40,
+    width: '100%',
+    alignSelf: 'center',
   },
   confirmedHero: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
-    ...ParkShadows.md,
+    ...ParkShadows.sm,
   },
   confirmedIconCircle: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   confirmedHeroText: {
     flex: 1,
+    gap: 2,
   },
   confirmedNumberRow: {
     flexDirection: 'row',
@@ -468,226 +718,179 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   confirmedTag: {
-    fontSize: 10,
     fontWeight: '800',
     color: ParkColors.secondary,
     letterSpacing: 0.5,
   },
   dot: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   bookingIdText: {
-    fontSize: 11,
+    fontWeight: '700',
     color: ParkColors.textMuted,
-    fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
-    fontWeight: '600',
   },
   confirmedTitle: {
-    fontSize: 16,
     fontWeight: '800',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   confirmedSubtitle: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 1,
   },
   celebrationCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   qrPassContainer: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: ParkColors.primary,
     borderRadius: ParkRadii.xl,
-    padding: 18,
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: ParkColors.border,
-    ...ParkShadows.lg,
+    ...ParkShadows.md,
   },
   passStatusPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: ParkColors.surfaceLow,
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 9999,
     gap: 6,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    borderRadius: 9999,
   },
   pulseDot: {
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: ParkColors.secondary,
+    backgroundColor: '#34D399',
   },
   passStatusText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: ParkColors.text,
+    color: '#FFFFFF',
+    fontWeight: '700',
   },
   countdownText: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: ParkColors.secondary,
+    color: '#34D399',
+    fontWeight: '800',
   },
   qrCodeBox: {
-    marginVertical: 18,
-    alignItems: 'center',
-    padding: 12,
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    borderWidth: 1,
-    borderColor: ParkColors.border,
+    alignItems: 'center',
   },
   qrInstructions: {
-    fontSize: 11,
     color: ParkColors.textMuted,
     textAlign: 'center',
-    marginTop: 12,
-    maxWidth: 220,
-    lineHeight: 15,
+    maxWidth: 260,
   },
   pinSection: {
     width: '100%',
     alignItems: 'center',
-    borderTopWidth: 1,
-    borderTopColor: ParkColors.border,
-    paddingTop: 14,
   },
   pinLabel: {
-    fontSize: 10,
+    color: 'rgba(255, 255, 255, 0.7)',
     fontWeight: '700',
-    color: ParkColors.textMuted,
-    letterSpacing: 1,
+    letterSpacing: 0.8,
   },
   pinRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginTop: 8,
   },
   pinBoxes: {
     flexDirection: 'row',
-    gap: 6,
   },
   pinDigitBox: {
-    width: 32,
-    height: 36,
-    borderRadius: 6,
-    backgroundColor: ParkColors.surfaceHigh,
+    backgroundColor: 'rgba(255, 255, 255, 0.14)',
+    borderRadius: ParkRadii.md,
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.25)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   pinDigitText: {
-    fontSize: 18,
-    fontWeight: '800',
-    color: ParkColors.primary,
+    fontWeight: '900',
+    color: '#FFFFFF',
   },
   copyPinBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: ParkColors.surfaceLow,
+    backgroundColor: '#FFFFFF',
+    borderRadius: ParkRadii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   pinCopiedNotice: {
-    fontSize: 11,
-    color: ParkColors.secondary,
-    fontWeight: '600',
-    marginTop: 6,
+    color: '#34D399',
+    fontWeight: '700',
+    marginTop: 2,
   },
   particularsCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
     ...ParkShadows.sm,
   },
   particularsHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    gap: 10,
   },
   particularsTitleGroup: {
     flex: 1,
-    paddingRight: 8,
+    gap: 3,
   },
   bayTagRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginBottom: 4,
   },
   bayTagText: {
-    fontSize: 10,
     fontWeight: '800',
     color: ParkColors.secondary,
   },
   particularsSpotTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: ParkColors.text,
-  },
-  particularsAddress: {
-    fontSize: 11,
-    color: ParkColors.textMuted,
-    marginTop: 2,
-  },
-  slotSpotBox: {
-    backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: ParkRadii.sm,
-    alignItems: 'center',
-  },
-  slotSpotLabel: {
-    fontSize: 9,
-    color: ParkColors.textMuted,
-  },
-  slotSpotValue: {
-    fontSize: 14,
     fontWeight: '800',
     color: ParkColors.primary,
   },
-  routePreviewBox: {
-    height: 70,
+  particularsAddress: {
+    color: ParkColors.textMuted,
+  },
+  slotSpotBox: {
+    backgroundColor: ParkColors.surfaceLow,
     borderRadius: ParkRadii.md,
-    backgroundColor: '#CBD8EE',
-    justifyContent: 'flex-end',
-    padding: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+  },
+  slotSpotLabel: {
+    color: ParkColors.textMuted,
+    fontWeight: '600',
+  },
+  slotSpotValue: {
+    fontWeight: '800',
+    color: ParkColors.primary,
+    marginTop: 2,
+  },
+  routePreviewBox: {
+    backgroundColor: ParkColors.surfaceLow,
+    borderRadius: ParkRadii.md,
+    alignItems: 'center',
   },
   routeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 6,
-    alignSelf: 'flex-start',
   },
   routeBadgeText: {
-    fontSize: 11,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.secondary,
   },
   twoColGrid: {
     flexDirection: 'row',
-    gap: 10,
   },
   gridBox: {
     flex: 1,
-    backgroundColor: ParkColors.surfaceLow,
-    padding: 10,
+    backgroundColor: ParkColors.backgroundLight,
     borderRadius: ParkRadii.md,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+    gap: 4,
   },
   gridBoxHeader: {
     flexDirection: 'row',
@@ -695,38 +898,32 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   gridBoxLabel: {
-    fontSize: 10,
     color: ParkColors.textMuted,
+    fontWeight: '600',
   },
   gridBoxValue: {
-    fontSize: 12,
     fontWeight: '700',
-    color: ParkColors.text,
-    marginTop: 4,
+    color: ParkColors.primary,
   },
   hostCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
     ...ParkShadows.sm,
   },
   hostCardTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    gap: 8,
   },
   hostAvatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    flex: 1,
   },
   hostAvatar: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     backgroundColor: ParkColors.surfaceHigh,
   },
   hostNameRow: {
@@ -735,9 +932,9 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   hostNameText: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
+    flexShrink: 1,
   },
   hostRatingRow: {
     flexDirection: 'row',
@@ -746,105 +943,92 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   hostRatingText: {
-    fontSize: 11,
     color: ParkColors.textMuted,
   },
   hostNearbyPill: {
-    backgroundColor: ParkColors.surfaceHigh,
+    backgroundColor: ParkColors.successLight,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: 9999,
   },
   hostNearbyText: {
-    fontSize: 10,
     fontWeight: '700',
-    color: ParkColors.secondary,
+    color: ParkColors.success,
   },
   actionCluster: {
     flexDirection: 'row',
-    gap: 10,
   },
   clusterBtn: {
     flex: 1,
     backgroundColor: ParkColors.surfaceLow,
-    paddingVertical: 10,
     borderRadius: ParkRadii.md,
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 2,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
   },
   clusterBtnTitle: {
-    fontSize: 12,
     fontWeight: '700',
-    color: ParkColors.text,
-    marginTop: 4,
+    color: ParkColors.primary,
+    marginTop: 2,
   },
   clusterBtnSub: {
-    fontSize: 9,
     color: ParkColors.textMuted,
-    marginTop: 1,
   },
   paymentReceiptCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 10,
     ...ParkShadows.sm,
   },
   receiptHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   receiptTitle: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   paidBadge: {
-    backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
+    backgroundColor: ParkColors.successLight,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
     borderRadius: 9999,
   },
   paidBadgeText: {
-    fontSize: 9,
     fontWeight: '800',
-    color: ParkColors.secondary,
+    color: ParkColors.success,
   },
   receiptRows: {
-    gap: 6,
+    width: '100%',
   },
   receiptRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   receiptLabel: {
-    fontSize: 12,
     color: ParkColors.textMuted,
   },
   receiptVal: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   receiptTotalRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    paddingTop: 6,
+    justifyContent: 'space-between',
     borderTopWidth: 1,
     borderTopColor: ParkColors.border,
   },
   receiptTotalLabel: {
-    fontSize: 14,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   receiptTotalVal: {
-    fontSize: 16,
     fontWeight: '900',
     color: ParkColors.primary,
   },
@@ -853,88 +1037,73 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: ParkColors.surfaceLow,
-    padding: 10,
     borderRadius: ParkRadii.md,
-    marginTop: 4,
   },
   methodLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    flex: 1,
   },
   methodBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 6,
     backgroundColor: '#D91D24',
     alignItems: 'center',
     justifyContent: 'center',
   },
   methodBadgeText: {
     color: '#FFFFFF',
-    fontSize: 10,
     fontWeight: '900',
   },
   methodName: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   methodRef: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   sandboxNote: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    paddingTop: 4,
+    justifyContent: 'center',
+    gap: 5,
   },
   sandboxNoteText: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   controlButtonsSection: {
-    gap: 10,
-    marginTop: 6,
+    width: '100%',
   },
   walletBtn: {
-    height: 50,
-    borderRadius: 9999,
-    backgroundColor: ParkColors.primary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
-    ...ParkShadows.md,
+    backgroundColor: ParkColors.primary,
+    borderRadius: 9999,
+    ...ParkShadows.sm,
   },
   walletBtnSuccess: {
     backgroundColor: ParkColors.success,
   },
   walletBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   extendBtn: {
-    height: 50,
-    borderRadius: 9999,
-    backgroundColor: ParkColors.surfaceLow,
-    borderWidth: 1,
-    borderColor: ParkColors.border,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
+    gap: 8,
+    backgroundColor: '#FFFFFF',
+    borderRadius: 9999,
+    borderWidth: 1.5,
+    borderColor: ParkColors.secondary,
   },
   extendBtnSuccess: {
-    backgroundColor: ParkColors.successLight,
     borderColor: ParkColors.success,
+    backgroundColor: ParkColors.successLight,
   },
   extendBtnText: {
-    fontSize: 14,
-    fontWeight: '700',
     color: ParkColors.secondary,
+    fontWeight: '700',
   },
 });
-

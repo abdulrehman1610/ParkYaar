@@ -8,9 +8,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ParkColors, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 
 interface TabBarProps {
   state: any;
@@ -50,14 +50,41 @@ export const IosTabBar: React.FC<TabBarProps> = ({
   descriptors,
   navigation,
 }) => {
-  const insets = useSafeAreaInsets();
+  const {
+    s,
+    ms,
+    hPad,
+    navBarHeight,
+    navBarBottom,
+    navBarMaxWidth,
+    isSmallPhone,
+  } = useResponsive();
 
-  // Dynamic bottom clearance to guarantee zero collision with Android 3-button or iOS home indicator
-  const bottomMargin = Math.max(insets.bottom, 14) + 6;
+  const itemHeight = navBarHeight - ms(14);
+  const iconSize = ms(21);
 
   return (
-    <View style={[styles.floatingContainer, { bottom: bottomMargin }]}>
-      <View style={styles.blurBackdrop}>
+    <View
+      style={[
+        styles.floatingContainer,
+        {
+          bottom: navBarBottom,
+          left: hPad,
+          right: hPad,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.blurBackdrop,
+          {
+            height: navBarHeight,
+            maxWidth: navBarMaxWidth,
+            borderRadius: ms(24),
+            paddingHorizontal: isSmallPhone ? 4 : s(8),
+          },
+        ]}
+      >
         {state.routes.map((route: any, index: number) => {
           const { options } = descriptors[route.key];
           const isFocused = state.index === index;
@@ -92,21 +119,41 @@ export const IosTabBar: React.FC<TabBarProps> = ({
               activeOpacity={0.7}
               style={[
                 styles.tabItem,
+                {
+                  height: itemHeight,
+                  borderRadius: ms(16),
+                  marginHorizontal: isSmallPhone ? 1 : s(3),
+                },
                 isFocused && styles.tabItemActive,
               ]}
             >
               {/* Icon Container with active iOS styling */}
-              <View style={styles.iconContainer}>
+              <View style={[styles.iconContainer, { height: ms(24) }]}>
                 <MaterialIcons
                   name={config.icon}
-                  size={22}
+                  size={iconSize}
                   color={isFocused ? ParkColors.secondary : '#8E8E93'}
                 />
 
                 {/* Optional iOS Badge (e.g. Amber EARN tag on Host) */}
                 {config.badge && (
-                  <View style={styles.earnBadge}>
-                    <Text style={styles.earnBadgeText}>{config.badge}</Text>
+                  <View
+                    style={[
+                      styles.earnBadge,
+                      {
+                        right: isSmallPhone ? -18 : -s(22),
+                        paddingHorizontal: isSmallPhone ? 3 : 4,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.earnBadgeText,
+                        { fontSize: isSmallPhone ? 6.5 : ms(7.5) },
+                      ]}
+                    >
+                      {config.badge}
+                    </Text>
                   </View>
                 )}
               </View>
@@ -115,6 +162,7 @@ export const IosTabBar: React.FC<TabBarProps> = ({
               <Text
                 style={[
                   styles.tabLabel,
+                  { fontSize: ms(10.5) },
                   isFocused ? styles.tabLabelActive : styles.tabLabelInactive,
                 ]}
                 numberOfLines={1}
@@ -132,22 +180,16 @@ export const IosTabBar: React.FC<TabBarProps> = ({
 const styles = StyleSheet.create({
   floatingContainer: {
     position: 'absolute',
-    left: 16,
-    right: 16,
     zIndex: 100,
     alignItems: 'center',
     justifyContent: 'center',
   },
   blurBackdrop: {
     width: '100%',
-    maxWidth: 400,
-    height: 66,
     backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    borderRadius: 24,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-around',
-    paddingHorizontal: 8,
     borderWidth: 1,
     borderColor: 'rgba(226, 232, 240, 0.85)',
     ...ParkShadows.lg,
@@ -161,10 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
-    borderRadius: 16,
     paddingVertical: 4,
-    marginHorizontal: 3,
   },
   tabItemActive: {
     backgroundColor: ParkColors.surfaceLow,
@@ -173,27 +212,22 @@ const styles = StyleSheet.create({
     position: 'relative',
     alignItems: 'center',
     justifyContent: 'center',
-    height: 24,
   },
   earnBadge: {
     position: 'absolute',
     top: -4,
-    right: -24,
     backgroundColor: ParkColors.amberDim,
-    paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 4,
   },
   earnBadgeText: {
-    fontSize: 7.5,
     fontWeight: '800',
     color: '#362000',
   },
   tabLabel: {
-    fontSize: 10.5,
     fontWeight: '600',
     letterSpacing: -0.2,
-    marginTop: 3,
+    marginTop: 2,
   },
   tabLabelActive: {
     color: ParkColors.secondary,

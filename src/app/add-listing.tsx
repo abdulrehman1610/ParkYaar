@@ -15,28 +15,47 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 import { VehicleType } from '@/types';
 
 export default function AddListingScreen() {
   const router = useRouter();
   const { addListing, user } = useParkStore();
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    headerHeight,
+    headerTopPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+    isSmallPhone,
+  } = useResponsive();
 
   const [title, setTitle] = useState('Covered Car Porch near Main Market');
   const [area, setArea] = useState('Gulberg II');
-  const [address, setAddress] = useState('House 19, Block G, Gulberg II, Lahore');
-  const [photoUri, setPhotoUri] = useState('https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80');
-  const [spotType, setSpotType] = useState<'Covered Porch' | 'Open Driveway' | 'Gated Plot'>('Covered Porch');
+  const [address, setAddress] = useState(
+    'House 19, Block G, Gulberg II, Lahore'
+  );
+  const [photoUri, setPhotoUri] = useState(
+    'https://images.unsplash.com/photo-1590674899484-d5640e854abe?w=800&auto=format&fit=crop&q=80'
+  );
   const [pricePerHour, setPricePerHour] = useState('140');
   const [pricePerDay, setPricePerDay] = useState('850');
   const [pricePerMonth, setPricePerMonth] = useState('14000');
   const [isCovered, setIsCovered] = useState(true);
   const [cctv, setCctv] = useState(true);
   const [instantBook, setInstantBook] = useState(true);
-  const [selectedVehicles, setSelectedVehicles] = useState<VehicleType[]>(['car', 'suv']);
+  const [selectedVehicles, setSelectedVehicles] = useState<VehicleType[]>([
+    'car',
+    'suv',
+  ]);
 
   const pickImage = async () => {
     try {
@@ -66,11 +85,14 @@ export default function AddListingScreen() {
 
   const handlePublish = () => {
     if (!title.trim() || !address.trim()) {
-      Alert.alert('Required Fields', 'Please enter a title and street address.');
+      Alert.alert(
+        'Required Fields',
+        'Please enter a title and street address.'
+      );
       return;
     }
 
-    const newId = addListing({
+    addListing({
       type: 'private',
       title,
       area,
@@ -100,7 +122,8 @@ export default function AddListingScreen() {
       vehicleTypes: selectedVehicles,
       isCovered,
       cctv,
-      accessProtocol: 'Call host or buzzer entry on arrival. Sensor camera active.',
+      accessProtocol:
+        'Call host or buzzer entry on arrival. Sensor camera active.',
       isActive: true,
     });
 
@@ -116,53 +139,103 @@ export default function AddListingScreen() {
     );
   };
 
+  const iconBtnSize = ms(38);
+
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <View style={styles.safeArea}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={styles.container}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.iconButton}
-            onPress={() => router.back()}
+        <View style={[styles.headerOuter, { paddingTop: headerTopPad }]}>
+          <View
+            style={[
+              styles.headerInner,
+              {
+                height: headerHeight,
+                paddingHorizontal: hPad,
+                maxWidth: formMaxWidth,
+              },
+            ]}
           >
-            <MaterialIcons name="close" size={24} color={ParkColors.text} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>List Your Parking Space</Text>
-          <View style={{ width: 40 }} />
+            <TouchableOpacity
+              style={[
+                styles.iconButton,
+                {
+                  width: iconBtnSize,
+                  height: iconBtnSize,
+                  borderRadius: iconBtnSize / 2,
+                },
+              ]}
+              onPress={() => router.back()}
+            >
+              <MaterialIcons
+                name="close"
+                size={ms(22)}
+                color={ParkColors.text}
+              />
+            </TouchableOpacity>
+            <Text style={[styles.headerTitle, { fontSize: ms(16.5) }]}>
+              List Your Parking Space
+            </Text>
+            <View style={{ width: iconBtnSize }} />
+          </View>
         </View>
 
         <ScrollView
           style={styles.scroll}
-          contentContainerStyle={styles.content}
+          contentContainerStyle={[
+            styles.content,
+            {
+              maxWidth: formMaxWidth,
+              paddingHorizontal: hPad,
+              paddingTop: vGap,
+              gap: vGap,
+              paddingBottom: vs(30),
+            },
+          ]}
           showsVerticalScrollIndicator={false}
         >
           {/* Photo Picker Hero */}
           <View style={styles.photoPickerSection}>
-            <Text style={styles.sectionLabel}>Driveway Photo</Text>
+            <Text style={[styles.sectionLabel, { fontSize: ms(13) }]}>
+              Driveway Photo
+            </Text>
             <TouchableOpacity
-              style={styles.photoPickerBox}
+              style={[styles.photoPickerBox, { height: vs(165) }]}
               activeOpacity={0.85}
               onPress={pickImage}
             >
               <Image source={{ uri: photoUri }} style={styles.photoPreview} />
               <View style={styles.changePhotoBadge}>
-                <MaterialIcons name="photo-camera" size={14} color="#FFFFFF" />
-                <Text style={styles.changePhotoText}>Change Photo</Text>
+                <MaterialIcons
+                  name="photo-camera"
+                  size={ms(14)}
+                  color="#FFFFFF"
+                />
+                <Text style={[styles.changePhotoText, { fontSize: ms(11.5) }]}>
+                  Change Photo
+                </Text>
               </View>
             </TouchableOpacity>
           </View>
 
           {/* Title & Location Form */}
-          <View style={styles.formCard}>
-            <Text style={styles.cardHeader}>Location & Details</Text>
+          <View style={[styles.formCard, { padding: cardPad, gap: vs(12) }]}>
+            <Text style={[styles.cardHeader, { fontSize: ms(15.5) }]}>
+              Location & Details
+            </Text>
 
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Listing Title</Text>
+              <Text style={[styles.fieldLabel, { fontSize: ms(12) }]}>
+                Listing Title
+              </Text>
               <TextInput
-                style={styles.textInput}
+                style={[
+                  styles.textInput,
+                  { height: ms(44), fontSize: ms(13.5) },
+                ]}
                 value={title}
                 onChangeText={setTitle}
                 placeholder="e.g. Covered Porch near MM Alam"
@@ -170,13 +243,25 @@ export default function AddListingScreen() {
             </View>
 
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Lahore Area</Text>
-              <View style={styles.areaChipsRow}>
-                {['Gulberg III', 'Gulberg II', 'DHA Phase 5', 'Model Town', 'MM Alam'].map((ar) => (
+              <Text style={[styles.fieldLabel, { fontSize: ms(12) }]}>
+                Lahore Area
+              </Text>
+              <View style={[styles.areaChipsRow, { gap: s(8) }]}>
+                {[
+                  'Gulberg III',
+                  'Gulberg II',
+                  'DHA Phase 5',
+                  'Model Town',
+                  'MM Alam',
+                ].map((ar) => (
                   <TouchableOpacity
                     key={ar}
                     style={[
                       styles.areaChip,
+                      {
+                        paddingHorizontal: s(11),
+                        paddingVertical: vs(6),
+                      },
                       area === ar && styles.areaChipSelected,
                     ]}
                     onPress={() => setArea(ar)}
@@ -184,6 +269,7 @@ export default function AddListingScreen() {
                     <Text
                       style={[
                         styles.areaChipText,
+                        { fontSize: ms(11.5) },
                         area === ar && styles.areaChipTextSelected,
                       ]}
                     >
@@ -195,9 +281,14 @@ export default function AddListingScreen() {
             </View>
 
             <View style={styles.fieldGroup}>
-              <Text style={styles.fieldLabel}>Complete Street Address</Text>
+              <Text style={[styles.fieldLabel, { fontSize: ms(12) }]}>
+                Complete Street Address
+              </Text>
               <TextInput
-                style={styles.textInput}
+                style={[
+                  styles.textInput,
+                  { height: ms(44), fontSize: ms(13.5) },
+                ]}
                 value={address}
                 onChangeText={setAddress}
                 placeholder="House #, Street #, Sector..."
@@ -206,9 +297,11 @@ export default function AddListingScreen() {
           </View>
 
           {/* Vehicle Compatibility & Type */}
-          <View style={styles.formCard}>
-            <Text style={styles.cardHeader}>Vehicle Types Allowed</Text>
-            <View style={styles.vehicleTypesRow}>
+          <View style={[styles.formCard, { padding: cardPad, gap: vs(12) }]}>
+            <Text style={[styles.cardHeader, { fontSize: ms(15.5) }]}>
+              Vehicle Types Allowed
+            </Text>
+            <View style={[styles.vehicleTypesRow, { gap: s(8) }]}>
               {(['car', 'suv', 'bike'] as VehicleType[]).map((vType) => {
                 const isSelected = selectedVehicles.includes(vType);
                 return (
@@ -216,31 +309,37 @@ export default function AddListingScreen() {
                     key={vType}
                     style={[
                       styles.vTypeBtn,
+                      { paddingVertical: vs(10), gap: s(6) },
                       isSelected && styles.vTypeBtnSelected,
                     ]}
                     onPress={() => toggleVehicle(vType)}
                   >
                     <MaterialIcons
                       name={
-                        vType === 'bike'
-                          ? 'two-wheeler'
-                          : vType === 'suv'
-                          ? 'directions-car'
-                          : 'directions-car'
+                        vType === 'bike' ? 'two-wheeler' : 'directions-car'
                       }
-                      size={20}
-                      color={isSelected ? ParkColors.secondary : ParkColors.textMuted}
+                      size={ms(19)}
+                      color={
+                        isSelected
+                          ? ParkColors.secondary
+                          : ParkColors.textMuted
+                      }
                     />
                     <Text
                       style={[
                         styles.vTypeText,
+                        { fontSize: ms(12) },
                         isSelected && styles.vTypeTextSelected,
                       ]}
                     >
                       {vType.toUpperCase()}
                     </Text>
                     {isSelected && (
-                      <MaterialIcons name="check" size={14} color={ParkColors.secondary} />
+                      <MaterialIcons
+                        name="check"
+                        size={ms(13)}
+                        color={ParkColors.secondary}
+                      />
                     )}
                   </TouchableOpacity>
                 );
@@ -249,92 +348,143 @@ export default function AddListingScreen() {
           </View>
 
           {/* Pricing Model */}
-          <View style={styles.formCard}>
-            <Text style={styles.cardHeader}>Set Your Rental Rates (PKR)</Text>
-            <View style={styles.priceInputsGrid}>
-              <View style={styles.priceInputBox}>
-                <Text style={styles.priceInputLabel}>Hourly Rate</Text>
+          <View style={[styles.formCard, { padding: cardPad, gap: vs(12) }]}>
+            <Text style={[styles.cardHeader, { fontSize: ms(15.5) }]}>
+              Set Your Rental Rates (PKR)
+            </Text>
+            <View
+              style={[
+                styles.priceInputsGrid,
+                {
+                  gap: s(10),
+                  flexDirection: isSmallPhone ? 'column' : 'row',
+                },
+              ]}
+            >
+              <View style={[styles.priceInputBox, { padding: s(10) }]}>
+                <Text style={[styles.priceInputLabel, { fontSize: ms(11) }]}>
+                  Hourly Rate
+                </Text>
                 <View style={styles.priceInputRow}>
-                  <Text style={styles.rsPrefix}>Rs</Text>
+                  <Text style={[styles.rsPrefix, { fontSize: ms(12) }]}>
+                    Rs
+                  </Text>
                   <TextInput
-                    style={styles.priceInput}
+                    style={[styles.priceInput, { fontSize: ms(15) }]}
                     keyboardType="number-pad"
                     value={pricePerHour}
                     onChangeText={setPricePerHour}
                   />
-                  <Text style={styles.rsSuffix}>/hr</Text>
+                  <Text style={[styles.rsSuffix, { fontSize: ms(11) }]}>
+                    /hr
+                  </Text>
                 </View>
               </View>
 
-              <View style={styles.priceInputBox}>
-                <Text style={styles.priceInputLabel}>Full Day</Text>
+              <View style={[styles.priceInputBox, { padding: s(10) }]}>
+                <Text style={[styles.priceInputLabel, { fontSize: ms(11) }]}>
+                  Full Day
+                </Text>
                 <View style={styles.priceInputRow}>
-                  <Text style={styles.rsPrefix}>Rs</Text>
+                  <Text style={[styles.rsPrefix, { fontSize: ms(12) }]}>
+                    Rs
+                  </Text>
                   <TextInput
-                    style={styles.priceInput}
+                    style={[styles.priceInput, { fontSize: ms(15) }]}
                     keyboardType="number-pad"
                     value={pricePerDay}
                     onChangeText={setPricePerDay}
                   />
-                  <Text style={styles.rsSuffix}>/day</Text>
+                  <Text style={[styles.rsSuffix, { fontSize: ms(11) }]}>
+                    /day
+                  </Text>
                 </View>
               </View>
 
-              <View style={styles.priceInputBox}>
-                <Text style={styles.priceInputLabel}>Monthly Pass</Text>
+              <View style={[styles.priceInputBox, { padding: s(10) }]}>
+                <Text style={[styles.priceInputLabel, { fontSize: ms(11) }]}>
+                  Monthly Pass
+                </Text>
                 <View style={styles.priceInputRow}>
-                  <Text style={styles.rsPrefix}>Rs</Text>
+                  <Text style={[styles.rsPrefix, { fontSize: ms(12) }]}>
+                    Rs
+                  </Text>
                   <TextInput
-                    style={styles.priceInput}
+                    style={[styles.priceInput, { fontSize: ms(15) }]}
                     keyboardType="number-pad"
                     value={pricePerMonth}
                     onChangeText={setPricePerMonth}
                   />
-                  <Text style={styles.rsSuffix}>/mo</Text>
+                  <Text style={[styles.rsSuffix, { fontSize: ms(11) }]}>
+                    /mo
+                  </Text>
                 </View>
               </View>
             </View>
           </View>
 
           {/* Amenities & Instant Book Toggles */}
-          <View style={styles.formCard}>
-            <Text style={styles.cardHeader}>Amenities & Features</Text>
+          <View style={[styles.formCard, { padding: cardPad, gap: vs(12) }]}>
+            <Text style={[styles.cardHeader, { fontSize: ms(15.5) }]}>
+              Amenities & Features
+            </Text>
 
             <View style={styles.switchRow}>
               <View style={styles.switchText}>
-                <Text style={styles.switchTitle}>Covered Roof</Text>
-                <Text style={styles.switchSub}>Protects vehicle from sun & rain</Text>
+                <Text style={[styles.switchTitle, { fontSize: ms(13.5) }]}>
+                  Covered Roof
+                </Text>
+                <Text style={[styles.switchSub, { fontSize: ms(11.5) }]}>
+                  Protects vehicle from sun & rain
+                </Text>
               </View>
               <Switch
                 value={isCovered}
                 onValueChange={setIsCovered}
-                trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
+                trackColor={{
+                  false: ParkColors.border,
+                  true: ParkColors.secondary,
+                }}
                 thumbColor="#FFFFFF"
               />
             </View>
 
             <View style={styles.switchRow}>
               <View style={styles.switchText}>
-                <Text style={styles.switchTitle}>24/7 CCTV Camera</Text>
-                <Text style={styles.switchSub}>Bay is under constant surveillance</Text>
+                <Text style={[styles.switchTitle, { fontSize: ms(13.5) }]}>
+                  24/7 CCTV Camera
+                </Text>
+                <Text style={[styles.switchSub, { fontSize: ms(11.5) }]}>
+                  Bay is under constant surveillance
+                </Text>
               </View>
               <Switch
                 value={cctv}
                 onValueChange={setCctv}
-                trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
+                trackColor={{
+                  false: ParkColors.border,
+                  true: ParkColors.secondary,
+                }}
                 thumbColor="#FFFFFF"
               />
             </View>
 
             <View style={styles.switchRow}>
               <View style={styles.switchText}>
-                <Text style={styles.switchTitle}>Instant Booking</Text>
-                <Text style={styles.switchSub}>Guests can book without waiting for approval</Text>
+                <Text style={[styles.switchTitle, { fontSize: ms(13.5) }]}>
+                  Instant Booking
+                </Text>
+                <Text style={[styles.switchSub, { fontSize: ms(11.5) }]}>
+                  Guests can book without waiting for approval
+                </Text>
               </View>
               <Switch
                 value={instantBook}
                 onValueChange={setInstantBook}
-                trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
+                trackColor={{
+                  false: ParkColors.border,
+                  true: ParkColors.secondary,
+                }}
                 thumbColor="#FFFFFF"
               />
             </View>
@@ -342,18 +492,35 @@ export default function AddListingScreen() {
         </ScrollView>
 
         {/* Bottom Publish CTA */}
-        <View style={styles.footer}>
-          <TouchableOpacity
-            style={styles.publishBtn}
-            activeOpacity={0.88}
-            onPress={handlePublish}
-          >
-            <Text style={styles.publishBtnText}>Publish Listing Now</Text>
-            <MaterialIcons name="arrow-forward" size={20} color="#FFFFFF" />
-          </TouchableOpacity>
+        <View
+          style={[
+            styles.footerOuter,
+            {
+              paddingBottom: stickyFooterBottomPad,
+              paddingTop: vs(12),
+              paddingHorizontal: hPad,
+            },
+          ]}
+        >
+          <View style={[styles.footerInner, { maxWidth: formMaxWidth }]}>
+            <TouchableOpacity
+              style={[styles.publishBtn, { height: ms(50) }]}
+              activeOpacity={0.88}
+              onPress={handlePublish}
+            >
+              <Text style={[styles.publishBtnText, { fontSize: ms(15) }]}>
+                Publish Listing Now
+              </Text>
+              <MaterialIcons
+                name="arrow-forward"
+                size={ms(19)}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+          </View>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -366,25 +533,24 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  headerOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
   },
+  headerInner: {
+    width: '100%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 16,
     fontWeight: '700',
     color: ParkColors.primary,
   },
@@ -392,21 +558,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 32,
+    width: '100%',
+    alignSelf: 'center',
   },
   photoPickerSection: {
     gap: 8,
   },
   sectionLabel: {
-    fontSize: 13,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   photoPickerBox: {
-    width: '100%',
-    height: 180,
     borderRadius: ParkRadii.lg,
     overflow: 'hidden',
     position: 'relative',
@@ -419,63 +581,54 @@ const styles = StyleSheet.create({
   },
   changePhotoBadge: {
     position: 'absolute',
-    bottom: 12,
-    right: 12,
+    bottom: 10,
+    right: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
     backgroundColor: 'rgba(11, 37, 69, 0.85)',
     paddingHorizontal: 10,
-    paddingVertical: 6,
+    paddingVertical: 5,
     borderRadius: 9999,
   },
   changePhotoText: {
-    fontSize: 11,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   formCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 16,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 14,
     ...ParkShadows.sm,
   },
   cardHeader: {
-    fontSize: 15,
-    fontWeight: '700',
+    fontWeight: '800',
     color: ParkColors.primary,
   },
   fieldGroup: {
     gap: 6,
   },
   fieldLabel: {
-    fontSize: 12,
     fontWeight: '600',
     color: ParkColors.textMuted,
   },
   textInput: {
-    height: 46,
-    backgroundColor: ParkColors.surfaceLow,
+    backgroundColor: ParkColors.backgroundLight,
     borderRadius: ParkRadii.md,
-    paddingHorizontal: 14,
-    fontSize: 14,
-    color: ParkColors.text,
+    paddingHorizontal: 12,
     borderWidth: 1,
     borderColor: ParkColors.border,
+    fontWeight: '600',
+    color: ParkColors.text,
   },
   areaChipsRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
   },
   areaChip: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: 9999,
     backgroundColor: ParkColors.surfaceLow,
+    borderRadius: 9999,
     borderWidth: 1,
     borderColor: ParkColors.border,
   },
@@ -484,78 +637,69 @@ const styles = StyleSheet.create({
     borderColor: ParkColors.secondary,
   },
   areaChipText: {
-    fontSize: 11,
     fontWeight: '600',
     color: ParkColors.text,
   },
   areaChipTextSelected: {
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   vehicleTypesRow: {
     flexDirection: 'row',
-    gap: 10,
   },
   vTypeBtn: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
     backgroundColor: ParkColors.surfaceLow,
-    paddingVertical: 12,
     borderRadius: ParkRadii.md,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: ParkColors.border,
   },
   vTypeBtnSelected: {
     borderColor: ParkColors.secondary,
-    backgroundColor: ParkColors.surfaceHigh,
+    backgroundColor: '#FFFFFF',
   },
   vTypeText: {
-    fontSize: 12,
     fontWeight: '700',
     color: ParkColors.textMuted,
   },
   vTypeTextSelected: {
-    color: ParkColors.secondary,
+    color: ParkColors.primary,
   },
   priceInputsGrid: {
-    flexDirection: 'row',
-    gap: 10,
+    width: '100%',
   },
   priceInputBox: {
     flex: 1,
-    backgroundColor: ParkColors.surfaceLow,
-    padding: 10,
+    backgroundColor: ParkColors.backgroundLight,
     borderRadius: ParkRadii.md,
     borderWidth: 1,
     borderColor: ParkColors.border,
+    gap: 4,
   },
   priceInputLabel: {
-    fontSize: 10,
-    fontWeight: '600',
     color: ParkColors.textMuted,
-    marginBottom: 4,
+    fontWeight: '600',
   },
   priceInputRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 3,
   },
   rsPrefix: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.textMuted,
-    marginRight: 2,
   },
   priceInput: {
-    fontSize: 16,
+    flex: 1,
     fontWeight: '800',
     color: ParkColors.primary,
     padding: 0,
-    flex: 1,
+    margin: 0,
   },
   rsSuffix: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   switchRow: {
@@ -563,41 +707,40 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 4,
+    gap: 10,
   },
   switchText: {
     flex: 1,
-    paddingRight: 10,
+    gap: 2,
   },
   switchTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   switchSub: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 1,
   },
-  footer: {
-    padding: 16,
+  footerOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderTopWidth: 1,
     borderTopColor: ParkColors.border,
   },
+  footerInner: {
+    width: '100%',
+    alignSelf: 'center',
+  },
   publishBtn: {
-    height: 52,
-    borderRadius: 9999,
-    backgroundColor: ParkColors.secondary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: ParkColors.secondary,
+    borderRadius: 9999,
     ...ParkShadows.md,
   },
   publishBtnText: {
-    fontSize: 16,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '800',
   },
 });
-

@@ -3,7 +3,6 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
   Image,
-  Platform,
   ScrollView,
   StyleSheet,
   Switch,
@@ -11,16 +10,29 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function BookingScheduleScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
-  const { listings, vehicles, selectedVehicleId, setSelectedVehicleId } = useParkStore();
+  const { listings, vehicles, selectedVehicleId, setSelectedVehicleId } =
+    useParkStore();
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    headerHeight,
+    headerTopPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+    isSmallPhone,
+  } = useResponsive();
 
   const spot = listings.find((l) => l.id === id) || listings[0];
 
@@ -47,7 +59,6 @@ export default function BookingScheduleScreen() {
     const selectedVeh =
       vehicles.find((v) => v.id === selectedVehicleId) || vehicles[0];
 
-    // Navigate to payment modal with booking parameters
     router.push({
       pathname: '/payment',
       params: {
@@ -76,52 +87,111 @@ export default function BookingScheduleScreen() {
     } as any);
   };
 
+  const iconBtnSize = ms(38);
+  const thumbSize = ms(74);
+
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => router.back()}
+      <View style={[styles.headerOuter, { paddingTop: headerTopPad }]}>
+        <View
+          style={[
+            styles.headerInner,
+            {
+              height: headerHeight,
+              paddingHorizontal: hPad,
+              maxWidth: formMaxWidth,
+            },
+          ]}
         >
-          <MaterialIcons name="arrow-back" size={24} color={ParkColors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Schedule Booking</Text>
-        <View style={{ width: 40 }} />
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                width: iconBtnSize,
+                height: iconBtnSize,
+                borderRadius: iconBtnSize / 2,
+              },
+            ]}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons
+              name="arrow-back"
+              size={ms(22)}
+              color={ParkColors.text}
+            />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { fontSize: ms(16.5) }]}>
+            Schedule Booking
+          </Text>
+          <View style={{ width: iconBtnSize }} />
+        </View>
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          {
+            maxWidth: formMaxWidth,
+            paddingHorizontal: hPad,
+            paddingTop: vGap,
+            gap: vGap,
+            paddingBottom: vs(130),
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Spot Summary Banner */}
-        <View style={styles.spotSummaryCard}>
-          <Image source={{ uri: spot.photos[0] }} style={styles.spotThumbnail} />
+        <View style={[styles.spotSummaryCard, { padding: cardPad, gap: s(12) }]}>
+          <Image
+            source={{ uri: spot.photos[0] }}
+            style={[
+              styles.spotThumbnail,
+              { width: thumbSize, height: thumbSize },
+            ]}
+          />
           <View style={styles.spotSummaryInfo}>
             <View style={styles.verifiedTag}>
-              <MaterialIcons name="verified" size={12} color={ParkColors.secondary} />
-              <Text style={styles.verifiedTagText}>Verified Spot</Text>
+              <MaterialIcons
+                name="verified"
+                size={ms(12)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.verifiedTagText, { fontSize: ms(10.5) }]}>
+                Verified Spot
+              </Text>
             </View>
-            <Text style={styles.spotSummaryTitle} numberOfLines={1}>
+            <Text
+              style={[styles.spotSummaryTitle, { fontSize: ms(15) }]}
+              numberOfLines={1}
+            >
               {spot.title}
             </Text>
-            <Text style={styles.spotSummaryHost}>Host: {spot.hostName}</Text>
-            <Text style={styles.spotSummaryPrice}>
+            <Text style={[styles.spotSummaryHost, { fontSize: ms(12) }]}>
+              Host: {spot.hostName}
+            </Text>
+            <Text style={[styles.spotSummaryPrice, { fontSize: ms(15.5) }]}>
               Rs {spot.pricePerHour}
-              <Text style={styles.spotSummaryPriceUnit}>/hr</Text>
+              <Text style={[styles.spotSummaryPriceUnit, { fontSize: ms(11) }]}>
+                /hr
+              </Text>
             </Text>
           </View>
         </View>
 
         {/* Vehicle Selector Section */}
-        <View style={styles.section}>
+        <View style={[styles.section, { gap: vs(10) }]}>
           <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>Select Your Vehicle</Text>
-            <Text style={styles.stepLabel}>Step 1 of 2</Text>
+            <Text style={[styles.sectionTitle, { fontSize: ms(16) }]}>
+              Select Your Vehicle
+            </Text>
+            <Text style={[styles.stepLabel, { fontSize: ms(11.5) }]}>
+              Step 1 of 2
+            </Text>
           </View>
 
-          <View style={styles.vehicleList}>
+          <View style={[styles.vehicleList, { gap: vs(10) }]}>
             {vehicles.map((veh) => {
               const isSelected = veh.id === selectedVehicleId;
               return (
@@ -129,39 +199,81 @@ export default function BookingScheduleScreen() {
                   key={veh.id}
                   style={[
                     styles.vehicleCard,
+                    { padding: cardPad },
                     isSelected && styles.vehicleCardSelected,
                   ]}
                   activeOpacity={0.85}
                   onPress={() => setSelectedVehicleId(veh.id)}
                 >
-                  <View style={styles.vehicleCardLeft}>
+                  <View style={[styles.vehicleCardLeft, { gap: s(12) }]}>
                     <View
                       style={[
                         styles.vehicleIconCircle,
+                        {
+                          width: ms(44),
+                          height: ms(44),
+                          borderRadius: ms(22),
+                        },
                         isSelected && styles.vehicleIconCircleSelected,
                       ]}
                     >
                       <MaterialIcons
-                        name={veh.type === 'bike' ? 'two-wheeler' : 'directions-car'}
-                        size={24}
-                        color={isSelected ? ParkColors.secondary : ParkColors.textMuted}
+                        name={
+                          veh.type === 'bike'
+                            ? 'two-wheeler'
+                            : 'directions-car'
+                        }
+                        size={ms(22)}
+                        color={
+                          isSelected
+                            ? ParkColors.secondary
+                            : ParkColors.textMuted
+                        }
                       />
                     </View>
                     <View style={styles.vehicleInfo}>
                       <View style={styles.vehicleModelRow}>
-                        <Text style={styles.vehicleModel}>{veh.model}</Text>
+                        <Text
+                          style={[styles.vehicleModel, { fontSize: ms(14) }]}
+                          numberOfLines={1}
+                        >
+                          {veh.model}
+                        </Text>
                         {veh.isPrimary && (
                           <View style={styles.primaryBadge}>
-                            <MaterialIcons name="check-circle" size={10} color={ParkColors.secondary} />
-                            <Text style={styles.primaryBadgeText}>Primary</Text>
+                            <MaterialIcons
+                              name="check-circle"
+                              size={ms(10)}
+                              color={ParkColors.secondary}
+                            />
+                            <Text
+                              style={[
+                                styles.primaryBadgeText,
+                                { fontSize: ms(10) },
+                              ]}
+                            >
+                              Primary
+                            </Text>
                           </View>
                         )}
                       </View>
                       <View style={styles.plateRow}>
                         <View style={styles.punjabPlate}>
-                          <Text style={styles.punjabPlateText}>{veh.plate}</Text>
+                          <Text
+                            style={[
+                              styles.punjabPlateText,
+                              { fontSize: ms(11) },
+                            ]}
+                          >
+                            {veh.plate}
+                          </Text>
                         </View>
-                        <Text style={styles.vehicleTypeTag}>
+                        <Text
+                          style={[
+                            styles.vehicleTypeTag,
+                            { fontSize: ms(10.5) },
+                          ]}
+                        >
                           {veh.type.toUpperCase()}
                         </Text>
                       </View>
@@ -169,7 +281,12 @@ export default function BookingScheduleScreen() {
                   </View>
 
                   {/* Radio Indicator */}
-                  <View style={[styles.radioCircle, isSelected && styles.radioCircleSelected]}>
+                  <View
+                    style={[
+                      styles.radioCircle,
+                      isSelected && styles.radioCircleSelected,
+                    ]}
+                  >
                     {isSelected && <View style={styles.radioDot} />}
                   </View>
                 </TouchableOpacity>
@@ -179,92 +296,169 @@ export default function BookingScheduleScreen() {
         </View>
 
         {/* Schedule Arrival Section */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Schedule Arrival</Text>
+        <View style={[styles.section, { gap: vs(10) }]}>
+          <Text style={[styles.sectionTitle, { fontSize: ms(16) }]}>
+            Schedule Arrival
+          </Text>
 
           {/* Date Chips Rail */}
-          <View style={styles.dateRail}>
-            {['Today, 24 Oct', 'Tomorrow, 25 Oct', 'Sat, 26 Oct'].map((dateOption) => {
-              const isSelected = selectedDate === dateOption;
-              return (
-                <TouchableOpacity
-                  key={dateOption}
-                  style={[
-                    styles.dateChip,
-                    isSelected && styles.dateChipSelected,
-                  ]}
-                  onPress={() => setSelectedDate(dateOption)}
-                >
-                  {isSelected && (
-                    <MaterialIcons name="calendar-today" size={14} color="#FFFFFF" />
-                  )}
-                  <Text
+          <View style={[styles.dateRail, { gap: s(8) }]}>
+            {['Today, 24 Oct', 'Tomorrow, 25 Oct', 'Sat, 26 Oct'].map(
+              (dateOption) => {
+                const isSelected = selectedDate === dateOption;
+                return (
+                  <TouchableOpacity
+                    key={dateOption}
                     style={[
-                      styles.dateChipText,
-                      isSelected && styles.dateChipTextSelected,
+                      styles.dateChip,
+                      {
+                        paddingVertical: vs(9),
+                        paddingHorizontal: isSmallPhone ? 6 : s(10),
+                      },
+                      isSelected && styles.dateChipSelected,
                     ]}
+                    onPress={() => setSelectedDate(dateOption)}
                   >
-                    {dateOption}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
+                    {isSelected && (
+                      <MaterialIcons
+                        name="calendar-today"
+                        size={ms(13)}
+                        color="#FFFFFF"
+                      />
+                    )}
+                    <Text
+                      style={[
+                        styles.dateChipText,
+                        { fontSize: ms(11.5) },
+                        isSelected && styles.dateChipTextSelected,
+                      ]}
+                      numberOfLines={1}
+                    >
+                      {dateOption}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }
+            )}
           </View>
 
           {/* Time & Stepper Box */}
-          <View style={styles.timeStepperBox}>
+          <View style={[styles.timeStepperBox, { padding: cardPad, gap: vs(14) }]}>
             {/* Arrival Time Row */}
             <View style={styles.arrivalTimeRow}>
-              <View style={styles.timeIconText}>
-                <View style={styles.timeIconCircle}>
-                  <MaterialIcons name="schedule" size={18} color={ParkColors.secondary} />
+              <View style={[styles.timeIconText, { gap: s(10) }]}>
+                <View
+                  style={[
+                    styles.timeIconCircle,
+                    {
+                      width: ms(38),
+                      height: ms(38),
+                      borderRadius: ms(19),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="schedule"
+                    size={ms(18)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
                 <View>
-                  <Text style={styles.timeLabel}>Arrival Time</Text>
-                  <Text style={styles.timeValue}>{arrivalTime}</Text>
+                  <Text style={[styles.timeLabel, { fontSize: ms(11) }]}>
+                    Arrival Time
+                  </Text>
+                  <Text style={[styles.timeValue, { fontSize: ms(15) }]}>
+                    {arrivalTime}
+                  </Text>
                 </View>
               </View>
               <TouchableOpacity
-                style={styles.changeTimeBtn}
+                style={[
+                  styles.changeTimeBtn,
+                  { paddingHorizontal: s(12), paddingVertical: vs(6) },
+                ]}
                 onPress={() => {
-                  const times = ['01:00 PM', '02:00 PM', '03:00 PM', '04:00 PM', '05:00 PM'];
-                  const nextIdx = (times.indexOf(arrivalTime) + 1) % times.length;
+                  const times = [
+                    '01:00 PM',
+                    '02:00 PM',
+                    '03:00 PM',
+                    '04:00 PM',
+                    '05:00 PM',
+                  ];
+                  const nextIdx =
+                    (times.indexOf(arrivalTime) + 1) % times.length;
                   setArrivalTime(times[nextIdx]);
                 }}
               >
-                <Text style={styles.changeTimeText}>Change</Text>
-                <MaterialIcons name="expand-more" size={14} color={ParkColors.secondary} />
+                <Text style={[styles.changeTimeText, { fontSize: ms(12) }]}>
+                  Change
+                </Text>
+                <MaterialIcons
+                  name="expand-more"
+                  size={ms(14)}
+                  color={ParkColors.secondary}
+                />
               </TouchableOpacity>
             </View>
 
             {/* Stepper Control */}
-            <View style={styles.stepperContainer}>
+            <View style={[styles.stepperContainer, { paddingTop: vs(12) }]}>
               <View style={styles.stepperTop}>
-                <Text style={styles.stepperLabel}>Parking Duration</Text>
-                <View style={styles.stepperControl}>
+                <Text style={[styles.stepperLabel, { fontSize: ms(13.5) }]}>
+                  Parking Duration
+                </Text>
+                <View style={[styles.stepperControl, { gap: s(10) }]}>
                   <TouchableOpacity
-                    style={[styles.stepperBtn, hours <= 1 && styles.stepperBtnDisabled]}
+                    style={[
+                      styles.stepperBtn,
+                      {
+                        width: ms(34),
+                        height: ms(34),
+                        borderRadius: ms(17),
+                      },
+                      hours <= 1 && styles.stepperBtnDisabled,
+                    ]}
                     onPress={() => setHours((h) => Math.max(1, h - 1))}
                     disabled={hours <= 1}
                   >
-                    <MaterialIcons name="remove" size={18} color={ParkColors.text} />
+                    <MaterialIcons
+                      name="remove"
+                      size={ms(17)}
+                      color={ParkColors.text}
+                    />
                   </TouchableOpacity>
-                  <Text style={styles.stepperCount}>
+                  <Text style={[styles.stepperCount, { fontSize: ms(14) }]}>
                     {hours} {hours === 1 ? 'Hour' : 'Hours'}
                   </Text>
                   <TouchableOpacity
-                    style={styles.stepperBtn}
+                    style={[
+                      styles.stepperBtn,
+                      {
+                        width: ms(34),
+                        height: ms(34),
+                        borderRadius: ms(17),
+                      },
+                    ]}
                     onPress={() => setHours((h) => Math.min(24, h + 1))}
                   >
-                    <MaterialIcons name="add" size={18} color={ParkColors.text} />
+                    <MaterialIcons
+                      name="add"
+                      size={ms(17)}
+                      color={ParkColors.text}
+                    />
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View style={styles.departureRow}>
-                <MaterialIcons name="update" size={14} color={ParkColors.secondary} />
-                <Text style={styles.departureText}>
-                  Until {departureFormatted} {selectedDate.includes('Today') ? 'today' : ''}
+                <MaterialIcons
+                  name="update"
+                  size={ms(14)}
+                  color={ParkColors.secondary}
+                />
+                <Text style={[styles.departureText, { fontSize: ms(12) }]}>
+                  Until {departureFormatted}{' '}
+                  {selectedDate.includes('Today') ? 'today' : ''}
                 </Text>
               </View>
             </View>
@@ -272,69 +466,120 @@ export default function BookingScheduleScreen() {
         </View>
 
         {/* Instant QR Entry Pass Toggle */}
-        <View style={styles.qrPassCard}>
-          <View style={styles.qrPassLeft}>
-            <View style={styles.qrPassIconCircle}>
-              <MaterialIcons name="qr-code-2" size={22} color={ParkColors.secondary} />
+        <View style={[styles.qrPassCard, { padding: cardPad, gap: s(10) }]}>
+          <View style={[styles.qrPassLeft, { gap: s(12) }]}>
+            <View
+              style={[
+                styles.qrPassIconCircle,
+                {
+                  width: ms(42),
+                  height: ms(42),
+                  borderRadius: ms(21),
+                },
+              ]}
+            >
+              <MaterialIcons
+                name="qr-code-2"
+                size={ms(21)}
+                color={ParkColors.secondary}
+              />
             </View>
             <View style={styles.qrPassText}>
               <View style={styles.qrPassTitleRow}>
-                <Text style={styles.qrPassTitle}>Instant QR Entry Pass</Text>
+                <Text style={[styles.qrPassTitle, { fontSize: ms(13.5) }]}>
+                  Instant QR Entry Pass
+                </Text>
                 <View style={styles.fastTag}>
-                  <Text style={styles.fastTagText}>FAST</Text>
+                  <Text style={[styles.fastTagText, { fontSize: ms(9.5) }]}>
+                    FAST
+                  </Text>
                 </View>
               </View>
-              <Text style={styles.qrPassSubtitle}>
-                Host approved automatic camera sync. Scan upon arrival at Gulberg entrance.
+              <Text style={[styles.qrPassSubtitle, { fontSize: ms(11.5) }]}>
+                Host approved automatic camera sync. Scan upon arrival at
+                Gulberg entrance.
               </Text>
             </View>
           </View>
           <Switch
             value={instantQrPass}
             onValueChange={setInstantQrPass}
-            trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
+            trackColor={{
+              false: ParkColors.border,
+              true: ParkColors.secondary,
+            }}
             thumbColor="#FFFFFF"
           />
         </View>
 
         {/* Fare Summary Breakdown */}
-        <View style={styles.fareCard}>
+        <View style={[styles.fareCard, { padding: cardPad, gap: vs(12) }]}>
           <View style={styles.fareHeader}>
-            <Text style={styles.fareTitle}>Fare Summary</Text>
+            <Text style={[styles.fareTitle, { fontSize: ms(15.5) }]}>
+              Fare Summary
+            </Text>
             <View style={styles.guaranteedBadge}>
-              <MaterialIcons name="verified-user" size={12} color={ParkColors.secondary} />
-              <Text style={styles.guaranteedText}>100% Guaranteed</Text>
+              <MaterialIcons
+                name="verified-user"
+                size={ms(12)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.guaranteedText, { fontSize: ms(10.5) }]}>
+                100% Guaranteed
+              </Text>
             </View>
           </View>
 
-          <View style={styles.fareRows}>
+          <View style={[styles.fareRows, { gap: vs(8) }]}>
             <View style={styles.fareRow}>
-              <Text style={styles.fareLabel}>
+              <Text style={[styles.fareLabel, { fontSize: ms(12.5) }]}>
                 Base parking ({hours} hrs × Rs {ratePerHour})
               </Text>
-              <Text style={styles.fareValue}>Rs {baseFare}</Text>
+              <Text style={[styles.fareValue, { fontSize: ms(13) }]}>
+                Rs {baseFare}
+              </Text>
             </View>
 
             <View style={styles.fareRow}>
               <View style={styles.feeLabelGroup}>
-                <Text style={styles.fareLabel}>Platform service fee</Text>
-                <MaterialIcons name="info-outline" size={13} color={ParkColors.textMuted} />
+                <Text style={[styles.fareLabel, { fontSize: ms(12.5) }]}>
+                  Platform service fee
+                </Text>
+                <MaterialIcons
+                  name="info-outline"
+                  size={ms(13)}
+                  color={ParkColors.textMuted}
+                />
               </View>
-              <Text style={styles.fareValue}>Rs {serviceFee}</Text>
+              <Text style={[styles.fareValue, { fontSize: ms(13) }]}>
+                Rs {serviceFee}
+              </Text>
             </View>
 
             <View style={styles.fareRow}>
-              <Text style={styles.fareLabel}>Security & insurance guarantee</Text>
-              <Text style={styles.fareFreeValue}>Free (Included)</Text>
+              <Text style={[styles.fareLabel, { fontSize: ms(12.5) }]}>
+                Security & insurance guarantee
+              </Text>
+              <Text style={[styles.fareFreeValue, { fontSize: ms(12.5) }]}>
+                Free (Included)
+              </Text>
             </View>
 
             {/* Promo Code Applied */}
-            <View style={styles.promoCard}>
+            <View style={[styles.promoCard, { padding: s(10) }]}>
               <View style={styles.promoLeft}>
-                <MaterialIcons name="local-activity" size={16} color={ParkColors.secondary} />
-                <Text style={styles.promoCodeText}>PKFIRST applied</Text>
+                <MaterialIcons
+                  name="local-activity"
+                  size={ms(15)}
+                  color={ParkColors.secondary}
+                />
+                <Text style={[styles.promoCodeText, { fontSize: ms(12) }]}>
+                  PKFIRST applied
+                </Text>
               </View>
-              <Text style={styles.promoDiscountText}>-Rs {promoDiscount}</Text>
+              <Text style={[styles.promoDiscountText, { fontSize: ms(12.5) }]}>
+                -Rs {promoDiscount}
+              </Text>
             </View>
           </View>
 
@@ -343,31 +588,52 @@ export default function BookingScheduleScreen() {
           {/* Total Payable */}
           <View style={styles.totalRow}>
             <View>
-              <Text style={styles.totalTitle}>Total Payable</Text>
-              <Text style={styles.taxInclusive}>Inclusive of all local taxes</Text>
+              <Text style={[styles.totalTitle, { fontSize: ms(15) }]}>
+                Total Payable
+              </Text>
+              <Text style={[styles.taxInclusive, { fontSize: ms(11) }]}>
+                Inclusive of all local taxes
+              </Text>
             </View>
-            <Text style={styles.totalAmount}>Rs {total}</Text>
+            <Text style={[styles.totalAmount, { fontSize: ms(21) }]}>
+              Rs {total}
+            </Text>
           </View>
         </View>
       </ScrollView>
 
       {/* Sticky Bottom Action Bar */}
-      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
-        <TouchableOpacity
-          style={styles.payButton}
-          activeOpacity={0.88}
-          onPress={handleContinueToPayment}
-        >
-          <MaterialIcons name="lock" size={18} color="#FFFFFF" />
-          <Text style={styles.payButtonText}>
-            Continue to Payment • Rs {total}
-          </Text>
-        </TouchableOpacity>
-        <View style={styles.cancellationRow}>
-          <MaterialIcons name="schedule" size={13} color={ParkColors.secondary} />
-          <Text style={styles.cancellationText}>
-            Free cancellation up to 15 mins before arrival
-          </Text>
+      <View
+        style={[
+          styles.stickyFooterOuter,
+          {
+            paddingBottom: stickyFooterBottomPad,
+            paddingTop: vs(12),
+            paddingHorizontal: hPad,
+          },
+        ]}
+      >
+        <View style={[styles.stickyFooterInner, { maxWidth: formMaxWidth }]}>
+          <TouchableOpacity
+            style={[styles.payButton, { height: ms(50) }]}
+            activeOpacity={0.88}
+            onPress={handleContinueToPayment}
+          >
+            <MaterialIcons name="lock" size={ms(18)} color="#FFFFFF" />
+            <Text style={[styles.payButtonText, { fontSize: ms(15) }]}>
+              Continue to Payment • Rs {total}
+            </Text>
+          </TouchableOpacity>
+          <View style={styles.cancellationRow}>
+            <MaterialIcons
+              name="schedule"
+              size={ms(13)}
+              color={ParkColors.secondary}
+            />
+            <Text style={[styles.cancellationText, { fontSize: ms(11) }]}>
+              Free cancellation up to 15 mins before arrival
+            </Text>
+          </View>
         </View>
       </View>
     </View>
@@ -379,26 +645,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: ParkColors.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 12,
+  headerOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
     ...ParkShadows.sm,
   },
+  headerInner: {
+    width: '100%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 17,
     fontWeight: '700',
     color: ParkColors.primary,
   },
@@ -406,70 +671,53 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    padding: 16,
-    gap: 16,
-    paddingBottom: 120,
+    width: '100%',
+    alignSelf: 'center',
   },
   spotSummaryCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 12,
-    gap: 12,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
   },
   spotThumbnail: {
-    width: 72,
-    height: 72,
     borderRadius: ParkRadii.md,
     backgroundColor: ParkColors.surfaceHigh,
   },
   spotSummaryInfo: {
     flex: 1,
-    justifyContent: 'center',
+    gap: 2,
   },
   verifiedTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 9999,
-    alignSelf: 'flex-start',
-    marginBottom: 4,
+    gap: 3,
   },
   verifiedTagText: {
-    fontSize: 10,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   spotSummaryTitle: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   spotSummaryHost: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 2,
   },
   spotSummaryPrice: {
-    fontSize: 15,
     fontWeight: '800',
-    color: ParkColors.secondary,
+    color: ParkColors.primary,
     marginTop: 2,
   },
   spotSummaryPriceUnit: {
-    fontSize: 11,
-    fontWeight: '400',
+    fontWeight: '500',
     color: ParkColors.textMuted,
   },
   section: {
-    gap: 10,
+    width: '100%',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -477,16 +725,15 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   stepLabel: {
-    fontSize: 12,
-    color: ParkColors.textMuted,
+    fontWeight: '700',
+    color: ParkColors.secondary,
   },
   vehicleList: {
-    gap: 10,
+    width: '100%',
   },
   vehicleCard: {
     flexDirection: 'row',
@@ -494,7 +741,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1.5,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
@@ -506,13 +752,9 @@ const styles = StyleSheet.create({
   vehicleCardLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
   vehicleIconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
@@ -522,28 +764,29 @@ const styles = StyleSheet.create({
   },
   vehicleInfo: {
     flex: 1,
+    gap: 4,
   },
   vehicleModelRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    flexWrap: 'wrap',
   },
   vehicleModel: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
+    flexShrink: 1,
   },
   primaryBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 3,
     backgroundColor: ParkColors.surfaceHigh,
     paddingHorizontal: 6,
-    paddingVertical: 1.5,
-    borderRadius: 4,
+    paddingVertical: 2,
+    borderRadius: 9999,
   },
   primaryBadgeText: {
-    fontSize: 9,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
@@ -551,28 +794,28 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 4,
   },
   punjabPlate: {
-    backgroundColor: ParkColors.primary,
-    paddingHorizontal: 7,
+    backgroundColor: '#F8FAFC',
+    borderWidth: 1,
+    borderColor: '#CBD5E1',
+    paddingHorizontal: 8,
     paddingVertical: 2,
     borderRadius: 4,
   },
   punjabPlateText: {
-    color: '#FFFFFF',
-    fontSize: 11,
     fontWeight: '800',
-    letterSpacing: 1,
+    color: ParkColors.primary,
+    letterSpacing: 0.5,
   },
   vehicleTypeTag: {
-    fontSize: 11,
+    fontWeight: '700',
     color: ParkColors.textMuted,
   },
   radioCircle: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
+    width: 20,
+    height: 20,
+    borderRadius: 10,
     borderWidth: 2,
     borderColor: ParkColors.textMuted,
     alignItems: 'center',
@@ -582,46 +825,43 @@ const styles = StyleSheet.create({
     borderColor: ParkColors.secondary,
   },
   radioDot: {
-    width: 12,
-    height: 12,
-    borderRadius: 6,
+    width: 10,
+    height: 10,
+    borderRadius: 5,
     backgroundColor: ParkColors.secondary,
   },
   dateRail: {
     flexDirection: 'row',
-    gap: 8,
   },
   dateChip: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    justifyContent: 'center',
+    gap: 4,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 14,
-    paddingVertical: 9,
-    borderRadius: 9999,
+    borderRadius: ParkRadii.md,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
   },
   dateChipSelected: {
-    backgroundColor: ParkColors.primary,
-    borderColor: ParkColors.primary,
+    backgroundColor: ParkColors.secondary,
+    borderColor: ParkColors.secondary,
   },
   dateChipText: {
-    fontSize: 12,
     fontWeight: '600',
     color: ParkColors.text,
   },
   dateChipTextSelected: {
     color: '#FFFFFF',
+    fontWeight: '700',
   },
   timeStepperBox: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 14,
     ...ParkShadows.sm,
   },
   arrivalTimeRow: {
@@ -632,43 +872,34 @@ const styles = StyleSheet.create({
   timeIconText: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
   },
   timeIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   timeLabel: {
-    fontSize: 11,
     color: ParkColors.textMuted,
+    fontWeight: '500',
   },
   timeValue: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   changeTimeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 3,
     backgroundColor: ParkColors.surfaceLow,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 9999,
   },
   changeTimeText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
   stepperContainer: {
-    backgroundColor: ParkColors.surfaceLow,
-    padding: 12,
-    borderRadius: ParkRadii.md,
+    borderTopWidth: 1,
+    borderTopColor: ParkColors.border,
     gap: 8,
   },
   stepperTop: {
@@ -677,43 +908,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   stepperLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   stepperControl: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FFFFFF',
-    borderRadius: 9999,
-    padding: 3,
-    ...ParkShadows.sm,
   },
   stepperBtn: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    backgroundColor: ParkColors.surfaceLow,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: ParkColors.surfaceLow,
   },
   stepperBtnDisabled: {
-    opacity: 0.35,
+    opacity: 0.4,
   },
   stepperCount: {
-    fontSize: 13,
-    fontWeight: '700',
+    fontWeight: '800',
     color: ParkColors.primary,
-    paddingHorizontal: 12,
+    minWidth: 64,
+    textAlign: 'center',
   },
   departureRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 5,
   },
   departureText: {
-    fontSize: 12,
-    color: ParkColors.textMuted,
+    color: ParkColors.secondary,
+    fontWeight: '600',
   },
   qrPassCard: {
     flexDirection: 'row',
@@ -721,7 +946,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
@@ -729,20 +953,16 @@ const styles = StyleSheet.create({
   qrPassLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
-    paddingRight: 8,
   },
   qrPassIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: ParkColors.surfaceHigh,
+    backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   qrPassText: {
     flex: 1,
+    gap: 2,
   },
   qrPassTitleRow: {
     flexDirection: 'row',
@@ -750,64 +970,59 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   qrPassTitle: {
-    fontSize: 13,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   fastTag: {
-    backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 5,
-    paddingVertical: 1,
+    backgroundColor: ParkColors.amberDim,
+    paddingHorizontal: 6,
+    paddingVertical: 1.5,
     borderRadius: 4,
   },
   fastTagText: {
-    fontSize: 9,
     fontWeight: '800',
-    color: ParkColors.secondary,
+    color: '#523400',
   },
   qrPassSubtitle: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    lineHeight: 15,
-    marginTop: 2,
+    lineHeight: 16,
   },
   fareCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 16,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
     ...ParkShadows.sm,
   },
   fareHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingBottom: 4,
   },
   fareTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: ParkColors.text,
+    fontWeight: '800',
+    color: ParkColors.primary,
   },
   guaranteedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
+    backgroundColor: ParkColors.surfaceLow,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 9999,
   },
   guaranteedText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
   fareRows: {
-    gap: 8,
+    width: '100%',
   },
   fareRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
   feeLabelGroup: {
     flexDirection: 'row',
@@ -815,27 +1030,23 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   fareLabel: {
-    fontSize: 13,
     color: ParkColors.textMuted,
   },
   fareValue: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   fareFreeValue: {
-    fontSize: 12,
     fontWeight: '700',
-    color: ParkColors.secondary,
+    color: ParkColors.success,
   },
   promoCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     backgroundColor: ParkColors.surfaceLow,
-    padding: 8,
-    borderRadius: ParkRadii.sm,
-    marginTop: 4,
+    borderRadius: ParkRadii.md,
+    marginTop: 2,
   },
   promoLeft: {
     flexDirection: 'row',
@@ -843,19 +1054,16 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   promoCodeText: {
-    fontSize: 12,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.secondary,
   },
   promoDiscountText: {
-    fontSize: 12,
-    fontWeight: '700',
+    fontWeight: '800',
     color: ParkColors.secondary,
   },
   divider: {
     height: 1,
     backgroundColor: ParkColors.border,
-    marginVertical: 4,
   },
   totalRow: {
     flexDirection: 'row',
@@ -863,43 +1071,43 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   totalTitle: {
-    fontSize: 16,
     fontWeight: '800',
     color: ParkColors.primary,
   },
   taxInclusive: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 1,
   },
   totalAmount: {
-    fontSize: 22,
     fontWeight: '900',
     color: ParkColors.primary,
   },
-  stickyFooter: {
-    backgroundColor: '#FFFFFF',
+  stickyFooterOuter: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(255, 255, 255, 0.97)',
     borderTopWidth: 1,
     borderTopColor: ParkColors.border,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    gap: 8,
     ...ParkShadows.sheet,
   },
+  stickyFooterInner: {
+    width: '100%',
+    alignSelf: 'center',
+    gap: 8,
+  },
   payButton: {
-    height: 52,
-    borderRadius: 9999,
-    backgroundColor: ParkColors.secondary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: ParkColors.secondary,
+    borderRadius: 9999,
     ...ParkShadows.md,
   },
   payButtonText: {
-    fontSize: 16,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '800',
   },
   cancellationRow: {
     flexDirection: 'row',
@@ -908,8 +1116,7 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   cancellationText: {
-    fontSize: 11,
     color: ParkColors.textMuted,
+    fontWeight: '500',
   },
 });
-

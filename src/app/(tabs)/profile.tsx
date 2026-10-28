@@ -15,12 +15,23 @@ import {
 import { DemoToolsModal } from '@/components/DemoToolsModal';
 import { Header } from '@/components/Header';
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function ProfileTabScreen() {
   const router = useRouter();
   const { user, setUserMode, vehicles, resetDemoData } = useParkStore();
   const [demoModalVisible, setDemoModalVisible] = useState(false);
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    tabScrollBottomPad,
+    contentMaxWidth,
+  } = useResponsive();
 
   const isHostMode = user.mode === 'owner';
 
@@ -52,74 +63,130 @@ export default function ProfileTabScreen() {
     );
   };
 
+  const avatarSize = ms(64);
+  const menuIconSize = ms(38);
+
   return (
     <View style={styles.container}>
       <Header />
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.content}
+        contentContainerStyle={[
+          styles.content,
+          {
+            maxWidth: contentMaxWidth,
+            paddingHorizontal: hPad,
+            paddingTop: vGap,
+            gap: vGap,
+            paddingBottom: tabScrollBottomPad,
+          },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* User Profile Card */}
-        <View style={styles.profileCard}>
-          <View style={styles.avatarRow}>
+        <View style={[styles.profileCard, { padding: cardPad }]}>
+          <View style={[styles.avatarRow, { gap: s(14) }]}>
             <View style={styles.avatarWrapper}>
-              <Image source={{ uri: user.avatar }} style={styles.avatar} />
+              <Image
+                source={{ uri: user.avatar }}
+                style={[
+                  styles.avatar,
+                  {
+                    width: avatarSize,
+                    height: avatarSize,
+                    borderRadius: avatarSize / 2,
+                  },
+                ]}
+              />
               {user.verified && (
                 <View style={styles.verifiedShield}>
-                  <MaterialIcons name="verified" size={16} color={ParkColors.secondary} />
+                  <MaterialIcons
+                    name="verified"
+                    size={ms(16)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
               )}
             </View>
             <View style={styles.nameSection}>
-              <Text style={styles.userName}>{user.name}</Text>
-              <Text style={styles.userPhone}>{user.phone}</Text>
+              <Text
+                style={[styles.userName, { fontSize: ms(18) }]}
+                numberOfLines={1}
+              >
+                {user.name}
+              </Text>
+              <Text style={[styles.userPhone, { fontSize: ms(13) }]}>
+                {user.phone}
+              </Text>
               <View style={styles.verifiedBadge}>
-                <MaterialIcons name="shield" size={13} color={ParkColors.success} />
-                <Text style={styles.verifiedBadgeText}>CNIC & Licence Verified</Text>
+                <MaterialIcons
+                  name="shield"
+                  size={ms(13)}
+                  color={ParkColors.success}
+                />
+                <Text style={[styles.verifiedBadgeText, { fontSize: ms(11) }]}>
+                  CNIC & Licence Verified
+                </Text>
               </View>
             </View>
           </View>
 
-          <View style={styles.cardDivider} />
+          <View style={[styles.cardDivider, { marginVertical: vs(14) }]} />
 
           <View style={styles.userStatsRow}>
             <View style={styles.userStatItem}>
-              <Text style={styles.userStatValue}>{user.rating}</Text>
-              <Text style={styles.userStatLabel}>Rating ★</Text>
+              <Text style={[styles.userStatValue, { fontSize: ms(16) }]}>
+                {user.rating}
+              </Text>
+              <Text style={[styles.userStatLabel, { fontSize: ms(11) }]}>
+                Rating ★
+              </Text>
             </View>
             <View style={styles.userStatItem}>
-              <Text style={styles.userStatValue}>{user.totalStays}</Text>
-              <Text style={styles.userStatLabel}>Total Stays</Text>
+              <Text style={[styles.userStatValue, { fontSize: ms(16) }]}>
+                {user.totalStays}
+              </Text>
+              <Text style={[styles.userStatLabel, { fontSize: ms(11) }]}>
+                Total Stays
+              </Text>
             </View>
             <View style={styles.userStatItem}>
-              <Text style={styles.userStatValue}>{user.memberSince}</Text>
-              <Text style={styles.userStatLabel}>Member Since</Text>
+              <Text style={[styles.userStatValue, { fontSize: ms(16) }]}>
+                {user.memberSince}
+              </Text>
+              <Text style={[styles.userStatLabel, { fontSize: ms(11) }]}>
+                Member Since
+              </Text>
             </View>
           </View>
         </View>
 
         {/* Mode Switcher Banner */}
-        <View style={styles.modeCard}>
-          <View style={styles.modeLeft}>
+        <View style={[styles.modeCard, { padding: cardPad, gap: s(10) }]}>
+          <View style={[styles.modeLeft, { gap: s(12) }]}>
             <View
               style={[
                 styles.modeIconCircle,
+                {
+                  width: ms(42),
+                  height: ms(42),
+                  borderRadius: ms(21),
+                },
                 isHostMode && { backgroundColor: ParkColors.amberLight },
               ]}
             >
               <MaterialIcons
                 name={isHostMode ? 'vpn-key' : 'explore'}
-                size={22}
+                size={ms(21)}
                 color={isHostMode ? ParkColors.amber : ParkColors.secondary}
               />
             </View>
-            <View>
-              <Text style={styles.modeTitle}>
+            <View style={{ flex: 1 }}>
+              <Text style={[styles.modeTitle, { fontSize: ms(14) }]}>
                 {isHostMode ? 'Host / Owner Mode' : 'Seeker / Driver Mode'}
               </Text>
-              <Text style={styles.modeSubtitle}>
+              <Text style={[styles.modeSubtitle, { fontSize: ms(12) }]}>
                 {isHostMode
                   ? 'Managing driveways & earnings'
                   : 'Searching & booking spots'}
@@ -129,36 +196,55 @@ export default function ProfileTabScreen() {
           <Switch
             value={isHostMode}
             onValueChange={handleToggleMode}
-            trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
+            trackColor={{
+              false: ParkColors.border,
+              true: ParkColors.secondary,
+            }}
             thumbColor="#FFFFFF"
           />
         </View>
 
         {/* Registered Vehicles Section */}
-        <View style={styles.menuCard}>
+        <View style={[styles.menuCard, { padding: cardPad, gap: vs(12) }]}>
           <View style={styles.menuHeaderRow}>
-            <Text style={styles.menuHeaderTitle}>Registered Vehicles</Text>
+            <Text style={[styles.menuHeaderTitle, { fontSize: ms(15) }]}>
+              Registered Vehicles
+            </Text>
             <TouchableOpacity activeOpacity={0.7}>
-              <Text style={styles.addVehicleLink}>+ Add</Text>
+              <Text style={[styles.addVehicleLink, { fontSize: ms(12.5) }]}>
+                + Add
+              </Text>
             </TouchableOpacity>
           </View>
 
           {vehicles.map((veh) => (
-            <View key={veh.id} style={styles.vehicleRow}>
-              <View style={styles.vehicleRowLeft}>
+            <View
+              key={veh.id}
+              style={[styles.vehicleRow, { padding: s(12) }]}
+            >
+              <View style={[styles.vehicleRowLeft, { gap: s(10) }]}>
                 <MaterialIcons
                   name={veh.type === 'bike' ? 'two-wheeler' : 'directions-car'}
-                  size={20}
+                  size={ms(20)}
                   color={ParkColors.secondary}
                 />
-                <View>
-                  <Text style={styles.vehModelText}>{veh.model}</Text>
-                  <Text style={styles.vehPlateText}>{veh.plate}</Text>
+                <View style={{ flex: 1 }}>
+                  <Text
+                    style={[styles.vehModelText, { fontSize: ms(13.5) }]}
+                    numberOfLines={1}
+                  >
+                    {veh.model}
+                  </Text>
+                  <Text style={[styles.vehPlateText, { fontSize: ms(11.5) }]}>
+                    {veh.plate}
+                  </Text>
                 </View>
               </View>
               {veh.isPrimary && (
                 <View style={styles.primaryPill}>
-                  <Text style={styles.primaryPillText}>Primary</Text>
+                  <Text style={[styles.primaryPillText, { fontSize: ms(10) }]}>
+                    Primary
+                  </Text>
                 </View>
               )}
             </View>
@@ -166,8 +252,10 @@ export default function ProfileTabScreen() {
         </View>
 
         {/* App Settings & Evaluator Tools */}
-        <View style={styles.menuCard}>
-          <Text style={styles.menuHeaderTitle}>Preferences & Tools</Text>
+        <View style={[styles.menuCard, { padding: cardPad, gap: vs(12) }]}>
+          <Text style={[styles.menuHeaderTitle, { fontSize: ms(15) }]}>
+            Preferences & Tools
+          </Text>
 
           {/* Demo Tools Modal Row */}
           <TouchableOpacity
@@ -175,30 +263,74 @@ export default function ProfileTabScreen() {
             activeOpacity={0.7}
             onPress={() => setDemoModalVisible(true)}
           >
-            <View style={styles.menuRowLeft}>
-              <View style={[styles.menuIconCircle, { backgroundColor: ParkColors.surfaceHigh }]}>
-                <MaterialIcons name="science" size={18} color={ParkColors.secondary} />
+            <View style={[styles.menuRowLeft, { gap: s(12) }]}>
+              <View
+                style={[
+                  styles.menuIconCircle,
+                  {
+                    width: menuIconSize,
+                    height: menuIconSize,
+                    borderRadius: menuIconSize / 2,
+                    backgroundColor: ParkColors.surfaceHigh,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="science"
+                  size={ms(18)}
+                  color={ParkColors.secondary}
+                />
               </View>
-              <View>
-                <Text style={styles.menuRowTitle}>Expo Demo Tools</Text>
-                <Text style={styles.menuRowSubtitle}>Reset data, bypass KYC, auto-approve</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuRowTitle, { fontSize: ms(14) }]}>
+                  Expo Demo Tools
+                </Text>
+                <Text style={[styles.menuRowSubtitle, { fontSize: ms(11.5) }]}>
+                  Reset data, bypass KYC, auto-approve
+                </Text>
               </View>
             </View>
-            <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
+            <MaterialIcons
+              name="chevron-right"
+              size={ms(20)}
+              color={ParkColors.textMuted}
+            />
           </TouchableOpacity>
 
           {/* Payment Methods */}
           <View style={styles.menuRow}>
-            <View style={styles.menuRowLeft}>
-              <View style={[styles.menuIconCircle, { backgroundColor: '#FEE2E2' }]}>
-                <MaterialIcons name="account-balance-wallet" size={18} color="#D91D24" />
+            <View style={[styles.menuRowLeft, { gap: s(12) }]}>
+              <View
+                style={[
+                  styles.menuIconCircle,
+                  {
+                    width: menuIconSize,
+                    height: menuIconSize,
+                    borderRadius: menuIconSize / 2,
+                    backgroundColor: '#FEE2E2',
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="account-balance-wallet"
+                  size={ms(18)}
+                  color="#D91D24"
+                />
               </View>
-              <View>
-                <Text style={styles.menuRowTitle}>Payment Methods</Text>
-                <Text style={styles.menuRowSubtitle}>JazzCash (0300-******7) linked</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuRowTitle, { fontSize: ms(14) }]}>
+                  Payment Methods
+                </Text>
+                <Text style={[styles.menuRowSubtitle, { fontSize: ms(11.5) }]}>
+                  JazzCash (0300-******7) linked
+                </Text>
               </View>
             </View>
-            <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
+            <MaterialIcons
+              name="chevron-right"
+              size={ms(20)}
+              color={ParkColors.textMuted}
+            />
           </View>
 
           {/* Help & Helpline */}
@@ -212,30 +344,58 @@ export default function ProfileTabScreen() {
               )
             }
           >
-            <View style={styles.menuRowLeft}>
-              <View style={[styles.menuIconCircle, { backgroundColor: ParkColors.surfaceLow }]}>
-                <MaterialIcons name="support-agent" size={18} color={ParkColors.primary} />
+            <View style={[styles.menuRowLeft, { gap: s(12) }]}>
+              <View
+                style={[
+                  styles.menuIconCircle,
+                  {
+                    width: menuIconSize,
+                    height: menuIconSize,
+                    borderRadius: menuIconSize / 2,
+                    backgroundColor: ParkColors.surfaceLow,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="support-agent"
+                  size={ms(18)}
+                  color={ParkColors.primary}
+                />
               </View>
-              <View>
-                <Text style={styles.menuRowTitle}>24/7 Lahore Concierge</Text>
-                <Text style={styles.menuRowSubtitle}>Emergency hotline & parking assistance</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.menuRowTitle, { fontSize: ms(14) }]}>
+                  24/7 Lahore Concierge
+                </Text>
+                <Text style={[styles.menuRowSubtitle, { fontSize: ms(11.5) }]}>
+                  Emergency hotline & parking assistance
+                </Text>
               </View>
             </View>
-            <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
+            <MaterialIcons
+              name="chevron-right"
+              size={ms(20)}
+              color={ParkColors.textMuted}
+            />
           </TouchableOpacity>
         </View>
 
         {/* Reset Demo Data Button */}
         <TouchableOpacity
-          style={styles.resetCard}
+          style={[styles.resetCard, { padding: s(14) }]}
           activeOpacity={0.8}
           onPress={handleResetData}
         >
-          <MaterialIcons name="refresh" size={18} color={ParkColors.error} />
-          <Text style={styles.resetCardText}>Reset Demo Data (Evaluator Reset)</Text>
+          <MaterialIcons
+            name="refresh"
+            size={ms(18)}
+            color={ParkColors.error}
+          />
+          <Text style={[styles.resetCardText, { fontSize: ms(13) }]}>
+            Reset Demo Data (Evaluator Reset)
+          </Text>
         </TouchableOpacity>
 
-        <Text style={styles.versionNote}>
+        <Text style={[styles.versionNote, { fontSize: ms(11) }]}>
           ParkYaar MVP v1.0.0 (Lahore, PK) • University Project Expo Build
         </Text>
       </ScrollView>
@@ -258,14 +418,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
-    padding: 16,
-    gap: 14,
-    paddingBottom: 120,
+    width: '100%',
+    alignSelf: 'center',
   },
   profileCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.xl,
-    padding: 16,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.md,
@@ -273,36 +431,32 @@ const styles = StyleSheet.create({
   avatarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 14,
   },
   avatarWrapper: {
     position: 'relative',
   },
   avatar: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
     backgroundColor: ParkColors.surfaceHigh,
   },
   verifiedShield: {
     position: 'absolute',
-    bottom: -2,
-    right: -2,
+    bottom: 0,
+    right: 0,
     backgroundColor: '#FFFFFF',
     borderRadius: 10,
+    padding: 1,
   },
   nameSection: {
     flex: 1,
+    gap: 3,
   },
   userName: {
-    fontSize: 18,
     fontWeight: '800',
     color: ParkColors.primary,
   },
   userPhone: {
-    fontSize: 12,
     color: ParkColors.textMuted,
-    marginTop: 1,
+    fontWeight: '500',
   },
   verifiedBadge: {
     flexDirection: 'row',
@@ -313,17 +467,15 @@ const styles = StyleSheet.create({
     paddingVertical: 3,
     borderRadius: 9999,
     alignSelf: 'flex-start',
-    marginTop: 6,
+    marginTop: 2,
   },
   verifiedBadgeText: {
-    fontSize: 10,
     fontWeight: '700',
     color: ParkColors.success,
   },
   cardDivider: {
     height: 1,
     backgroundColor: ParkColors.border,
-    marginVertical: 14,
   },
   userStatsRow: {
     flexDirection: 'row',
@@ -331,16 +483,15 @@ const styles = StyleSheet.create({
   },
   userStatItem: {
     alignItems: 'center',
+    gap: 2,
   },
   userStatValue: {
-    fontSize: 16,
     fontWeight: '800',
     color: ParkColors.primary,
   },
   userStatLabel: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 2,
+    fontWeight: '500',
   },
   modeCard: {
     flexDirection: 'row',
@@ -348,7 +499,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
@@ -356,49 +506,38 @@ const styles = StyleSheet.create({
   modeLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
   modeIconCircle: {
-    width: 42,
-    height: 42,
-    borderRadius: 21,
-    backgroundColor: ParkColors.surfaceLow,
+    backgroundColor: ParkColors.surfaceHigh,
     alignItems: 'center',
     justifyContent: 'center',
   },
   modeTitle: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   modeSubtitle: {
-    fontSize: 11,
     color: ParkColors.textMuted,
     marginTop: 2,
   },
   menuCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
     ...ParkShadows.sm,
   },
   menuHeaderRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 2,
   },
   menuHeaderTitle: {
-    fontSize: 14,
-    fontWeight: '700',
+    fontWeight: '800',
     color: ParkColors.primary,
   },
   addVehicleLink: {
-    fontSize: 12,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
@@ -406,33 +545,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: ParkColors.surfaceLow,
-    padding: 10,
+    backgroundColor: ParkColors.backgroundLight,
     borderRadius: ParkRadii.md,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+    gap: 8,
   },
   vehicleRowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
+    flex: 1,
   },
   vehModelText: {
-    fontSize: 13,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   vehPlateText: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 1,
+    fontWeight: '600',
   },
   primaryPill: {
     backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 7,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 9999,
   },
   primaryPillText: {
-    fontSize: 10,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
@@ -441,27 +579,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingVertical: 4,
+    gap: 8,
   },
   menuRowLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
   menuIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
   },
   menuRowTitle: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   menuRowSubtitle: {
-    fontSize: 11,
     color: ParkColors.textMuted,
     marginTop: 1,
   },
@@ -471,20 +604,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     gap: 8,
     backgroundColor: '#FEE2E2',
-    paddingVertical: 12,
     borderRadius: ParkRadii.lg,
-    marginTop: 4,
+    borderWidth: 1,
+    borderColor: '#FECACA',
   },
   resetCardText: {
-    fontSize: 13,
     fontWeight: '700',
     color: ParkColors.error,
   },
   versionNote: {
-    fontSize: 11,
-    color: ParkColors.textMuted,
     textAlign: 'center',
-    marginTop: 8,
+    color: ParkColors.textMuted,
+    marginTop: 4,
   },
 });
-

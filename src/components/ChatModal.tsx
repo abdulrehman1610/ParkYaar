@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 
 interface ChatModalProps {
   visible: boolean;
@@ -35,6 +36,15 @@ export const ChatModal: React.FC<ChatModalProps> = ({
   hostName,
   hostPhoto,
 }) => {
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+  } = useResponsive();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -65,7 +75,6 @@ export const ChatModal: React.FC<ChatModalProps> = ({
     setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputText('');
 
-    // Simulated host reply after 1.5s
     setTimeout(() => {
       const hostReply: Message = {
         id: (Date.now() + 1).toString(),
@@ -87,30 +96,65 @@ export const ChatModal: React.FC<ChatModalProps> = ({
       <View style={styles.overlay}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.container}
+          style={[styles.container, { maxWidth: formMaxWidth }]}
         >
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.hostInfo}>
-              <Image source={{ uri: hostPhoto }} style={styles.avatar} />
+          <View style={[styles.header, { padding: hPad }]}>
+            <View style={[styles.hostInfo, { gap: s(10) }]}>
+              <Image
+                source={{ uri: hostPhoto }}
+                style={[
+                  styles.avatar,
+                  {
+                    width: ms(36),
+                    height: ms(36),
+                    borderRadius: ms(18),
+                  },
+                ]}
+              />
               <View>
                 <View style={styles.nameRow}>
-                  <Text style={styles.hostName}>{hostName}</Text>
-                  <MaterialIcons name="verified" size={14} color={ParkColors.secondary} />
+                  <Text style={[styles.hostName, { fontSize: ms(15) }]}>
+                    {hostName}
+                  </Text>
+                  <MaterialIcons
+                    name="verified"
+                    size={ms(14)}
+                    color={ParkColors.secondary}
+                  />
                 </View>
-                <Text style={styles.onlineStatus}>Online • Fast responder</Text>
+                <Text style={[styles.onlineStatus, { fontSize: ms(11) }]}>
+                  Online • Fast responder
+                </Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <MaterialIcons name="close" size={24} color={ParkColors.textMuted} />
+            <TouchableOpacity
+              onPress={onClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <MaterialIcons
+                name="close"
+                size={ms(24)}
+                color={ParkColors.textMuted}
+              />
             </TouchableOpacity>
           </View>
 
           {/* Messages Scroll View */}
-          <ScrollView style={styles.chatScroll} contentContainerStyle={styles.chatContent}>
+          <ScrollView
+            style={styles.chatScroll}
+            contentContainerStyle={[
+              styles.chatContent,
+              { padding: hPad, gap: vs(12) },
+            ]}
+          >
             <View style={styles.encryptedBanner}>
-              <MaterialIcons name="lock" size={12} color={ParkColors.textMuted} />
-              <Text style={styles.encryptedText}>
+              <MaterialIcons
+                name="lock"
+                size={ms(12)}
+                color={ParkColors.textMuted}
+              />
+              <Text style={[styles.encryptedText, { fontSize: ms(10.5) }]}>
                 Encrypted in-app messaging • Host phone is masked
               </Text>
             </View>
@@ -120,12 +164,14 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 key={m.id}
                 style={[
                   styles.messageBubble,
+                  { padding: s(12) },
                   m.sender === 'user' ? styles.userBubble : styles.hostBubble,
                 ]}
               >
                 <Text
                   style={[
                     styles.messageText,
+                    { fontSize: ms(13.5) },
                     m.sender === 'user' ? styles.userText : styles.hostText,
                   ]}
                 >
@@ -134,6 +180,7 @@ export const ChatModal: React.FC<ChatModalProps> = ({
                 <Text
                   style={[
                     styles.messageTime,
+                    { fontSize: ms(10) },
                     m.sender === 'user' ? styles.userTime : styles.hostTime,
                   ]}
                 >
@@ -145,23 +192,51 @@ export const ChatModal: React.FC<ChatModalProps> = ({
 
           {/* Quick Reply Chips */}
           <View style={styles.quickReplyContainer}>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.quickChips}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={[
+                styles.quickChips,
+                { paddingHorizontal: hPad, gap: s(8) },
+              ]}
+            >
               {quickReplies.map((qr, i) => (
                 <TouchableOpacity
                   key={i}
-                  style={styles.quickChip}
+                  style={[
+                    styles.quickChip,
+                    {
+                      paddingHorizontal: s(12),
+                      paddingVertical: vs(6),
+                    },
+                  ]}
                   onPress={() => handleSend(qr)}
                 >
-                  <Text style={styles.quickChipText}>{qr}</Text>
+                  <Text style={[styles.quickChipText, { fontSize: ms(12) }]}>
+                    {qr}
+                  </Text>
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
 
           {/* Input Row */}
-          <View style={styles.inputContainer}>
+          <View
+            style={[
+              styles.inputContainer,
+              {
+                paddingHorizontal: hPad,
+                paddingBottom: stickyFooterBottomPad,
+                paddingTop: vs(8),
+                gap: s(10),
+              },
+            ]}
+          >
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                { height: ms(44), fontSize: ms(14) },
+              ]}
               placeholder="Message host..."
               placeholderTextColor={ParkColors.textMuted}
               value={inputText}
@@ -169,11 +244,18 @@ export const ChatModal: React.FC<ChatModalProps> = ({
               onSubmitEditing={() => handleSend()}
             />
             <TouchableOpacity
-              style={styles.sendButton}
+              style={[
+                styles.sendButton,
+                {
+                  width: ms(44),
+                  height: ms(44),
+                  borderRadius: ms(22),
+                },
+              ]}
               activeOpacity={0.8}
               onPress={() => handleSend()}
             >
-              <MaterialIcons name="send" size={18} color="#FFFFFF" />
+              <MaterialIcons name="send" size={ms(18)} color="#FFFFFF" />
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -189,30 +271,27 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   container: {
+    width: '100%',
+    alignSelf: 'center',
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: ParkRadii.sheet,
     borderTopRightRadius: ParkRadii.sheet,
-    height: '75%',
-    maxHeight: 600,
+    height: '78%',
+    maxHeight: 640,
     ...ParkShadows.sheet,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
   },
   hostInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
   },
   avatar: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: ParkColors.surfaceHigh,
   },
   nameRow: {
@@ -221,12 +300,10 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   hostName: {
-    fontSize: 15,
     fontWeight: '700',
     color: ParkColors.text,
   },
   onlineStatus: {
-    fontSize: 11,
     color: ParkColors.success,
     fontWeight: '500',
   },
@@ -234,8 +311,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   chatContent: {
-    padding: 16,
-    gap: 12,
+    width: '100%',
   },
   encryptedBanner: {
     flexDirection: 'row',
@@ -250,12 +326,10 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   encryptedText: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   messageBubble: {
-    maxWidth: '80%',
-    padding: 12,
+    maxWidth: '82%',
     borderRadius: ParkRadii.lg,
   },
   userBubble: {
@@ -269,7 +343,6 @@ const styles = StyleSheet.create({
     borderBottomLeftRadius: 4,
   },
   messageText: {
-    fontSize: 14,
     lineHeight: 19,
   },
   userText: {
@@ -279,7 +352,6 @@ const styles = StyleSheet.create({
     color: ParkColors.text,
   },
   messageTime: {
-    fontSize: 10,
     marginTop: 4,
   },
   userTime: {
@@ -296,47 +368,33 @@ const styles = StyleSheet.create({
     borderTopColor: ParkColors.border,
   },
   quickChips: {
-    paddingHorizontal: 16,
-    gap: 8,
+    flexDirection: 'row',
   },
   quickChip: {
     backgroundColor: ParkColors.surfaceLow,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: ParkColors.border,
   },
   quickChipText: {
-    fontSize: 12,
     color: ParkColors.secondary,
     fontWeight: '600',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: Platform.OS === 'ios' ? 24 : 16,
-    paddingTop: 8,
-    gap: 10,
   },
   input: {
     flex: 1,
-    height: 44,
     backgroundColor: ParkColors.surfaceLow,
     borderRadius: 9999,
     paddingHorizontal: 16,
-    fontSize: 14,
     color: ParkColors.text,
   },
   sendButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
     ...ParkShadows.sm,
   },
 });
-

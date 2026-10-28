@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import {
   Alert,
   Modal,
-  Platform,
+  ScrollView,
   StyleSheet,
   Switch,
   Text,
@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 interface DemoToolsModalProps {
@@ -32,6 +33,7 @@ export const DemoToolsModal: React.FC<DemoToolsModalProps> = ({
     setUserMode,
   } = useParkStore();
 
+  const { height, s, vs, ms, hPad } = useResponsive();
   const [resetMessage, setResetMessage] = useState<string | null>(null);
 
   const handleReset = () => {
@@ -45,9 +47,14 @@ export const DemoToolsModal: React.FC<DemoToolsModalProps> = ({
 
   const handleSkipKyc = () => {
     skipVerification();
-    Alert.alert('KYC Bypassed', 'User is now marked as CNIC & Licence Verified.');
+    Alert.alert(
+      'KYC Bypassed',
+      'User is now marked as CNIC & Licence Verified.'
+    );
     onClose();
   };
+
+  const iconSize = ms(40);
 
   return (
     <Modal
@@ -56,119 +63,265 @@ export const DemoToolsModal: React.FC<DemoToolsModalProps> = ({
       visible={visible}
       onRequestClose={onClose}
     >
-      <View style={styles.overlay}>
-        <View style={styles.modalCard}>
+      <View style={[styles.overlay, { padding: hPad }]}>
+        <View
+          style={[
+            styles.modalCard,
+            {
+              padding: s(18),
+              maxHeight: height * 0.88,
+            },
+          ]}
+        >
           {/* Header */}
-          <View style={styles.header}>
-            <View style={styles.titleRow}>
-              <View style={styles.iconCircle}>
-                <MaterialIcons name="build" size={20} color={ParkColors.secondary} />
+          <View style={[styles.header, { marginBottom: vs(14) }]}>
+            <View style={[styles.titleRow, { gap: s(12) }]}>
+              <View
+                style={[
+                  styles.iconCircle,
+                  {
+                    width: iconSize,
+                    height: iconSize,
+                    borderRadius: iconSize / 2,
+                  },
+                ]}
+              >
+                <MaterialIcons
+                  name="build"
+                  size={ms(20)}
+                  color={ParkColors.secondary}
+                />
               </View>
-              <View>
-                <Text style={styles.title}>Expo Demo Controls</Text>
-                <Text style={styles.subtitle}>Fast evaluator testing & resets</Text>
+              <View style={{ flex: 1 }}>
+                <Text style={[styles.title, { fontSize: ms(16.5) }]}>
+                  Expo Demo Controls
+                </Text>
+                <Text style={[styles.subtitle, { fontSize: ms(12) }]}>
+                  Fast evaluator testing & resets
+                </Text>
               </View>
             </View>
-            <TouchableOpacity onPress={onClose} hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
-              <MaterialIcons name="close" size={24} color={ParkColors.textMuted} />
-            </TouchableOpacity>
-          </View>
-
-          {/* Alert feedback */}
-          {resetMessage && (
-            <View style={styles.feedbackBanner}>
-              <MaterialIcons name="check-circle" size={16} color={ParkColors.success} />
-              <Text style={styles.feedbackText}>{resetMessage}</Text>
-            </View>
-          )}
-
-          {/* Quick Actions List */}
-          <View style={styles.actionsList}>
-            {/* Action 1: Reset Demo Data */}
             <TouchableOpacity
-              style={styles.actionRow}
-              activeOpacity={0.7}
-              onPress={handleReset}
+              onPress={onClose}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
-              <View style={[styles.actionIconCircle, { backgroundColor: '#FEE2E2' }]}>
-                <MaterialIcons name="restart-alt" size={22} color={ParkColors.error} />
-              </View>
-              <View style={styles.actionInfo}>
-                <Text style={styles.actionTitle}>Reset Demo Data</Text>
-                <Text style={styles.actionDescription}>
-                  Restores clean state (10 spots, 2 vehicles, 2 past bookings) in &lt; 1s.
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
-            </TouchableOpacity>
-
-            {/* Action 2: Skip KYC Verification */}
-            <TouchableOpacity
-              style={styles.actionRow}
-              activeOpacity={0.7}
-              onPress={handleSkipKyc}
-            >
-              <View style={[styles.actionIconCircle, { backgroundColor: ParkColors.surfaceHigh }]}>
-                <MaterialIcons name="verified-user" size={22} color={ParkColors.secondary} />
-              </View>
-              <View style={styles.actionInfo}>
-                <Text style={styles.actionTitle}>Skip KYC Verification</Text>
-                <Text style={styles.actionDescription}>
-                  Status: {user.verified ? 'Already Verified' : 'Unverified (Tap to verify)'}
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
-            </TouchableOpacity>
-
-            {/* Action 3: Auto-Approve Requests Toggle */}
-            <View style={styles.actionRow}>
-              <View style={[styles.actionIconCircle, { backgroundColor: ParkColors.amberLight }]}>
-                <MaterialIcons name="bolt" size={22} color={ParkColors.amber} />
-              </View>
-              <View style={styles.actionInfo}>
-                <Text style={styles.actionTitle}>Auto-Approve Requests</Text>
-                <Text style={styles.actionDescription}>
-                  Automatically confirms booking requests without manual host tap.
-                </Text>
-              </View>
-              <Switch
-                value={autoApproveRequests}
-                onValueChange={toggleAutoApproveRequests}
-                trackColor={{ false: ParkColors.border, true: ParkColors.secondary }}
-                thumbColor="#FFFFFF"
+              <MaterialIcons
+                name="close"
+                size={ms(24)}
+                color={ParkColors.textMuted}
               />
-            </View>
-
-            {/* Action 4: Quick Mode Switch */}
-            <TouchableOpacity
-              style={styles.actionRow}
-              activeOpacity={0.7}
-              onPress={() => {
-                const newMode = user.mode === 'seeker' ? 'owner' : 'seeker';
-                setUserMode(newMode);
-                onClose();
-              }}
-            >
-              <View style={[styles.actionIconCircle, { backgroundColor: ParkColors.surfaceLow }]}>
-                <MaterialIcons name="swap-horiz" size={22} color={ParkColors.primary} />
-              </View>
-              <View style={styles.actionInfo}>
-                <Text style={styles.actionTitle}>Switch Active Mode</Text>
-                <Text style={styles.actionDescription}>
-                  Currently in: <Text style={{ fontWeight: '700' }}>{user.mode.toUpperCase()}</Text> mode.
-                </Text>
-              </View>
-              <MaterialIcons name="chevron-right" size={20} color={ParkColors.textMuted} />
             </TouchableOpacity>
           </View>
 
-          {/* Test Mode Disclaimer */}
-          <View style={styles.disclaimerBox}>
-            <MaterialIcons name="info-outline" size={16} color={ParkColors.textMuted} />
-            <Text style={styles.disclaimerText}>
-              University Expo Demo Mode: NADRA identity validation and banking payment gateways are simulated.
-            </Text>
-          </View>
+          <ScrollView showsVerticalScrollIndicator={false}>
+            {/* Alert feedback */}
+            {resetMessage && (
+              <View style={styles.feedbackBanner}>
+                <MaterialIcons
+                  name="check-circle"
+                  size={ms(16)}
+                  color={ParkColors.success}
+                />
+                <Text style={[styles.feedbackText, { fontSize: ms(12.5) }]}>
+                  {resetMessage}
+                </Text>
+              </View>
+            )}
+
+            {/* Quick Actions List */}
+            <View style={[styles.actionsList, { gap: vs(10) }]}>
+              {/* Action 1: Reset Demo Data */}
+              <TouchableOpacity
+                style={[styles.actionRow, { padding: s(12), gap: s(12) }]}
+                activeOpacity={0.7}
+                onPress={handleReset}
+              >
+                <View
+                  style={[
+                    styles.actionIconCircle,
+                    {
+                      width: iconSize,
+                      height: iconSize,
+                      borderRadius: iconSize / 2,
+                      backgroundColor: '#FEE2E2',
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="restart-alt"
+                    size={ms(21)}
+                    color={ParkColors.error}
+                  />
+                </View>
+                <View style={styles.actionInfo}>
+                  <Text style={[styles.actionTitle, { fontSize: ms(14) }]}>
+                    Reset Demo Data
+                  </Text>
+                  <Text
+                    style={[styles.actionDescription, { fontSize: ms(11.5) }]}
+                  >
+                    Restores clean state (10 spots, 2 vehicles, 2 past bookings)
+                    in &lt; 1s.
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={ms(20)}
+                  color={ParkColors.textMuted}
+                />
+              </TouchableOpacity>
+
+              {/* Action 2: Skip KYC Verification */}
+              <TouchableOpacity
+                style={[styles.actionRow, { padding: s(12), gap: s(12) }]}
+                activeOpacity={0.7}
+                onPress={handleSkipKyc}
+              >
+                <View
+                  style={[
+                    styles.actionIconCircle,
+                    {
+                      width: iconSize,
+                      height: iconSize,
+                      borderRadius: iconSize / 2,
+                      backgroundColor: ParkColors.surfaceHigh,
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="verified-user"
+                    size={ms(21)}
+                    color={ParkColors.secondary}
+                  />
+                </View>
+                <View style={styles.actionInfo}>
+                  <Text style={[styles.actionTitle, { fontSize: ms(14) }]}>
+                    Skip KYC Verification
+                  </Text>
+                  <Text
+                    style={[styles.actionDescription, { fontSize: ms(11.5) }]}
+                  >
+                    Status:{' '}
+                    {user.verified
+                      ? 'Already Verified'
+                      : 'Unverified (Tap to verify)'}
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={ms(20)}
+                  color={ParkColors.textMuted}
+                />
+              </TouchableOpacity>
+
+              {/* Action 3: Auto-Approve Requests Toggle */}
+              <View style={[styles.actionRow, { padding: s(12), gap: s(12) }]}>
+                <View
+                  style={[
+                    styles.actionIconCircle,
+                    {
+                      width: iconSize,
+                      height: iconSize,
+                      borderRadius: iconSize / 2,
+                      backgroundColor: ParkColors.amberLight,
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="bolt"
+                    size={ms(21)}
+                    color={ParkColors.amber}
+                  />
+                </View>
+                <View style={styles.actionInfo}>
+                  <Text style={[styles.actionTitle, { fontSize: ms(14) }]}>
+                    Auto-Approve Requests
+                  </Text>
+                  <Text
+                    style={[styles.actionDescription, { fontSize: ms(11.5) }]}
+                  >
+                    Automatically confirms booking requests without manual host
+                    tap.
+                  </Text>
+                </View>
+                <Switch
+                  value={autoApproveRequests}
+                  onValueChange={toggleAutoApproveRequests}
+                  trackColor={{
+                    false: ParkColors.border,
+                    true: ParkColors.secondary,
+                  }}
+                  thumbColor="#FFFFFF"
+                />
+              </View>
+
+              {/* Action 4: Quick Mode Switch */}
+              <TouchableOpacity
+                style={[styles.actionRow, { padding: s(12), gap: s(12) }]}
+                activeOpacity={0.7}
+                onPress={() => {
+                  const newMode = user.mode === 'seeker' ? 'owner' : 'seeker';
+                  setUserMode(newMode);
+                  onClose();
+                }}
+              >
+                <View
+                  style={[
+                    styles.actionIconCircle,
+                    {
+                      width: iconSize,
+                      height: iconSize,
+                      borderRadius: iconSize / 2,
+                      backgroundColor: ParkColors.surfaceLow,
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="swap-horiz"
+                    size={ms(21)}
+                    color={ParkColors.primary}
+                  />
+                </View>
+                <View style={styles.actionInfo}>
+                  <Text style={[styles.actionTitle, { fontSize: ms(14) }]}>
+                    Switch Active Mode
+                  </Text>
+                  <Text
+                    style={[styles.actionDescription, { fontSize: ms(11.5) }]}
+                  >
+                    Currently in:{' '}
+                    <Text style={{ fontWeight: '700' }}>
+                      {user.mode.toUpperCase()}
+                    </Text>{' '}
+                    mode.
+                  </Text>
+                </View>
+                <MaterialIcons
+                  name="chevron-right"
+                  size={ms(20)}
+                  color={ParkColors.textMuted}
+                />
+              </TouchableOpacity>
+            </View>
+
+            {/* Test Mode Disclaimer */}
+            <View
+              style={[
+                styles.disclaimerBox,
+                { padding: s(12), marginTop: vs(14) },
+              ]}
+            >
+              <MaterialIcons
+                name="info-outline"
+                size={ms(16)}
+                color={ParkColors.textMuted}
+              />
+              <Text style={[styles.disclaimerText, { fontSize: ms(11) }]}>
+                University Expo Demo Mode: NADRA identity validation and banking
+                payment gateways are simulated.
+              </Text>
+            </View>
+          </ScrollView>
         </View>
       </View>
     </Modal>
@@ -181,43 +334,34 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(11, 37, 69, 0.65)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
   },
   modalCard: {
     width: '100%',
-    maxWidth: 400,
+    maxWidth: 440,
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.xl,
-    padding: 20,
     ...ParkShadows.lg,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
   iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     backgroundColor: ParkColors.surfaceHigh,
     alignItems: 'center',
     justifyContent: 'center',
   },
   title: {
-    fontSize: 17,
     fontWeight: '700',
     color: ParkColors.primary,
   },
   subtitle: {
-    fontSize: 12,
     color: ParkColors.textMuted,
     marginTop: 1,
   },
@@ -231,57 +375,46 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   feedbackText: {
-    fontSize: 13,
     color: ParkColors.success,
     fontWeight: '600',
   },
   actionsList: {
-    gap: 10,
+    width: '100%',
   },
   actionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 12,
     backgroundColor: ParkColors.backgroundLight,
     borderRadius: ParkRadii.lg,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
   },
   actionIconCircle: {
-    width: 38,
-    height: 38,
-    borderRadius: 19,
     alignItems: 'center',
     justifyContent: 'center',
   },
   actionInfo: {
     flex: 1,
+    gap: 2,
   },
   actionTitle: {
-    fontSize: 14,
-    fontWeight: '600',
-    color: ParkColors.text,
+    fontWeight: '700',
+    color: ParkColors.primary,
   },
   actionDescription: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 2,
-    lineHeight: 15,
+    lineHeight: 16,
   },
   disclaimerBox: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: 16,
-    paddingTop: 12,
-    borderTopWidth: 1,
-    borderTopColor: ParkColors.border,
+    backgroundColor: ParkColors.surfaceLow,
+    borderRadius: ParkRadii.md,
   },
   disclaimerText: {
-    fontSize: 11,
-    color: ParkColors.textMuted,
     flex: 1,
-    lineHeight: 14,
+    color: ParkColors.textMuted,
+    lineHeight: 15,
   },
 });

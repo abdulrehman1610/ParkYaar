@@ -5,24 +5,36 @@ import {
   Alert,
   Image,
   Linking,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChatModal } from '@/components/ChatModal';
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function SpotDetailsScreen() {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
   const { listings } = useParkStore();
+  const {
+    height,
+    s,
+    vs,
+    ms,
+    hPad,
+    vGap,
+    cardPad,
+    headerHeight,
+    headerTopPad,
+    stickyFooterBottomPad,
+    contentMaxWidth,
+    isWide,
+  } = useResponsive();
 
   const spot = listings.find((l) => l.id === id) || listings[0];
 
@@ -54,59 +66,99 @@ export default function SpotDetailsScreen() {
   };
 
   const currentPrice = getTierPrice();
+  const heroHeight = Math.round(Math.min(Math.max(height * 0.32, 210), 340));
+  const iconBtnSize = ms(38);
 
   return (
     <View style={styles.container}>
       {/* Top Header */}
-      <View style={[styles.header, { paddingTop: Math.max(insets.top, 12) }]}>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => router.back()}
+      <View style={[styles.headerOuter, { paddingTop: headerTopPad }]}>
+        <View
+          style={[
+            styles.headerInner,
+            {
+              height: headerHeight,
+              paddingHorizontal: hPad,
+              maxWidth: contentMaxWidth,
+            },
+          ]}
         >
-          <MaterialIcons name="arrow-back" size={24} color={ParkColors.text} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Spot Details</Text>
-        <TouchableOpacity
-          style={styles.iconButton}
-          onPress={() => setIsSaved(!isSaved)}
-        >
-          <MaterialIcons
-            name={isSaved ? 'favorite' : 'favorite-border'}
-            size={22}
-            color={isSaved ? ParkColors.error : ParkColors.text}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                width: iconBtnSize,
+                height: iconBtnSize,
+                borderRadius: iconBtnSize / 2,
+              },
+            ]}
+            onPress={() => router.back()}
+          >
+            <MaterialIcons
+              name="arrow-back"
+              size={ms(22)}
+              color={ParkColors.text}
+            />
+          </TouchableOpacity>
+          <Text style={[styles.headerTitle, { fontSize: ms(16.5) }]}>
+            Spot Details
+          </Text>
+          <TouchableOpacity
+            style={[
+              styles.iconButton,
+              {
+                width: iconBtnSize,
+                height: iconBtnSize,
+                borderRadius: iconBtnSize / 2,
+              },
+            ]}
+            onPress={() => setIsSaved(!isSaved)}
+          >
+            <MaterialIcons
+              name={isSaved ? 'favorite' : 'favorite-border'}
+              size={ms(21)}
+              color={isSaved ? ParkColors.error : ParkColors.text}
+            />
+          </TouchableOpacity>
+        </View>
       </View>
 
       <ScrollView
         style={styles.scroll}
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: vs(120) },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         {/* Top Visual Gallery Hero */}
-        <View style={styles.heroGallery}>
+        <View style={[styles.heroGallery, { height: heroHeight }]}>
           <Image
             source={{ uri: spot.photos[currentPhotoIdx] || spot.photos[0] }}
             style={styles.heroImage}
           />
           {/* Top Badges */}
-          <View style={styles.heroBadgesTop}>
+          <View style={[styles.heroBadgesTop, { top: s(14), left: hPad, gap: s(6) }]}>
             {spot.instantBook && (
-              <View style={styles.heroBadgePrimary}>
-                <MaterialIcons name="bolt" size={13} color="#FFFFFF" />
-                <Text style={styles.heroBadgeText}>Instant Book</Text>
+              <View style={[styles.heroBadgePrimary, { paddingHorizontal: s(10), paddingVertical: vs(5) }]}>
+                <MaterialIcons name="bolt" size={ms(13)} color="#FFFFFF" />
+                <Text style={[styles.heroBadgeText, { fontSize: ms(11) }]}>
+                  Instant Book
+                </Text>
               </View>
             )}
             {spot.cctv && (
-              <View style={styles.heroBadgeDark}>
-                <MaterialIcons name="videocam" size={13} color="#FFFFFF" />
-                <Text style={styles.heroBadgeText}>CCTV Monitored</Text>
+              <View style={[styles.heroBadgeDark, { paddingHorizontal: s(10), paddingVertical: vs(5) }]}>
+                <MaterialIcons name="videocam" size={ms(13)} color="#FFFFFF" />
+                <Text style={[styles.heroBadgeText, { fontSize: ms(11) }]}>
+                  CCTV Monitored
+                </Text>
               </View>
             )}
           </View>
 
           {/* Bottom Dots & Counter */}
-          <View style={styles.heroFooter}>
+          <View style={[styles.heroFooter, { bottom: vs(12), left: hPad, right: hPad }]}>
             <View style={styles.dotsRow}>
               {spot.photos.map((_, i) => (
                 <TouchableOpacity
@@ -120,8 +172,8 @@ export default function SpotDetailsScreen() {
               ))}
             </View>
             <View style={styles.photoCountBadge}>
-              <MaterialIcons name="photo-camera" size={13} color={ParkColors.primary} />
-              <Text style={styles.photoCountText}>
+              <MaterialIcons name="photo-camera" size={ms(13)} color={ParkColors.primary} />
+              <Text style={[styles.photoCountText, { fontSize: ms(11) }]}>
                 {currentPhotoIdx + 1} of {spot.photos.length} photos
               </Text>
             </View>
@@ -129,293 +181,504 @@ export default function SpotDetailsScreen() {
         </View>
 
         {/* Primary Content Sheet */}
-        <View style={styles.contentBody}>
-          {/* Title & Tag */}
-          <View style={styles.titleSection}>
-            <View style={styles.tagRow}>
-              <View style={styles.typeBadge}>
-                <MaterialIcons name="local-parking" size={13} color={ParkColors.secondary} />
-                <Text style={styles.typeBadgeText}>
-                  {spot.type === 'public' ? 'Public Facility' : 'Private Driveway'}
-                </Text>
-              </View>
-              <View style={styles.availableBadge}>
-                <View style={styles.greenPulse} />
-                <Text style={styles.availableText}>Available Now</Text>
-              </View>
-            </View>
-
-            <Text style={styles.spotTitle}>{spot.title}</Text>
-            <View style={styles.addressRow}>
-              <MaterialIcons name="place" size={16} color={ParkColors.secondary} />
-              <Text style={styles.addressText}>{spot.address}</Text>
-            </View>
-
-            {/* Rating Summary Bar */}
-            <View style={styles.ratingBar}>
-              <View style={styles.ratingScoreRow}>
-                <MaterialIcons name="star" size={18} color={ParkColors.amber} />
-                <Text style={styles.ratingNumber}>{spot.rating}</Text>
-              </View>
-              <Text style={styles.ratingReviewCount}>
-                ({spot.reviewCount} verified stays)
-              </Text>
-              <Text style={styles.ratingDot}>•</Text>
-              <View style={styles.topRatedBadge}>
-                <MaterialIcons name="verified" size={12} color={ParkColors.secondary} />
-                <Text style={styles.topRatedText}>Top Rated Space</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* Verified Host Card */}
-          <View style={styles.hostCard}>
-            <View style={styles.hostTopRow}>
-              <View style={styles.hostAvatarGroup}>
-                <Image source={{ uri: spot.hostPhoto }} style={styles.hostAvatarLarge} />
-                <View style={styles.hostShieldBadge}>
-                  <MaterialIcons name="verified-user" size={12} color="#FFFFFF" />
-                </View>
-              </View>
-              <View style={styles.hostDetails}>
-                <View style={styles.hostNamePill}>
-                  <Text style={styles.hostNameLarge}>{spot.hostName}</Text>
-                  <View style={styles.hostBadge}>
-                    <Text style={styles.hostBadgeText}>Host</Text>
-                  </View>
-                </View>
-                <Text style={styles.hostSubtitle}>CNIC & Physical Address Verified</Text>
-              </View>
-              <TouchableOpacity
-                style={styles.contactBtn}
-                onPress={() => setChatVisible(true)}
-              >
-                <MaterialIcons name="chat" size={16} color={ParkColors.secondary} />
-                <Text style={styles.contactBtnText}>Contact</Text>
-              </TouchableOpacity>
-            </View>
-
-            <View style={styles.hostStatsGrid}>
-              <View style={styles.hostStatItem}>
-                <MaterialIcons name="history-toggle-off" size={16} color={ParkColors.textMuted} />
-                <View>
-                  <Text style={styles.hostStatLabel}>Response Time</Text>
-                  <Text style={styles.hostStatValue}>{spot.hostResponseTime}</Text>
-                </View>
-              </View>
-              <View style={styles.hostStatItem}>
-                <MaterialIcons name="calendar-month" size={16} color={ParkColors.textMuted} />
-                <View>
-                  <Text style={styles.hostStatLabel}>Hosting Since</Text>
-                  <Text style={styles.hostStatValue}>{spot.hostSince}</Text>
-                </View>
-              </View>
-            </View>
-          </View>
-
-          {/* Amenities & Security Bento Grid */}
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Amenities & Security</Text>
-              <Text style={styles.sectionSubtitle}>
-                {spot.features.length} Verified Features
-              </Text>
-            </View>
-
-            <View style={styles.amenitiesGrid}>
-              {spot.features.map((feature, idx) => (
-                <View key={idx} style={styles.amenityTile}>
-                  <View style={styles.amenityIconCircle}>
-                    <MaterialIcons
-                      name={
-                        feature.includes('EV')
-                          ? 'electric-bolt'
-                          : feature.includes('CCTV')
-                          ? 'videocam'
-                          : feature.includes('Covered')
-                          ? 'roofing'
-                          : feature.includes('Gated')
-                          ? 'lock'
-                          : 'directions-car'
-                      }
-                      size={18}
-                      color={ParkColors.secondary}
-                    />
-                  </View>
-                  <Text style={styles.amenityText} numberOfLines={2}>
-                    {feature}
+        <View style={styles.contentOuter}>
+          <View
+            style={[
+              styles.contentBody,
+              {
+                maxWidth: contentMaxWidth,
+                paddingHorizontal: hPad,
+                paddingTop: vs(18),
+                gap: vGap,
+              },
+            ]}
+          >
+            {/* Title & Tag */}
+            <View style={[styles.titleSection, { gap: vs(6) }]}>
+              <View style={styles.tagRow}>
+                <View style={styles.typeBadge}>
+                  <MaterialIcons
+                    name="local-parking"
+                    size={ms(13)}
+                    color={ParkColors.secondary}
+                  />
+                  <Text style={[styles.typeBadgeText, { fontSize: ms(11) }]}>
+                    {spot.type === 'public' ? 'Public Facility' : 'Private Driveway'}
                   </Text>
                 </View>
-              ))}
-            </View>
-          </View>
-
-          {/* Tiered Duration Pricing Selector */}
-          <View style={styles.sectionContainer}>
-            <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>Choose Duration Tier</Text>
-              <Text style={styles.sectionSubtitle}>Select to preview total</Text>
-            </View>
-
-            <View style={styles.tierGroup}>
-              {/* Hourly Tier */}
-              <TouchableOpacity
-                style={[
-                  styles.tierCard,
-                  selectedTier === 'hourly' && styles.tierCardSelected,
-                ]}
-                activeOpacity={0.8}
-                onPress={() => setSelectedTier('hourly')}
-              >
-                <View style={styles.tierLeft}>
-                  <View style={[styles.radioOuter, selectedTier === 'hourly' && styles.radioOuterSelected]}>
-                    {selectedTier === 'hourly' && <View style={styles.radioInner} />}
-                  </View>
-                  <View>
-                    <View style={styles.tierBadgeRow}>
-                      <Text style={styles.tierTitle}>Hourly Parking</Text>
-                      <View style={styles.tierPill}>
-                        <Text style={styles.tierPillText}>Standard</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.tierDesc}>Pay-as-you-go • Min 1 hr</Text>
-                  </View>
-                </View>
-                <View style={styles.tierRight}>
-                  <Text style={styles.tierPrice}>Rs {spot.pricePerHour}</Text>
-                  <Text style={styles.tierUnit}>per hour</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Full Day Pass Tier */}
-              <TouchableOpacity
-                style={[
-                  styles.tierCard,
-                  selectedTier === 'daily' && styles.tierCardSelected,
-                ]}
-                activeOpacity={0.8}
-                onPress={() => setSelectedTier('daily')}
-              >
-                <View style={styles.tierLeft}>
-                  <View style={[styles.radioOuter, selectedTier === 'daily' && styles.radioOuterSelected]}>
-                    {selectedTier === 'daily' && <View style={styles.radioInner} />}
-                  </View>
-                  <View>
-                    <View style={styles.tierBadgeRow}>
-                      <Text style={styles.tierTitle}>Full Day Pass</Text>
-                      <View style={styles.saveBadge}>
-                        <Text style={styles.saveBadgeText}>Save 25%</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.tierDesc}>12 hours continuous access</Text>
-                  </View>
-                </View>
-                <View style={styles.tierRight}>
-                  <Text style={styles.tierPrice}>Rs {spot.pricePerDay}</Text>
-                  <Text style={styles.tierUnit}>per day</Text>
-                </View>
-              </TouchableOpacity>
-
-              {/* Monthly Tier */}
-              <TouchableOpacity
-                style={[
-                  styles.tierCard,
-                  selectedTier === 'monthly' && styles.tierCardSelected,
-                ]}
-                activeOpacity={0.8}
-                onPress={() => setSelectedTier('monthly')}
-              >
-                <View style={styles.tierLeft}>
-                  <View style={[styles.radioOuter, selectedTier === 'monthly' && styles.radioOuterSelected]}>
-                    {selectedTier === 'monthly' && <View style={styles.radioInner} />}
-                  </View>
-                  <View>
-                    <View style={styles.tierBadgeRow}>
-                      <Text style={styles.tierTitle}>Monthly Reserved</Text>
-                      <View style={styles.tierPill}>
-                        <Text style={styles.tierPillText}>Dedicated</Text>
-                      </View>
-                    </View>
-                    <Text style={styles.tierDesc}>Designated 24/7 private bay</Text>
-                  </View>
-                </View>
-                <View style={styles.tierRight}>
-                  <Text style={styles.tierPrice}>Rs {spot.pricePerMonth}</Text>
-                  <Text style={styles.tierUnit}>per month</Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          </View>
-
-          {/* Access Protocol & Instructions */}
-          <View style={styles.sectionContainer}>
-            <Text style={styles.sectionTitle}>Location & Access Protocol</Text>
-
-            {/* Directions Bar */}
-            <View style={styles.directionsBar}>
-              <View style={styles.directionsInfo}>
-                <View style={styles.directionsIcon}>
-                  <MaterialIcons name="navigation" size={18} color="#FFFFFF" />
-                </View>
-                <View>
-                  <Text style={styles.directionsTitle}>4 mins drive from Liberty</Text>
-                  <Text style={styles.directionsSubtitle}>Direct asphalt route via Main Blvd</Text>
+                <View style={styles.availableBadge}>
+                  <View style={styles.greenPulse} />
+                  <Text style={[styles.availableText, { fontSize: ms(11) }]}>
+                    Available Now
+                  </Text>
                 </View>
               </View>
-              <TouchableOpacity
-                style={styles.directionsBtn}
-                onPress={handleDirections}
-              >
-                <Text style={styles.directionsBtnText}>Get Directions</Text>
-              </TouchableOpacity>
-            </View>
 
-            {/* Smart Access Instructions Card */}
-            <View style={styles.accessProtocolCard}>
-              <View style={styles.accessIconCircle}>
-                <MaterialIcons name="qr-code-scanner" size={20} color={ParkColors.secondary} />
-              </View>
-              <View style={styles.accessTextGroup}>
-                <Text style={styles.accessTitle}>Automated Driveway Gate</Text>
-                <Text style={styles.accessDesc}>{spot.accessProtocol}</Text>
-              </View>
-            </View>
-          </View>
-
-          {/* SafePark Guarantee */}
-          <View style={styles.guaranteeBox}>
-            <MaterialIcons name="shield" size={20} color={ParkColors.secondary} />
-            <Text style={styles.guaranteeText}>
-              <Text style={{ fontWeight: '700', color: ParkColors.text }}>
-                ParkYaar SafePark Guarantee:{' '}
+              <Text style={[styles.spotTitle, { fontSize: ms(22) }]}>
+                {spot.title}
               </Text>
-              Free cancellation up to 15 mins before arrival time. Full host payout protection.
-            </Text>
+              <View style={styles.addressRow}>
+                <MaterialIcons name="place" size={ms(16)} color={ParkColors.secondary} />
+                <Text style={[styles.addressText, { fontSize: ms(13) }]}>
+                  {spot.address}
+                </Text>
+              </View>
+
+              {/* Rating Summary Bar */}
+              <View style={[styles.ratingBar, { marginTop: vs(4), gap: s(6) }]}>
+                <View style={styles.ratingScoreRow}>
+                  <MaterialIcons name="star" size={ms(17)} color={ParkColors.amber} />
+                  <Text style={[styles.ratingNumber, { fontSize: ms(14) }]}>
+                    {spot.rating}
+                  </Text>
+                </View>
+                <Text style={[styles.ratingReviewCount, { fontSize: ms(12) }]}>
+                  ({spot.reviewCount} verified stays)
+                </Text>
+                <Text style={styles.ratingDot}>•</Text>
+                <View style={styles.topRatedBadge}>
+                  <MaterialIcons name="verified" size={ms(12)} color={ParkColors.secondary} />
+                  <Text style={[styles.topRatedText, { fontSize: ms(11) }]}>
+                    Top Rated Space
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* Verified Host Card */}
+            <View style={[styles.hostCard, { padding: cardPad, gap: vs(12) }]}>
+              <View style={[styles.hostTopRow, { gap: s(12) }]}>
+                <View style={styles.hostAvatarGroup}>
+                  <Image
+                    source={{ uri: spot.hostPhoto }}
+                    style={[
+                      styles.hostAvatarLarge,
+                      {
+                        width: ms(48),
+                        height: ms(48),
+                        borderRadius: ms(24),
+                      },
+                    ]}
+                  />
+                  <View style={styles.hostShieldBadge}>
+                    <MaterialIcons name="verified-user" size={ms(11)} color="#FFFFFF" />
+                  </View>
+                </View>
+                <View style={styles.hostDetails}>
+                  <View style={styles.hostNamePill}>
+                    <Text
+                      style={[styles.hostNameLarge, { fontSize: ms(15) }]}
+                      numberOfLines={1}
+                    >
+                      {spot.hostName}
+                    </Text>
+                    <View style={styles.hostBadge}>
+                      <Text style={[styles.hostBadgeText, { fontSize: ms(10) }]}>
+                        Host
+                      </Text>
+                    </View>
+                  </View>
+                  <Text
+                    style={[styles.hostSubtitle, { fontSize: ms(11.5) }]}
+                    numberOfLines={1}
+                  >
+                    CNIC & Physical Address Verified
+                  </Text>
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.contactBtn,
+                    { paddingHorizontal: s(12), paddingVertical: vs(7) },
+                  ]}
+                  onPress={() => setChatVisible(true)}
+                >
+                  <MaterialIcons name="chat" size={ms(15)} color={ParkColors.secondary} />
+                  <Text style={[styles.contactBtnText, { fontSize: ms(12) }]}>
+                    Contact
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              <View style={[styles.hostStatsGrid, { paddingTop: vs(10), gap: s(10) }]}>
+                <View style={[styles.hostStatItem, { gap: s(8) }]}>
+                  <MaterialIcons
+                    name="history-toggle-off"
+                    size={ms(16)}
+                    color={ParkColors.textMuted}
+                  />
+                  <View>
+                    <Text style={[styles.hostStatLabel, { fontSize: ms(10.5) }]}>
+                      Response Time
+                    </Text>
+                    <Text style={[styles.hostStatValue, { fontSize: ms(12.5) }]}>
+                      {spot.hostResponseTime}
+                    </Text>
+                  </View>
+                </View>
+                <View style={[styles.hostStatItem, { gap: s(8) }]}>
+                  <MaterialIcons
+                    name="calendar-month"
+                    size={ms(16)}
+                    color={ParkColors.textMuted}
+                  />
+                  <View>
+                    <Text style={[styles.hostStatLabel, { fontSize: ms(10.5) }]}>
+                      Hosting Since
+                    </Text>
+                    <Text style={[styles.hostStatValue, { fontSize: ms(12.5) }]}>
+                      {spot.hostSince}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+
+            {/* Amenities & Security Bento Grid */}
+            <View style={[styles.sectionContainer, { gap: vs(10) }]}>
+              <View style={styles.sectionHeader}>
+                <Text style={[styles.sectionTitle, { fontSize: ms(16) }]}>
+                  Amenities & Security
+                </Text>
+                <Text style={[styles.sectionSubtitle, { fontSize: ms(12) }]}>
+                  {spot.features.length} Verified Features
+                </Text>
+              </View>
+
+              <View style={[styles.amenitiesGrid, { gap: s(10) }]}>
+                {spot.features.map((feature, idx) => (
+                  <View
+                    key={idx}
+                    style={[
+                      styles.amenityTile,
+                      {
+                        padding: s(12),
+                        gap: s(10),
+                        flexBasis: isWide ? '23%' : '47%',
+                      },
+                    ]}
+                  >
+                    <View
+                      style={[
+                        styles.amenityIconCircle,
+                        {
+                          width: ms(34),
+                          height: ms(34),
+                          borderRadius: ms(17),
+                        },
+                      ]}
+                    >
+                      <MaterialIcons
+                        name={
+                          feature.includes('EV')
+                            ? 'electric-bolt'
+                            : feature.includes('CCTV')
+                            ? 'videocam'
+                            : feature.includes('Covered')
+                            ? 'roofing'
+                            : feature.includes('Gated')
+                            ? 'lock'
+                            : 'directions-car'
+                        }
+                        size={ms(17)}
+                        color={ParkColors.secondary}
+                      />
+                    </View>
+                    <Text
+                      style={[styles.amenityText, { fontSize: ms(12) }]}
+                      numberOfLines={2}
+                    >
+                      {feature}
+                    </Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            {/* Tiered Duration Pricing Selector */}
+            <View style={[styles.sectionContainer, { gap: vs(10) }]}>
+              <View style={styles.sectionHeader}>
+                <Text style={[styles.sectionTitle, { fontSize: ms(16) }]}>
+                  Choose Duration Tier
+                </Text>
+                <Text style={[styles.sectionSubtitle, { fontSize: ms(12) }]}>
+                  Select to preview total
+                </Text>
+              </View>
+
+              <View style={[styles.tierGroup, { gap: vs(10) }]}>
+                {/* Hourly Tier */}
+                <TouchableOpacity
+                  style={[
+                    styles.tierCard,
+                    { padding: cardPad },
+                    selectedTier === 'hourly' && styles.tierCardSelected,
+                  ]}
+                  activeOpacity={0.8}
+                  onPress={() => setSelectedTier('hourly')}
+                >
+                  <View style={[styles.tierLeft, { gap: s(12) }]}>
+                    <View
+                      style={[
+                        styles.radioOuter,
+                        selectedTier === 'hourly' && styles.radioOuterSelected,
+                      ]}
+                    >
+                      {selectedTier === 'hourly' && <View style={styles.radioInner} />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.tierBadgeRow}>
+                        <Text style={[styles.tierTitle, { fontSize: ms(14) }]}>
+                          Hourly Parking
+                        </Text>
+                        <View style={styles.tierPill}>
+                          <Text style={[styles.tierPillText, { fontSize: ms(10) }]}>
+                            Standard
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={[styles.tierDesc, { fontSize: ms(11.5) }]}>
+                        Pay-as-you-go • Min 1 hr
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.tierRight}>
+                    <Text style={[styles.tierPrice, { fontSize: ms(16) }]}>
+                      Rs {spot.pricePerHour}
+                    </Text>
+                    <Text style={[styles.tierUnit, { fontSize: ms(11) }]}>
+                      per hour
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Full Day Pass Tier */}
+                <TouchableOpacity
+                  style={[
+                    styles.tierCard,
+                    { padding: cardPad },
+                    selectedTier === 'daily' && styles.tierCardSelected,
+                  ]}
+                  activeOpacity={0.8}
+                  onPress={() => setSelectedTier('daily')}
+                >
+                  <View style={[styles.tierLeft, { gap: s(12) }]}>
+                    <View
+                      style={[
+                        styles.radioOuter,
+                        selectedTier === 'daily' && styles.radioOuterSelected,
+                      ]}
+                    >
+                      {selectedTier === 'daily' && <View style={styles.radioInner} />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.tierBadgeRow}>
+                        <Text style={[styles.tierTitle, { fontSize: ms(14) }]}>
+                          Full Day Pass
+                        </Text>
+                        <View style={styles.saveBadge}>
+                          <Text style={[styles.saveBadgeText, { fontSize: ms(10) }]}>
+                            Save 25%
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={[styles.tierDesc, { fontSize: ms(11.5) }]}>
+                        12 hours continuous access
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.tierRight}>
+                    <Text style={[styles.tierPrice, { fontSize: ms(16) }]}>
+                      Rs {spot.pricePerDay}
+                    </Text>
+                    <Text style={[styles.tierUnit, { fontSize: ms(11) }]}>
+                      per day
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+
+                {/* Monthly Tier */}
+                <TouchableOpacity
+                  style={[
+                    styles.tierCard,
+                    { padding: cardPad },
+                    selectedTier === 'monthly' && styles.tierCardSelected,
+                  ]}
+                  activeOpacity={0.8}
+                  onPress={() => setSelectedTier('monthly')}
+                >
+                  <View style={[styles.tierLeft, { gap: s(12) }]}>
+                    <View
+                      style={[
+                        styles.radioOuter,
+                        selectedTier === 'monthly' && styles.radioOuterSelected,
+                      ]}
+                    >
+                      {selectedTier === 'monthly' && <View style={styles.radioInner} />}
+                    </View>
+                    <View style={{ flex: 1 }}>
+                      <View style={styles.tierBadgeRow}>
+                        <Text style={[styles.tierTitle, { fontSize: ms(14) }]}>
+                          Monthly Reserved
+                        </Text>
+                        <View style={styles.tierPill}>
+                          <Text style={[styles.tierPillText, { fontSize: ms(10) }]}>
+                            Dedicated
+                          </Text>
+                        </View>
+                      </View>
+                      <Text style={[styles.tierDesc, { fontSize: ms(11.5) }]}>
+                        Designated 24/7 private bay
+                      </Text>
+                    </View>
+                  </View>
+                  <View style={styles.tierRight}>
+                    <Text style={[styles.tierPrice, { fontSize: ms(16) }]}>
+                      Rs {spot.pricePerMonth}
+                    </Text>
+                    <Text style={[styles.tierUnit, { fontSize: ms(11) }]}>
+                      per month
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            {/* Access Protocol & Instructions */}
+            <View style={[styles.sectionContainer, { gap: vs(10) }]}>
+              <Text style={[styles.sectionTitle, { fontSize: ms(16) }]}>
+                Location & Access Protocol
+              </Text>
+
+              {/* Directions Bar */}
+              <View style={[styles.directionsBar, { padding: cardPad, gap: s(10) }]}>
+                <View style={[styles.directionsInfo, { gap: s(10) }]}>
+                  <View
+                    style={[
+                      styles.directionsIcon,
+                      {
+                        width: ms(36),
+                        height: ms(36),
+                        borderRadius: ms(18),
+                      },
+                    ]}
+                  >
+                    <MaterialIcons name="navigation" size={ms(17)} color="#FFFFFF" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={[styles.directionsTitle, { fontSize: ms(13.5) }]}>
+                      4 mins drive from Liberty
+                    </Text>
+                    <Text style={[styles.directionsSubtitle, { fontSize: ms(11.5) }]}>
+                      Direct asphalt route via Main Blvd
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  style={[
+                    styles.directionsBtn,
+                    { paddingHorizontal: s(12), paddingVertical: vs(7) },
+                  ]}
+                  onPress={handleDirections}
+                >
+                  <Text style={[styles.directionsBtnText, { fontSize: ms(12) }]}>
+                    Get Directions
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Smart Access Instructions Card */}
+              <View style={[styles.accessProtocolCard, { padding: cardPad, gap: s(12) }]}>
+                <View
+                  style={[
+                    styles.accessIconCircle,
+                    {
+                      width: ms(40),
+                      height: ms(40),
+                      borderRadius: ms(20),
+                    },
+                  ]}
+                >
+                  <MaterialIcons
+                    name="qr-code-scanner"
+                    size={ms(20)}
+                    color={ParkColors.secondary}
+                  />
+                </View>
+                <View style={styles.accessTextGroup}>
+                  <Text style={[styles.accessTitle, { fontSize: ms(13.5) }]}>
+                    Automated Driveway Gate
+                  </Text>
+                  <Text style={[styles.accessDesc, { fontSize: ms(12) }]}>
+                    {spot.accessProtocol}
+                  </Text>
+                </View>
+              </View>
+            </View>
+
+            {/* SafePark Guarantee */}
+            <View style={[styles.guaranteeBox, { padding: cardPad, gap: s(10) }]}>
+              <MaterialIcons name="shield" size={ms(20)} color={ParkColors.secondary} />
+              <Text style={[styles.guaranteeText, { fontSize: ms(12) }]}>
+                <Text style={{ fontWeight: '700', color: ParkColors.text }}>
+                  ParkYaar SafePark Guarantee:{' '}
+                </Text>
+                Free cancellation up to 15 mins before arrival time. Full host payout protection.
+              </Text>
+            </View>
           </View>
         </View>
       </ScrollView>
 
       {/* Sticky Bottom Booking Bar */}
-      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
-        <View style={styles.footerSummary}>
-          <View style={styles.footerPriceRow}>
-            <Text style={styles.footerPrice}>Rs {currentPrice.price}</Text>
-            <Text style={styles.footerUnit}>{currentPrice.unit}</Text>
+      <View
+        style={[
+          styles.stickyFooterOuter,
+          {
+            paddingBottom: stickyFooterBottomPad,
+            paddingTop: vs(12),
+            paddingHorizontal: hPad,
+          },
+        ]}
+      >
+        <View style={[styles.stickyFooterInner, { maxWidth: contentMaxWidth }]}>
+          <View style={styles.footerSummary}>
+            <View style={styles.footerPriceRow}>
+              <Text style={[styles.footerPrice, { fontSize: ms(20) }]}>
+                Rs {currentPrice.price}
+              </Text>
+              <Text style={[styles.footerUnit, { fontSize: ms(12) }]}>
+                {currentPrice.unit}
+              </Text>
+            </View>
+            <View style={styles.feeIncludedRow}>
+              <MaterialIcons
+                name="check-circle"
+                size={ms(12)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.feeIncludedText, { fontSize: ms(11) }]}>
+                Taxes & fee included
+              </Text>
+            </View>
           </View>
-          <View style={styles.feeIncludedRow}>
-            <MaterialIcons name="check-circle" size={12} color={ParkColors.secondary} />
-            <Text style={styles.feeIncludedText}>Taxes & fee included</Text>
-          </View>
-        </View>
 
-        <TouchableOpacity
-          style={styles.bookNowButton}
-          activeOpacity={0.88}
-          onPress={handleBookNow}
-        >
-          <Text style={styles.bookNowText}>Book This Spot</Text>
-          <MaterialIcons name="arrow-forward" size={20} color="#FFFFFF" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.bookNowButton,
+              {
+                height: ms(48),
+                paddingHorizontal: s(22),
+              },
+            ]}
+            activeOpacity={0.88}
+            onPress={handleBookNow}
+          >
+            <Text style={[styles.bookNowText, { fontSize: ms(15) }]}>
+              Book This Spot
+            </Text>
+            <MaterialIcons name="arrow-forward" size={ms(19)} color="#FFFFFF" />
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Chat with Host Modal */}
@@ -434,26 +697,25 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: ParkColors.background,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingBottom: 10,
+  headerOuter: {
+    width: '100%',
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
     borderBottomColor: ParkColors.border,
     zIndex: 20,
   },
+  headerInner: {
+    width: '100%',
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   iconButton: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
     alignItems: 'center',
     justifyContent: 'center',
   },
   headerTitle: {
-    fontSize: 17,
     fontWeight: '700',
     color: ParkColors.primary,
   },
@@ -461,11 +723,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 110,
+    flexGrow: 1,
   },
   heroGallery: {
     width: '100%',
-    height: 270,
     position: 'relative',
     backgroundColor: ParkColors.surfaceContainer,
   },
@@ -475,18 +736,14 @@ const styles = StyleSheet.create({
   },
   heroBadgesTop: {
     position: 'absolute',
-    top: 14,
-    left: 14,
     flexDirection: 'row',
-    gap: 6,
+    flexWrap: 'wrap',
   },
   heroBadgePrimary: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
     backgroundColor: ParkColors.secondary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 9999,
     ...ParkShadows.sm,
   },
@@ -495,20 +752,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 3,
     backgroundColor: ParkColors.primary,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 9999,
   },
   heroBadgeText: {
     color: '#FFFFFF',
-    fontSize: 11,
     fontWeight: '700',
   },
   heroFooter: {
     position: 'absolute',
-    bottom: 12,
-    left: 14,
-    right: 14,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -519,59 +770,63 @@ const styles = StyleSheet.create({
     gap: 6,
     backgroundColor: 'rgba(11, 37, 69, 0.4)',
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 6,
     borderRadius: 9999,
   },
   dot: {
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
+    width: 6,
+    height: 6,
+    borderRadius: 3,
     backgroundColor: 'rgba(255, 255, 255, 0.5)',
   },
   dotActive: {
+    width: 18,
     backgroundColor: '#FFFFFF',
-    width: 9,
-    height: 9,
-    borderRadius: 4.5,
   },
   photoCountBadge: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    backgroundColor: 'rgba(255, 255, 255, 0.94)',
+    backgroundColor: 'rgba(255, 255, 255, 0.92)',
     paddingHorizontal: 10,
-    paddingVertical: 4,
+    paddingVertical: 5,
     borderRadius: 9999,
-    ...ParkShadows.sm,
   },
   photoCountText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.primary,
   },
+  contentOuter: {
+    width: '100%',
+    backgroundColor: ParkColors.background,
+    borderTopLeftRadius: ParkRadii.sheet,
+    borderTopRightRadius: ParkRadii.sheet,
+    marginTop: -16,
+  },
   contentBody: {
-    padding: 16,
-    gap: 18,
+    width: '100%',
+    alignSelf: 'center',
   },
   titleSection: {
-    gap: 6,
+    width: '100%',
   },
   tagRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'wrap',
     gap: 8,
   },
   typeBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
+    gap: 4,
     backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 9,
-    paddingVertical: 3,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
     borderRadius: 9999,
   },
   typeBadgeText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
@@ -579,22 +834,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 5,
+    backgroundColor: ParkColors.successLight,
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 9999,
   },
   greenPulse: {
     width: 7,
     height: 7,
     borderRadius: 3.5,
-    backgroundColor: ParkColors.amber,
+    backgroundColor: ParkColors.success,
   },
   availableText: {
-    fontSize: 12,
-    color: ParkColors.textMuted,
+    fontWeight: '700',
+    color: ParkColors.success,
   },
   spotTitle: {
-    fontSize: 22,
     fontWeight: '800',
     color: ParkColors.primary,
-    lineHeight: 28,
+    letterSpacing: -0.3,
   },
   addressRow: {
     flexDirection: 'row',
@@ -602,31 +860,24 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   addressText: {
-    fontSize: 13,
     color: ParkColors.textMuted,
     flex: 1,
   },
   ratingBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: ParkColors.surfaceLow,
-    padding: 10,
-    borderRadius: ParkRadii.md,
-    gap: 6,
-    marginTop: 4,
+    flexWrap: 'wrap',
   },
   ratingScoreRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 2,
+    gap: 3,
   },
   ratingNumber: {
-    fontSize: 14,
     fontWeight: '800',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   ratingReviewCount: {
-    fontSize: 12,
     color: ParkColors.textMuted,
   },
   ratingDot: {
@@ -636,52 +887,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 3,
-    backgroundColor: ParkColors.surfaceHigh,
+    backgroundColor: ParkColors.surfaceLow,
     paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 4,
+    paddingVertical: 3,
+    borderRadius: 9999,
   },
   topRatedText: {
-    fontSize: 11,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
   hostCard: {
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    gap: 12,
     ...ParkShadows.sm,
   },
   hostTopRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
   },
   hostAvatarGroup: {
     position: 'relative',
   },
   hostAvatarLarge: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
     backgroundColor: ParkColors.surfaceHigh,
   },
   hostShieldBadge: {
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 18,
-    height: 18,
-    borderRadius: 9,
     backgroundColor: ParkColors.secondary,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderRadius: 10,
+    padding: 2,
+    borderWidth: 1.5,
+    borderColor: '#FFFFFF',
   },
   hostDetails: {
     flex: 1,
+    gap: 2,
   },
   hostNamePill: {
     flexDirection: 'row',
@@ -689,9 +933,9 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   hostNameLarge: {
-    fontSize: 15,
     fontWeight: '700',
     color: ParkColors.primary,
+    flexShrink: 1,
   },
   hostBadge: {
     backgroundColor: ParkColors.surfaceHigh,
@@ -700,53 +944,44 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   hostBadgeText: {
-    fontSize: 10,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
   hostSubtitle: {
-    fontSize: 11,
     color: ParkColors.textMuted,
-    marginTop: 2,
   },
   contactBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     backgroundColor: ParkColors.surfaceLow,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
     borderRadius: 9999,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
   },
   contactBtnText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
   hostStatsGrid: {
     flexDirection: 'row',
-    backgroundColor: ParkColors.surfaceLow,
-    borderRadius: ParkRadii.md,
-    padding: 10,
-    justifyContent: 'space-between',
+    borderTopWidth: 1,
+    borderTopColor: ParkColors.border,
   },
   hostStatItem: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    flex: 1,
   },
   hostStatLabel: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   hostStatValue: {
-    fontSize: 12,
     fontWeight: '700',
     color: ParkColors.primary,
   },
   sectionContainer: {
-    gap: 10,
+    width: '100%',
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -754,48 +989,39 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   sectionTitle: {
-    fontSize: 16,
-    fontWeight: '700',
+    fontWeight: '800',
     color: ParkColors.primary,
   },
   sectionSubtitle: {
-    fontSize: 12,
-    color: ParkColors.secondary,
+    color: ParkColors.textMuted,
     fontWeight: '600',
   },
   amenitiesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
   },
   amenityTile: {
+    flexGrow: 1,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.md,
-    padding: 10,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    width: '48.5%',
-    gap: 8,
     ...ParkShadows.sm,
   },
   amenityIconCircle: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   amenityText: {
-    fontSize: 12,
+    flex: 1,
     fontWeight: '600',
     color: ParkColors.text,
-    flex: 1,
   },
   tierGroup: {
-    gap: 10,
+    width: '100%',
   },
   tierCard: {
     flexDirection: 'row',
@@ -803,7 +1029,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: '#FFFFFF',
     borderRadius: ParkRadii.lg,
-    padding: 14,
     borderWidth: 1.5,
     borderColor: ParkColors.border,
     ...ParkShadows.sm,
@@ -815,7 +1040,6 @@ const styles = StyleSheet.create({
   tierLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
     flex: 1,
   },
   radioOuter: {
@@ -840,36 +1064,33 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
+    flexWrap: 'wrap',
   },
   tierTitle: {
-    fontSize: 14,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: ParkColors.primary,
   },
   tierPill: {
     backgroundColor: ParkColors.surfaceHigh,
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   tierPillText: {
-    fontSize: 10,
-    fontWeight: '600',
+    fontWeight: '700',
     color: ParkColors.secondary,
   },
   saveBadge: {
     backgroundColor: ParkColors.amberDim,
-    paddingHorizontal: 6,
+    paddingHorizontal: 7,
     paddingVertical: 2,
     borderRadius: 9999,
   },
   saveBadgeText: {
-    fontSize: 10,
     fontWeight: '800',
-    color: '#291800',
+    color: '#523400',
   },
   tierDesc: {
-    fontSize: 11,
     color: ParkColors.textMuted,
     marginTop: 2,
   },
@@ -877,165 +1098,138 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
   },
   tierPrice: {
-    fontSize: 16,
     fontWeight: '800',
     color: ParkColors.primary,
   },
   tierUnit: {
-    fontSize: 10,
     color: ParkColors.textMuted,
   },
   directionsBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#FFFFFF',
-    padding: 12,
-    borderRadius: ParkRadii.md,
-    borderWidth: 1,
-    borderColor: ParkColors.border,
+    backgroundColor: ParkColors.primary,
+    borderRadius: ParkRadii.lg,
     ...ParkShadows.sm,
   },
   directionsInfo: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
     flex: 1,
   },
   directionsIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
   },
   directionsTitle: {
-    fontSize: 13,
     fontWeight: '700',
-    color: ParkColors.text,
+    color: '#FFFFFF',
   },
   directionsSubtitle: {
-    fontSize: 11,
-    color: ParkColors.textMuted,
+    color: 'rgba(255, 255, 255, 0.75)',
+    marginTop: 1,
   },
   directionsBtn: {
-    backgroundColor: ParkColors.surfaceLow,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: ParkRadii.sm,
+    backgroundColor: 'rgba(255, 255, 255, 0.16)',
+    borderRadius: 9999,
   },
   directionsBtnText: {
-    fontSize: 11,
     fontWeight: '700',
-    color: ParkColors.secondary,
+    color: '#FFFFFF',
   },
   accessProtocolCard: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    gap: 12,
+    alignItems: 'center',
     backgroundColor: '#FFFFFF',
-    padding: 14,
     borderRadius: ParkRadii.lg,
     borderWidth: 1,
     borderColor: ParkColors.border,
-    ...ParkShadows.sm,
   },
   accessIconCircle: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 2,
   },
   accessTextGroup: {
     flex: 1,
+    gap: 2,
   },
   accessTitle: {
-    fontSize: 14,
     fontWeight: '700',
     color: ParkColors.primary,
   },
   accessDesc: {
-    fontSize: 12,
-    color: ParkColors.textVariant,
-    lineHeight: 18,
-    marginTop: 3,
+    color: ParkColors.textMuted,
+    lineHeight: 17,
   },
   guaranteeBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
     backgroundColor: ParkColors.surfaceLow,
-    padding: 12,
-    borderRadius: ParkRadii.md,
+    borderRadius: ParkRadii.lg,
+    borderWidth: 1,
+    borderColor: ParkColors.border,
   },
   guaranteeText: {
-    fontSize: 11,
-    color: ParkColors.textVariant,
     flex: 1,
-    lineHeight: 16,
+    color: ParkColors.textMuted,
+    lineHeight: 17,
   },
-  stickyFooter: {
+  stickyFooterOuter: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(255, 255, 255, 0.98)',
+    backgroundColor: 'rgba(255, 255, 255, 0.97)',
     borderTopWidth: 1,
     borderTopColor: ParkColors.border,
-    paddingHorizontal: 16,
-    paddingTop: 10,
+    ...ParkShadows.sheet,
+  },
+  stickyFooterInner: {
+    width: '100%',
+    alignSelf: 'center',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    ...ParkShadows.sheet,
+    gap: 12,
   },
   footerSummary: {
-    justifyContent: 'center',
+    gap: 2,
   },
   footerPriceRow: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    gap: 2,
+    gap: 4,
   },
   footerPrice: {
-    fontSize: 20,
-    fontWeight: '800',
+    fontWeight: '900',
     color: ParkColors.primary,
   },
   footerUnit: {
-    fontSize: 12,
     color: ParkColors.textMuted,
+    fontWeight: '600',
   },
   feeIncludedRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 3,
-    marginTop: 2,
+    gap: 4,
   },
   feeIncludedText: {
-    fontSize: 11,
-    color: ParkColors.secondary,
+    color: ParkColors.textMuted,
     fontWeight: '500',
   },
   bookNowButton: {
-    height: 52,
-    paddingHorizontal: 22,
-    borderRadius: 9999,
-    backgroundColor: ParkColors.secondary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 8,
+    backgroundColor: ParkColors.secondary,
+    borderRadius: 9999,
     ...ParkShadows.md,
   },
   bookNowText: {
-    fontSize: 15,
-    fontWeight: '700',
     color: '#FFFFFF',
+    fontWeight: '800',
   },
 });
-

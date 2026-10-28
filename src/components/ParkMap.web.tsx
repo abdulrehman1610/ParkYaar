@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Svg, { Circle, Path, Rect, Text as SvgText } from 'react-native-svg';
 
 import { ParkColors, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 
 export interface ParkMapPin {
   id: string;
@@ -25,7 +26,6 @@ export interface ParkMapProps {
 
 // Convert Lahore coordinates to SVG percentage coordinates for the Gulberg area map
 function getPinPosition(id: string, index: number) {
-  // Hardcoded aesthetic pin layout matching the design reference canvas
   const positions: Record<string, { left: string; top: string }> = {
     'spot-1': { left: '48%', top: '34%' },     // Covered Garage near Liberty (Featured)
     'spot-2': { left: '22%', top: '30%' },     // Spacious Paved Driveway
@@ -51,12 +51,15 @@ export const ParkMap: React.FC<ParkMapProps> = ({
   pins,
   selectedId,
   onSelectPin,
-  height = 360,
+  height,
 }) => {
+  const { s, vs, ms, hPad, mapHeight } = useResponsive();
+  const effectiveHeight = height ?? mapHeight;
+
   return (
-    <View style={[styles.container, { height }]}>
+    <View style={[styles.container, { height: effectiveHeight }]}>
       {/* Stylized Lahore Transit Map Vector Canvas */}
-      <Svg style={StyleSheet.absoluteFill} viewBox="0 0 400 420" preserveAspectRatio="none">
+      <Svg style={StyleSheet.absoluteFill} viewBox="0 0 400 420" preserveAspectRatio="xMidYMid slice">
         <Rect width="400" height="420" fill="#E8EEF8" />
         
         {/* Parks & Greens: Gaddafi Complex & Gulberg Parks */}
@@ -123,8 +126,18 @@ export const ParkMap: React.FC<ParkMapProps> = ({
 
       {/* User Location Pulse Indicator (On Main Blvd Gulberg) */}
       <View style={styles.userPulseWrapper}>
-        <View style={styles.userPulseOuter} />
-        <View style={styles.userPulseDot} />
+        <View
+          style={[
+            styles.userPulseOuter,
+            { width: ms(28), height: ms(28), borderRadius: ms(14) },
+          ]}
+        />
+        <View
+          style={[
+            styles.userPulseDot,
+            { width: ms(14), height: ms(14), borderRadius: ms(7) },
+          ]}
+        />
       </View>
 
       {/* Tappable Map Markers */}
@@ -143,13 +156,21 @@ export const ParkMap: React.FC<ParkMapProps> = ({
               <View
                 style={[
                   styles.publicBadge,
+                  { paddingHorizontal: s(8), paddingVertical: vs(4) },
                   isSelected && styles.pinSelectedHalo,
                 ]}
               >
-                <View style={styles.publicBadgeIcon}>
-                  <Text style={styles.publicBadgeIconText}>P</Text>
+                <View
+                  style={[
+                    styles.publicBadgeIcon,
+                    { width: ms(16), height: ms(16), borderRadius: ms(8) },
+                  ]}
+                >
+                  <Text style={[styles.publicBadgeIconText, { fontSize: ms(9.5) }]}>
+                    P
+                  </Text>
                 </View>
-                <Text style={styles.publicBadgeText}>
+                <Text style={[styles.publicBadgeText, { fontSize: ms(10) }]}>
                   {pin.title.split(' ')[0]} • Rs {pin.price}
                 </Text>
               </View>
@@ -166,9 +187,17 @@ export const ParkMap: React.FC<ParkMapProps> = ({
               style={[styles.pinWrapper, { left: pos.left as any, top: pos.top as any }]}
               onPress={() => onSelectPin(pin.id)}
             >
-              <View style={[styles.bikePin, isSelected && styles.pinSelectedHalo]}>
-                <MaterialIcons name="two-wheeler" size={13} color={ParkColors.secondary} />
-                <Text style={styles.bikePinText}>Rs {pin.price}</Text>
+              <View
+                style={[
+                  styles.bikePin,
+                  { paddingHorizontal: s(8), paddingVertical: vs(3.5) },
+                  isSelected && styles.pinSelectedHalo,
+                ]}
+              >
+                <MaterialIcons name="two-wheeler" size={ms(13)} color={ParkColors.secondary} />
+                <Text style={[styles.bikePinText, { fontSize: ms(11) }]}>
+                  Rs {pin.price}
+                </Text>
               </View>
               <View style={styles.bikePinTriangle} />
             </TouchableOpacity>
@@ -190,22 +219,30 @@ export const ParkMap: React.FC<ParkMapProps> = ({
             <View
               style={[
                 styles.privatePin,
+                {
+                  paddingHorizontal: isSelected ? s(11) : s(9),
+                  paddingVertical: isSelected ? vs(5.5) : vs(4.5),
+                },
                 isSelected ? styles.privatePinActive : styles.privatePinInactive,
                 isSelected && styles.pinSelectedHalo,
               ]}
             >
               {isSelected && (
-                <MaterialIcons name="shield" size={12} color="#FFFFFF" style={{ marginRight: 2 }} />
+                <MaterialIcons name="shield" size={ms(11.5)} color="#FFFFFF" style={{ marginRight: 2 }} />
               )}
               <Text
                 style={[
                   styles.privatePinText,
-                  !isSelected && styles.privatePinTextInactive,
+                  { fontSize: isSelected ? ms(12) : ms(11) },
                 ]}
               >
                 Rs {pin.price}
               </Text>
-              {isSelected && <Text style={styles.privatePinSubtext}>/hr</Text>}
+              {isSelected && (
+                <Text style={[styles.privatePinSubtext, { fontSize: ms(10) }]}>
+                  /hr
+                </Text>
+              )}
             </View>
             <View
               style={[
@@ -220,9 +257,21 @@ export const ParkMap: React.FC<ParkMapProps> = ({
       })}
 
       {/* Floating Availability Pill in Bottom Left */}
-      <View style={styles.spotCountOverlay}>
+      <View
+        style={[
+          styles.spotCountOverlay,
+          {
+            left: hPad,
+            bottom: vs(10),
+            paddingHorizontal: s(11),
+            paddingVertical: vs(5.5),
+          },
+        ]}
+      >
         <View style={styles.activeSpotGreenDot} />
-        <Text style={styles.spotCountText}>18 Verified Spots in Gulberg</Text>
+        <Text style={[styles.spotCountText, { fontSize: ms(11) }]}>
+          {pins.length} Verified Spots in Gulberg
+        </Text>
       </View>
     </View>
   );
@@ -245,15 +294,9 @@ const styles = StyleSheet.create({
   },
   userPulseOuter: {
     position: 'absolute',
-    width: 28,
-    height: 28,
-    borderRadius: 14,
     backgroundColor: 'rgba(31, 111, 235, 0.25)',
   },
   userPulseDot: {
-    width: 14,
-    height: 14,
-    borderRadius: 7,
     backgroundColor: ParkColors.secondary,
     borderWidth: 2.5,
     borderColor: '#FFFFFF',
@@ -268,8 +311,6 @@ const styles = StyleSheet.create({
   privatePin: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
     borderRadius: 9999,
     borderWidth: 1.5,
     borderColor: '#FFFFFF',
@@ -277,8 +318,6 @@ const styles = StyleSheet.create({
   },
   privatePinActive: {
     backgroundColor: ParkColors.secondary,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderColor: '#FFFFFF',
     borderWidth: 2.5,
   },
@@ -288,14 +327,9 @@ const styles = StyleSheet.create({
   privatePinText: {
     color: '#FFFFFF',
     fontWeight: '700',
-    fontSize: 12,
-  },
-  privatePinTextInactive: {
-    fontSize: 11,
   },
   privatePinSubtext: {
     color: 'rgba(255, 255, 255, 0.85)',
-    fontSize: 10,
     fontWeight: '400',
     marginLeft: 1,
   },
@@ -316,8 +350,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 3,
     backgroundColor: '#FFFFFF',
-    paddingHorizontal: 8,
-    paddingVertical: 3.5,
     borderRadius: 9999,
     borderWidth: 1,
     borderColor: ParkColors.border,
@@ -325,7 +357,6 @@ const styles = StyleSheet.create({
   },
   bikePinText: {
     color: ParkColors.text,
-    fontSize: 11,
     fontWeight: '700',
   },
   bikePinTriangle: {
@@ -343,29 +374,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 5,
     backgroundColor: ParkColors.amberDim,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
     borderRadius: 9999,
     borderWidth: 2,
     borderColor: '#FFFFFF',
     ...ParkShadows.sm,
   },
   publicBadgeIcon: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
     backgroundColor: '#291800',
     alignItems: 'center',
     justifyContent: 'center',
   },
   publicBadgeIconText: {
     color: '#FFDDB4',
-    fontSize: 10,
     fontWeight: '900',
   },
   publicBadgeText: {
     color: '#291800',
-    fontSize: 10,
     fontWeight: '700',
   },
   pinSelectedHalo: {
@@ -377,14 +401,10 @@ const styles = StyleSheet.create({
   },
   spotCountOverlay: {
     position: 'absolute',
-    left: 16,
-    bottom: 12,
     flexDirection: 'row',
     alignItems: 'center',
     gap: 6,
     backgroundColor: 'rgba(255, 255, 255, 0.94)',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
     borderRadius: 9999,
     ...ParkShadows.sm,
   },
@@ -395,9 +415,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#10B981',
   },
   spotCountText: {
-    fontSize: 11,
     fontWeight: '600',
     color: ParkColors.text,
   },
 });
-

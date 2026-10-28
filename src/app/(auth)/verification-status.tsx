@@ -9,9 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
+import { ParkColors, ParkShadows } from '@/constants/theme';
+import { useResponsive } from '@/hooks/useResponsive';
 import { useParkStore } from '@/store/useParkStore';
 
 export default function VerificationStatusScreen() {
@@ -19,9 +19,17 @@ export default function VerificationStatusScreen() {
   const { approveKyc } = useParkStore();
   const [isApproved, setIsApproved] = useState(false);
   const scaleAnim = new Animated.Value(0.85);
+  const {
+    s,
+    vs,
+    ms,
+    hPad,
+    headerTopPad,
+    stickyFooterBottomPad,
+    formMaxWidth,
+  } = useResponsive();
 
   useEffect(() => {
-    // 3-second simulated review
     const timer = setTimeout(() => {
       approveKyc();
       setIsApproved(true);
@@ -40,24 +48,73 @@ export default function VerificationStatusScreen() {
     router.replace('/(tabs)' as any);
   };
 
+  const circleSize = ms(92);
+
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.container}>
+    <View
+      style={[
+        styles.safeArea,
+        {
+          paddingTop: headerTopPad,
+          paddingBottom: stickyFooterBottomPad,
+        },
+      ]}
+    >
+      <View
+        style={[
+          styles.container,
+          {
+            maxWidth: formMaxWidth,
+            paddingHorizontal: hPad,
+          },
+        ]}
+      >
         {!isApproved ? (
           /* Under Review State */
           <View style={styles.stateCard}>
-            <View style={styles.loadingCircle}>
+            <View
+              style={[
+                styles.loadingCircle,
+                {
+                  width: circleSize,
+                  height: circleSize,
+                  borderRadius: circleSize / 2,
+                  marginBottom: vs(20),
+                },
+              ]}
+            >
               <ActivityIndicator size="large" color={ParkColors.secondary} />
             </View>
-            <View style={styles.testModeChip}>
-              <MaterialIcons name="science" size={13} color={ParkColors.secondary} />
-              <Text style={styles.testModeChipText}>NADRA Simulation • Test Mode</Text>
+            <View style={[styles.testModeChip, { marginBottom: vs(14) }]}>
+              <MaterialIcons
+                name="science"
+                size={ms(13)}
+                color={ParkColors.secondary}
+              />
+              <Text style={[styles.testModeChipText, { fontSize: ms(11) }]}>
+                NADRA Simulation • Test Mode
+              </Text>
             </View>
-            <Text style={styles.statusTitle}>Verifying Documents...</Text>
-            <Text style={styles.statusDescription}>
-              Matching your CNIC number, biometric selfie, and Punjab driving licence records.
+            <Text style={[styles.statusTitle, { fontSize: ms(25) }]}>
+              Verifying Documents...
             </Text>
-            <Text style={styles.countdownText}>Auto-approving in ~3 seconds</Text>
+            <Text
+              style={[
+                styles.statusDescription,
+                { fontSize: ms(14), marginTop: vs(8) },
+              ]}
+            >
+              Matching your CNIC number, biometric selfie, and Punjab driving
+              licence records.
+            </Text>
+            <Text
+              style={[
+                styles.countdownText,
+                { fontSize: ms(12), marginTop: vs(16) },
+              ]}
+            >
+              Auto-approving in ~3 seconds
+            </Text>
           </View>
         ) : (
           /* Approved / Verified State */
@@ -67,16 +124,40 @@ export default function VerificationStatusScreen() {
               { transform: [{ scale: scaleAnim }] },
             ]}
           >
-            <View style={styles.approvedCircle}>
-              <MaterialIcons name="verified" size={54} color="#FFFFFF" />
+            <View
+              style={[
+                styles.approvedCircle,
+                {
+                  width: circleSize,
+                  height: circleSize,
+                  borderRadius: circleSize / 2,
+                  marginBottom: vs(20),
+                },
+              ]}
+            >
+              <MaterialIcons name="verified" size={ms(50)} color="#FFFFFF" />
             </View>
-            <View style={styles.verifiedBadgeRow}>
-              <MaterialIcons name="shield" size={16} color={ParkColors.success} />
-              <Text style={styles.verifiedBadgeText}>CNIC & Licence Verified</Text>
+            <View style={[styles.verifiedBadgeRow, { marginBottom: vs(14) }]}>
+              <MaterialIcons
+                name="shield"
+                size={ms(15)}
+                color={ParkColors.success}
+              />
+              <Text style={[styles.verifiedBadgeText, { fontSize: ms(12) }]}>
+                CNIC & Licence Verified
+              </Text>
             </View>
-            <Text style={styles.statusTitle}>You're All Set!</Text>
-            <Text style={styles.statusDescription}>
-              Your identity has been verified. You can now instantly reserve bays and list driveways across Lahore.
+            <Text style={[styles.statusTitle, { fontSize: ms(26) }]}>
+              You&apos;re All Set!
+            </Text>
+            <Text
+              style={[
+                styles.statusDescription,
+                { fontSize: ms(14), marginTop: vs(8) },
+              ]}
+            >
+              Your identity has been verified. You can now instantly reserve
+              bays and list driveways across Lahore.
             </Text>
           </Animated.View>
         )}
@@ -85,27 +166,35 @@ export default function VerificationStatusScreen() {
         <View style={styles.footer}>
           {isApproved ? (
             <TouchableOpacity
-              style={styles.ctaButton}
+              style={[styles.ctaButton, { height: ms(52) }]}
               activeOpacity={0.85}
               onPress={handleFinish}
             >
-              <Text style={styles.ctaButtonText}>Start Exploring Lahore</Text>
-              <MaterialIcons name="arrow-forward" size={20} color="#FFFFFF" />
+              <Text style={[styles.ctaButtonText, { fontSize: ms(16) }]}>
+                Start Exploring Lahore
+              </Text>
+              <MaterialIcons
+                name="arrow-forward"
+                size={ms(20)}
+                color="#FFFFFF"
+              />
             </TouchableOpacity>
           ) : (
             <TouchableOpacity
-              style={styles.skipButton}
+              style={[styles.skipButton, { height: ms(48) }]}
               onPress={() => {
                 approveKyc();
                 setIsApproved(true);
               }}
             >
-              <Text style={styles.skipButtonText}>Skip Wait (Expo Demo Mode)</Text>
+              <Text style={[styles.skipButtonText, { fontSize: ms(13) }]}>
+                Skip Wait (Expo Demo Mode)
+              </Text>
             </TouchableOpacity>
           )}
         </View>
       </View>
-    </SafeAreaView>
+    </View>
   );
 }
 
@@ -116,7 +205,8 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 24,
+    width: '100%',
+    alignSelf: 'center',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
@@ -124,26 +214,18 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: 340,
+    maxWidth: 360,
   },
   loadingCircle: {
-    width: 90,
-    height: 90,
-    borderRadius: 45,
     backgroundColor: ParkColors.surfaceHigh,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
     ...ParkShadows.md,
   },
   approvedCircle: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
     backgroundColor: ParkColors.secondary,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
     ...ParkShadows.lg,
   },
   testModeChip: {
@@ -154,10 +236,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 9999,
-    marginBottom: 16,
   },
   testModeChipText: {
-    fontSize: 11,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
@@ -169,38 +249,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 9999,
-    marginBottom: 16,
   },
   verifiedBadgeText: {
-    fontSize: 12,
     fontWeight: '700',
     color: ParkColors.success,
   },
   statusTitle: {
-    fontSize: 26,
     fontWeight: '800',
     color: ParkColors.primary,
     textAlign: 'center',
   },
   statusDescription: {
-    fontSize: 14,
     color: ParkColors.textMuted,
     textAlign: 'center',
     lineHeight: 20,
-    marginTop: 8,
   },
   countdownText: {
-    fontSize: 12,
     color: ParkColors.secondary,
     fontWeight: '600',
-    marginTop: 18,
   },
   footer: {
     width: '100%',
-    paddingBottom: 16,
   },
   ctaButton: {
-    height: 52,
     borderRadius: 9999,
     backgroundColor: ParkColors.secondary,
     flexDirection: 'row',
@@ -210,21 +281,17 @@ const styles = StyleSheet.create({
     ...ParkShadows.md,
   },
   ctaButtonText: {
-    fontSize: 16,
     fontWeight: '700',
     color: '#FFFFFF',
   },
   skipButton: {
-    height: 48,
     borderRadius: 9999,
     backgroundColor: ParkColors.surfaceLow,
     alignItems: 'center',
     justifyContent: 'center',
   },
   skipButtonText: {
-    fontSize: 13,
     fontWeight: '700',
     color: ParkColors.secondary,
   },
 });
-
