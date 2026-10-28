@@ -10,7 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ParkColors, ParkRadii, ParkShadows } from '@/constants/theme';
 import { useParkStore } from '@/store/useParkStore';
@@ -20,6 +20,7 @@ type PaymentMethod = 'jazzcash' | 'easypaisa' | 'card';
 
 export default function PaymentScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const params = useLocalSearchParams();
   const { addBooking, vehicles } = useParkStore();
 
@@ -78,7 +79,7 @@ export default function PaymentScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
@@ -195,7 +196,7 @@ export default function PaymentScreen() {
         </ScrollView>
 
         {/* Footer CTA */}
-        <View style={styles.footer}>
+        <View style={[styles.footer, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
           <TouchableOpacity
             style={[styles.payBtn, processing && styles.payBtnDisabled]}
             activeOpacity={0.88}
@@ -429,3 +430,4 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+

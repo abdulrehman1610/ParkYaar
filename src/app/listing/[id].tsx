@@ -396,7 +396,7 @@ export default function SpotDetailsScreen() {
       </ScrollView>
 
       {/* Sticky Bottom Booking Bar */}
-      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 14) }]}>
+      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
         <View style={styles.footerSummary}>
           <View style={styles.footerPriceRow}>
             <Text style={styles.footerPrice}>Rs {currentPrice.price}</Text>
@@ -1038,3 +1038,4 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 });
+

@@ -407,7 +407,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: 120,
   },
   controlsSection: {
     paddingHorizontal: 16,
@@ -622,3 +622,4 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 });
+

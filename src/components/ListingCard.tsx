@@ -487,3 +487,4 @@ const styles = StyleSheet.create({
     color: ParkColors.primary,
   },
 });
+

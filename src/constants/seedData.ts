@@ -588,3 +588,4 @@ export const INITIAL_BOOKINGS: Booking[] = [
     durationLabel: '18 Oct, 5:00 - 9:00 PM',
   },
 ];
+

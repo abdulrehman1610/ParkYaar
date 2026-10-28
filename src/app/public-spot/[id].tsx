@@ -128,7 +128,7 @@ export default function PublicSpotDetailScreen() {
       </ScrollView>
 
       {/* Sticky Dual Action Bar */}
-      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 14) }]}>
+      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
         <TouchableOpacity
           style={styles.scanQrBtn}
           activeOpacity={0.85}
@@ -401,3 +401,4 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
   },
 });
+

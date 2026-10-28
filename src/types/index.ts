@@ -103,3 +103,4 @@ export interface KycDocuments {
   submittedAt: string | null;
   isApproved: boolean;
 }
+

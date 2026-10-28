@@ -352,7 +352,7 @@ export default function BookingScheduleScreen() {
       </ScrollView>
 
       {/* Sticky Bottom Action Bar */}
-      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 14) }]}>
+      <View style={[styles.stickyFooter, { paddingBottom: Math.max(insets.bottom, 16) + 10 }]}>
         <TouchableOpacity
           style={styles.payButton}
           activeOpacity={0.88}
@@ -912,3 +912,4 @@ const styles = StyleSheet.create({
     color: ParkColors.textMuted,
   },
 });
+
