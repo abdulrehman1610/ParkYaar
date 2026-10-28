@@ -2,6 +2,7 @@ import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -36,7 +37,7 @@ export default function LoginScreen() {
     router.push('/(auth)/otp' as any);
   };
 
-  const logoSize = ms(52);
+  const logoSize = ms(60);
 
   return (
     <View style={[styles.safeArea, { paddingTop: headerTopPad }]}>
@@ -79,12 +80,16 @@ export default function LoginScreen() {
                 {
                   width: logoSize,
                   height: logoSize,
-                  borderRadius: ms(16),
+                  borderRadius: ms(18),
                   marginBottom: vs(18),
                 },
               ]}
             >
-              <Text style={[styles.logoPillText, { fontSize: ms(26) }]}>P</Text>
+              <Image
+                source={require('../../../assets/images/logo.png')}
+                style={styles.logoImage}
+                resizeMode="contain"
+              />
             </View>
             <Text style={[styles.headline, { fontSize: ms(26) }]}>
               Welcome to ParkYaar
@@ -216,14 +221,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logoPill: {
-    backgroundColor: ParkColors.secondary,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+    overflow: 'hidden',
     ...ParkShadows.md,
   },
-  logoPillText: {
-    fontWeight: '900',
-    color: '#FFFFFF',
+  logoImage: {
+    width: '90%',
+    height: '90%',
   },
   headline: {
     fontWeight: '800',

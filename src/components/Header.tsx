@@ -39,7 +39,7 @@ export const Header: React.FC<HeaderProps> = ({
     isSmallPhone,
   } = useResponsive();
 
-  const logoSize = ms(32);
+  const logoSize = ms(34);
   const avatarSize = ms(36);
   const iconBtnSize = ms(38);
 
@@ -92,7 +92,7 @@ export const Header: React.FC<HeaderProps> = ({
               onPress={() => setDemoToolsVisible(true)}
               style={[styles.brandGroup, { gap: s(9) }]}
             >
-              {/* ParkYaar Badge/Logo */}
+              {/* ParkYaar Official Logo */}
               <View
                 style={[
                   styles.logoBadge,
@@ -103,9 +103,11 @@ export const Header: React.FC<HeaderProps> = ({
                   },
                 ]}
               >
-                <Text style={[styles.logoBadgeText, { fontSize: ms(17) }]}>
-                  P
-                </Text>
+                <Image
+                  source={require('../../assets/images/logo.png')}
+                  style={styles.logoImage}
+                  resizeMode="contain"
+                />
               </View>
               <View style={styles.brandTextGroup}>
                 <Text style={[styles.brandTitle, { fontSize: ms(16) }]}>
@@ -233,14 +235,17 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   logoBadge: {
-    backgroundColor: ParkColors.secondary,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+    overflow: 'hidden',
     ...ParkShadows.sm,
   },
-  logoBadgeText: {
-    color: '#FFFFFF',
-    fontWeight: '900',
+  logoImage: {
+    width: '94%',
+    height: '94%',
   },
   brandTextGroup: {
     flexDirection: 'column',

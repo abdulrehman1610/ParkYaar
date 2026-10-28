@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import {
   ActivityIndicator,
   Animated,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -39,7 +40,7 @@ export default function SplashScreen() {
     return () => clearTimeout(timer);
   }, []);
 
-  const badgeSize = ms(82);
+  const badgeSize = ms(96);
 
   return (
     <View style={[styles.container, { padding: s(24) }]}>
@@ -59,12 +60,16 @@ export default function SplashScreen() {
             {
               width: badgeSize,
               height: badgeSize,
-              borderRadius: ms(25),
+              borderRadius: ms(28),
               marginBottom: vs(20),
             },
           ]}
         >
-          <Text style={[styles.logoText, { fontSize: ms(46) }]}>P</Text>
+          <Image
+            source={require('../../../assets/images/logo.png')}
+            style={styles.logoImage}
+            resizeMode="contain"
+          />
         </View>
 
         <Text style={[styles.title, { fontSize: ms(32) }]}>ParkYaar</Text>
@@ -110,14 +115,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logoBadge: {
-    backgroundColor: ParkColors.secondary,
+    backgroundColor: '#FFFFFF',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: ParkColors.border,
+    overflow: 'hidden',
     ...ParkShadows.lg,
   },
-  logoText: {
-    fontWeight: '900',
-    color: '#FFFFFF',
+  logoImage: {
+    width: '90%',
+    height: '90%',
   },
   title: {
     fontWeight: '800',
