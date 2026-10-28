@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed-dim": "#ffb955", "on-primary-fixed-variant": "#314769", "secondary-container": "#1f6feb", "background": "#f8f9ff", "surface-tint": "#495f82", "on-error-container": "#93000a", "on-tertiary-fixed": "#291800", "on-secondary-fixed-variant": "#004299", "surface-container-lowest": "#ffffff", "surface-container": "#e5eeff", "on-secondary": "#ffffff", "on-secondary-container": "#fefcff", "tertiary-container": "#362000", "on-primary": "#ffffff", "surface-variant": "#d3e4fe", "on-background": "#0b1c30", "on-primary-fixed": "#001c3b", "primary-container": "#0b2545", "secondary-fixed-dim": "#afc6ff", "inverse-primary": "#b1c7f0", "on-secondary-fixed": "#001944", "secondary-fixed": "#d9e2ff", "inverse-surface": "#213145", "error-container": "#ffdad6", "on-tertiary-container": "#c07e00", "inverse-on-surface": "#eaf1ff", "surface-container-high": "#dce9ff", "surface": "#f8f9ff", "tertiary": "#190d00", "surface-container-highest": "#d3e4fe", "on-tertiary-fixed-variant": "#633f00", "outline": "#74777f", "primary-fixed": "#d5e3ff", "surface-bright": "#f8f9ff", "on-surface": "#0b1c30", "primary-fixed-dim": "#b1c7f0", "on-error": "#ffffff", "on-surface-variant": "#44474e", "surface-container-low": "#eff4ff", "on-primary-container": "#778db2", "outline-variant": "#c4c6cf", "error": "#ba1a1a", "secondary": "#0056c3", "surface-dim": "#cbdbf5", "on-tertiary": "#ffffff", "primary": "#001026", "tertiary-fixed": "#ffddb4" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "price-display": ["Outfit"], "body-lg": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Outfit"], "title-md": ["Outfit"], "body-md": ["Inter"], "headline-md": ["Outfit"], "label-sm": ["Inter"], "label-md": ["Inter"], "display-lg": ["Outfit"], "label-lg": ["Outfit"] }, fontSize: { "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "700"}], "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}], "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}], "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}], "title-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}], "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "600"}], "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}], "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}], "label-lg": ["16px", {"lineHeight": "22px", "fontWeight": "600"}] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md text-body-md"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/85 backdrop-blur-xl shadow-[0_4px_16px_rgba(11,37,69,0.06)]"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm min-w-0"><img alt="ParkYaar App Logo" class="h-8 w-auto object-contain shrink-0" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1MxCJrdTtQVMt_Xcef4ZE5R3D5eEZgAxYqZUGN8ScmimAj8Rfa02XSSRLOzOoR8QbvdDRUH-1daUVYqTgWqjiUlK4b9Kbl-sw8iqAA7LoAiD8alRywg9ToRWaSsQjRSxgIDP5pHfhr8yOzrOkN2DstJ7wD61AoEjHugNSgdcYSz3qBb5ifkKlwPgHUwgNIBvkP7ZFicTSsTrsTNXDXfZEtuaQoMOw9gyA0ItXYkn-"/><div class="flex flex-col min-w-0"><div class="flex items-center gap-space-xs"><span class="font-title-md text-title-md text-primary tracking-tight truncate">ParkYaar</span><span class="font-label-sm text-label-sm text-on-surface-variant hidden">Explore</span></div><button class="flex items-center gap-space-xs text-left group"><span class="font-label-md text-label-md text-secondary font-semibold">Lahore, PK</span><span class="material-symbols-outlined text-secondary text-sm leading-none">expand_more</span></button></div></div><div class="flex items-center gap-space-xs shrink-0"><button aria-label="Search" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined">search</span></button><button aria-label="Profile" class="w-11 h-11 flex items-center justify-center rounded-full relative hover:bg-surface-container transition-colors"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeuGJP6XS9WaPvGxU10xRaNMYBAEnQr5Mf4Hqz1IrXu74vrpmW6rnPfA_Qq1RQVKmTuYXQrOFSu5iFlkuZU44Ad1QYKOT268FrCrbGmmSrBE2p8ZIfxogTLhGySq70DV-xG7bugk7nKlx6Rlc5A9n9Kuoy1bqAVVWKeI6qAfUj9FISRg-TVNRmbR8HR2syNXIOHKhICYyQrsGsDpw5eO7zUFgWonbeytckcxDtEtbY"/><span class="material-symbols-outlined absolute -bottom-0.5 -right-0.5 text-secondary text-[14px] bg-surface-container-lowest rounded-full">verified</span></button></div></div></header><main class="flex flex-col relative w-full pt-16 pb-24 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Top Floating Controls Section -->
+<div class="sticky top-0 z-30 px-margin pt-space-xs pb-space-sm bg-surface/95 backdrop-blur-md flex flex-col gap-space-sm">
+<!-- Search Bar with Floating Elevation -->
+<div class="relative w-full flex items-center bg-surface-container-lowest rounded-full shadow-[0_8px_24px_rgba(11,37,69,0.08)] px-space-md py-space-xs transition-transform active:scale-[0.99]">
+<span class="material-symbols-outlined text-secondary-container shrink-0 text-[22px]">search</span>
+<div class="flex flex-col flex-1 min-w-0 ml-space-sm">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Where in Lahore?</span>
+<input aria-label="Search destination" class="bg-transparent font-title-md text-body-md text-on-surface font-semibold focus:outline-none truncate w-full p-0 leading-tight" type="text" value="Gulberg III, near Liberty Market"/>
+</div>
+<button aria-label="Open Map Filters" class="w-9 h-9 rounded-full bg-surface-container-low text-primary flex items-center justify-center shrink-0 hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[19px]">tune</span>
+</button>
+</div>
+<!-- Mode Selector: Private vs Public Spaces -->
+<div class="flex items-center p-1 bg-surface-container-low rounded-full shadow-inner text-center">
+<button class="flex-1 py-1.5 px-3 rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200" id="togglePrivate">
+<span class="material-symbols-outlined text-[16px]">garage_home</span>
+<span>Private Driveways</span>
+</button>
+<button class="flex-1 py-1.5 px-3 rounded-full text-on-surface-variant font-label-lg text-label-sm flex items-center justify-center gap-1.5 transition-all duration-200" id="togglePublic">
+<span class="material-symbols-outlined text-[16px]">local_parking</span>
+<span>Public & Corporate</span>
+<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-[10px] px-1.5 py-0.5 rounded-full font-bold">24 lots</span>
+</button>
+</div>
+<!-- Quick Filter Chip Rail -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-0.5 -mx-margin px-margin">
+<button class="shrink-0 h-9 px-4 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">directions_car</span>
+<span>Car</span>
+<span class="material-symbols-outlined text-[14px]">check</span>
+</button>
+<button class="shrink-0 h-9 px-4 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm">
+<span class="material-symbols-outlined text-[16px]">roofing</span>
+<span>Covered</span>
+<span class="material-symbols-outlined text-[14px]">check</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md flex items-center gap-1 shadow-sm hover:bg-surface-container-low">
+<span>Under Rs 200</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md flex items-center gap-1 shadow-sm hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px]">two_wheeler</span>
+<span>Bike</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md flex items-center gap-1 shadow-sm hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px]">lock_clock</span>
+<span>24/7 Access</span>
+</button>
+<button class="shrink-0 h-9 px-3.5 rounded-full bg-surface-container-lowest text-on-surface font-label-md text-label-md flex items-center gap-1 shadow-sm hover:bg-surface-container-low">
+<span class="material-symbols-outlined text-[16px]">videocam</span>
+<span>CCTV Verified</span>
+</button>
+</div>
+</div>
+<!-- Interactive Lahore Map Canvas Canvas Layer -->
+<div class="relative w-full h-[400px] overflow-hidden bg-surface-container-high select-none">
+<!-- Stylized Lahore Transit Map Vector Layer -->
+<svg class="absolute inset-0 w-full h-full object-cover" fill="none" viewbox="0 0 400 420" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#E8EEF8" height="420" width="400"></rect>
+<!-- Parks & Greens: Gaddafi Complex & Gulberg Parks -->
+<path d="M290 40C330 40 375 75 365 140C350 200 300 180 280 150C260 120 270 40 290 40Z" fill="#D3E8D8" opacity="0.8"></path>
+<rect fill="#D3E8D8" height="90" opacity="0.6" rx="20" width="80" x="20" y="270"></rect>
+<!-- Lahore Canals & Roads Base -->
+<!-- Main Boulevard Gulberg (Major arterial artery) -->
+<path d="M-20 220 L420 180" stroke="#FFFFFF" stroke-linecap="round" stroke-width="26"></path>
+<path d="M-20 220 L420 180" stroke="#CBD8EE" stroke-linecap="round" stroke-width="18"></path>
+<!-- MM Alam Road -->
+<path d="M120 -20 L155 440" stroke="#FFFFFF" stroke-width="18"></path>
+<path d="M120 -20 L155 440" stroke="#DCE5F5" stroke-width="12"></path>
+<!-- Liberty Roundabout -->
+<circle cx="210" cy="200" fill="#FFFFFF" r="34"></circle>
+<circle cx="210" cy="200" fill="#E2EDF9" r="24"></circle>
+<circle cx="210" cy="200" fill="#B9DBBA" r="13"></circle>
+<!-- Secondary Streets / Gulberg Sectors -->
+<path d="M210 200 L310 390" stroke="#FFFFFF" stroke-width="12"></path>
+<path d="M210 200 L310 390" stroke="#E2EBF8" stroke-width="8"></path>
+<path d="M40 70 L380 90" stroke="#FFFFFF" stroke-width="8"></path>
+<path d="M15 310 L380 320" stroke="#FFFFFF" stroke-width="8"></path>
+<path d="M270 -20 L290 440" stroke="#FFFFFF" stroke-width="8"></path>
+<path d="M50 140 L210 200" stroke="#FFFFFF" stroke-width="10"></path>
+<!-- Subtle Street Label Watermarks -->
+<text fill="#758AA6" font-family="Outfit" font-size="9" font-weight="700" letter-spacing="1.2" x="22" y="206">MAIN BOULEVARD GULBERG</text>
+<text fill="#758AA6" font-family="Outfit" font-size="8" font-weight="600" transform="rotate(84 135 70)" x="135" y="70">M.M. ALAM ROAD</text>
+<text fill="#3D5A80" font-family="Outfit" font-size="8" font-weight="700" text-anchor="middle" x="215" y="196">LIBERTY</text>
+<text fill="#587F63" font-family="Outfit" font-size="8" font-weight="600" x="295" y="105">GADDAFI STADIUM</text>
+</svg>
+<!-- Map Real-Time Location Pulse (User On Main Blvd) -->
+<div class="absolute left-[105px] top-[204px] -translate-x-1/2 -translate-y-1/2 pointer-events-none flex items-center justify-center">
+<span class="absolute w-8 h-8 rounded-full bg-secondary-container/25 animate-ping"></span>
+<span class="w-4 h-4 rounded-full bg-secondary-container border-2 border-surface-container-lowest shadow-md flex items-center justify-center"></span>
+</div>
+<!-- MAP MARKER 1: Active Highlighted P2P Pin (Rs 150/hr - Featured Spot) -->
+<div class="absolute left-[195px] top-[148px] -translate-x-1/2 -translate-y-1/2 z-20 group cursor-pointer transition-transform hover:scale-105 active:scale-95">
+<div class="relative flex flex-col items-center">
+<div class="bg-secondary-container text-on-secondary px-3 py-1.5 rounded-full shadow-[0_6px_20px_rgba(31,111,235,0.45)] flex items-center gap-1.5 ring-4 ring-white/90">
+<span class="material-symbols-outlined text-[14px]">shield</span>
+<span class="font-price-display text-label-md font-bold tracking-tight">Rs 150<span class="font-label-sm text-[10px] font-normal">/hr</span></span>
+</div>
+<div class="w-2.5 h-2.5 bg-secondary-container rotate-45 -mt-1 shadow-md"></div>
+</div>
+</div>
+<!-- MAP MARKER 2: Private P2P Spot 2 (Rs 130/hr) -->
+<div class="absolute left-[85px] top-[130px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer transition-transform hover:scale-105">
+<div class="flex flex-col items-center">
+<div class="bg-primary-container text-on-primary px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white">
+<span class="font-price-display text-label-sm font-bold">Rs 130</span>
+</div>
+<div class="w-2 h-2 bg-primary-container rotate-45 -mt-1"></div>
+</div>
+</div>
+<!-- MAP MARKER 3: Private P2P Spot 3 (Rs 180/hr) -->
+<div class="absolute left-[265px] top-[260px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer transition-transform hover:scale-105">
+<div class="flex flex-col items-center">
+<div class="bg-primary-container text-on-primary px-2.5 py-1 rounded-full shadow-md flex items-center gap-1 border-2 border-white">
+<span class="font-price-display text-label-sm font-bold">Rs 180</span>
+</div>
+<div class="w-2 h-2 bg-primary-container rotate-45 -mt-1"></div>
+</div>
+</div>
+<!-- MAP MARKER 4: Bike Spot Pin (Rs 80/hr) -->
+<div class="absolute left-[65px] top-[280px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer transition-transform hover:scale-105">
+<div class="flex flex-col items-center">
+<div class="bg-surface-container-lowest text-on-surface px-2 py-0.5 rounded-full shadow-md flex items-center gap-1 border border-outline-variant">
+<span class="material-symbols-outlined text-secondary text-[12px]">two_wheeler</span>
+<span class="font-price-display text-label-sm font-bold">Rs 80</span>
+</div>
+<div class="w-1.5 h-1.5 bg-surface-container-lowest rotate-45 -mt-0.5"></div>
+</div>
+</div>
+<!-- MAP MARKER 5: Public Parking Plaza (Amber Badge) -->
+<div class="absolute left-[295px] top-[170px] -translate-x-1/2 -translate-y-1/2 z-10 cursor-pointer transition-transform hover:scale-105">
+<div class="flex items-center bg-tertiary-fixed text-on-tertiary-fixed px-2 py-1 rounded-full shadow-md border-2 border-white gap-1">
+<span class="w-4 h-4 rounded-full bg-on-tertiary-fixed text-tertiary-fixed font-headline-md text-[10px] flex items-center justify-center font-black">P</span>
+<span class="font-label-sm text-[10px] font-bold">Liberty Plaza • Rs 50</span>
+</div>
+</div>
+<!-- Map Floating Controls (Recenter & Spot Count Overlay) -->
+<div class="absolute right-margin bottom-4 flex flex-col gap-2 z-10">
+<button aria-label="Recenter Map" class="w-10 h-10 rounded-full bg-surface-container-lowest shadow-md text-primary flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">my_location</span>
+</button>
+<button aria-label="Toggle Layers" class="w-10 h-10 rounded-full bg-surface-container-lowest shadow-md text-primary flex items-center justify-center hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-[20px]">layers</span>
+</button>
+</div>
+<div class="absolute left-margin bottom-4 z-10">
+<div class="bg-surface-container-lowest/90 backdrop-blur-md px-3 py-1.5 rounded-full shadow-sm flex items-center gap-1.5">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface font-semibold">18 Spots Available in Gulberg</span>
+</div>
+</div>
+</div>
+<!-- Bottom Sheet Carousel Area -->
+<div class="w-full px-margin pt-space-md pb-space-lg flex flex-col gap-space-sm bg-surface">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="font-title-md text-title-md text-on-surface font-bold">Nearby Verified Spots</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-secondary text-label-sm font-bold">Gulberg III</span>
+</div>
+<button class="font-label-sm text-label-sm text-secondary font-semibold hover:underline flex items-center gap-0.5">
+<span>View all (18)</span>
+<span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+</button>
+</div>
+<!-- Cards Scroll Container -->
+<div class="flex flex-col gap-space-md w-full">
+<!-- CARD 1: FEATURED SPOT (Covered Garage near Liberty Market) -->
+<article class="w-full bg-surface-container-lowest rounded-2xl p-space-sm shadow-[0_4px_16px_rgba(11,37,69,0.06)] flex flex-col gap-space-sm transition-all duration-200 hover:shadow-lg">
+<div class="relative w-full h-44 rounded-xl overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="A brightly lit, clean, secured private driveway in a modern Pakistani bungalow in Gulberg Lahore. Grey interlocking paving tiles, elegant steel security gate, sheltered overhead car canopy, ambient morning daylight, crisp architectural photo." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCRBawYb5NlDLwJ2ZXUUAzg99cIvFhbkLnaCO9sRuQF7GYIypFmJmklhKtHSd4LfdSw6tzOrYm-BRoHzwVzoqlBPJxk4--OaxRobEoAMz1gtoYMa8VLEAj9QXFB48og8a5nykdmecHyl_jl6mS67hpOvT6hSbJvGuVWiFsdYiguWBDm-BCFa0bOGvk_609xsd9IHTHx7Nf2UtBdIux9b4TLsDS_kuqOfqevDVop3ieD"/>
+<div class="absolute top-2.5 left-2.5 flex items-center gap-1.5">
+<span class="bg-secondary-container text-on-secondary px-2.5 py-1 rounded-full font-label-sm text-label-sm font-bold flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[13px]">bolt</span>
+<span>Instant Book</span>
+</span>
+<span class="bg-primary/80 backdrop-blur-md text-on-primary px-2 py-0.5 rounded-full font-label-sm text-[11px] font-medium">
+              Covered
+            </span>
+</div>
+<div class="absolute bottom-2.5 right-2.5 bg-surface-container-lowest/95 backdrop-blur-md px-2.5 py-1 rounded-full shadow-md flex items-center gap-1">
+<span class="font-price-display text-price-display text-primary font-bold">Rs 150</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">/hr</span>
+</div>
+</div>
+<!-- Listing Content -->
+<div class="flex flex-col gap-1 px-1">
+<div class="flex items-start justify-between gap-2">
+<h3 class="font-headline-md text-title-md text-on-surface font-bold leading-snug">Covered Garage near Liberty Market</h3>
+<div class="flex items-center gap-1 shrink-0 bg-surface-container-low px-2 py-0.5 rounded-md">
+<span class="material-symbols-outlined text-amber-500 text-[15px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md text-label-md font-bold text-on-surface">4.9</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">(48)</span>
+</div>
+</div>
+<!-- Location & Proximity -->
+<div class="flex items-center gap-2 text-on-surface-variant font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-secondary text-[16px]">near_me</span>
+<span class="font-semibold text-on-surface">350m away</span>
+<span>•</span>
+<span>4 min walk to Liberty Roundabout</span>
+</div>
+<!-- Host Credential Bar -->
+<div class="flex items-center justify-between pt-2 mt-1 border-t-0 bg-surface-container-low/60 rounded-xl p-2.5">
+<div class="flex items-center gap-2">
+<div class="relative">
+<img class="w-7 h-7 rounded-full object-cover" data-alt="Close up professional portrait of Sana Malik, a Pakistani woman homeowner in her 30s with warm approachable smile, well-dressed, soft daylight studio lighting, clean background." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAXw5doQernHdS4viM1dbMGNPgQMxjQ9ZgZMWy930qlaWjoZnmBqx4mck-g_C8BaWviv-XFXV21GQH9wlnH4TXNNwXzyWAvO6-bU0nFzDmGnzaxDYqCC5l-aG4iEWh8PYUXLgVbJtLbbr29EmvoJASwvE8noKydyG8hHyJVsgBHrZhQ3ewoPs4TJTNSQ96trfWA1lwBOTRX6fyHGRNeJx3yB64-tth_UnvA0A3oyy4V"/>
+<span class="material-symbols-outlined absolute -bottom-1 -right-1 text-secondary-container text-[13px] bg-white rounded-full">verified</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold leading-tight">Sana Malik</span>
+<span class="font-label-sm text-[10px] text-on-surface-variant">CNIC Verified Host</span>
+</div>
+</div>
+<!-- CTA Pill -->
+<button class="px-4 py-2 rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-sm font-bold shadow-sm hover:bg-secondary transition-transform active:scale-95 flex items-center gap-1">
+<span>Reserve Bay</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+</button>
+</div>
+</div>
+</article>
+<!-- CARD 2: Spacious Paved Driveway - Gulberg III -->
+<article class="w-full bg-surface-container-lowest rounded-2xl p-space-sm shadow-[0_4px_16px_rgba(11,37,69,0.06)] flex gap-space-sm items-center transition-all duration-200 hover:shadow-md">
+<div class="relative w-28 h-28 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img class="w-full h-full object-cover" data-alt="Wide paved car parking bay inside a secure gated suburban home in Lahore. Clean concrete tiles, decorative brick wall with green creepers, shade tree, secure environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCSyZuLOSm7Vvm1IjywFs2J4CeKN48g98IFJnoYh1yy7EHYCgrLlWFIAMx18fgzEKXqQMTdt6R2pcY1m47kbY1JAmLa8dxzqlOoGd_X9GshnOvdQO9kUBjadvTZBKp-Wq30Y46FRK9ay_Q0qEhBLl_-Fr0xEuHsvz0BFqeD3uLcEkydX4JseQK-mLcmzwNLmep5c_lbXdJMrwmeMkaHfrG5n4r4aoV5ChiFDrID9Q6k"/>
+<span class="absolute bottom-1.5 left-1.5 bg-primary/80 text-white font-label-sm text-[10px] px-1.5 py-0.5 rounded">SUV/Car</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0 justify-between py-0.5">
+<div class="flex flex-col">
+<div class="flex items-center justify-between gap-1">
+<span class="font-label-sm text-[11px] font-semibold text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">verified_user</span> 24/7 Guard
+              </span>
+<span class="font-price-display text-title-md text-primary font-bold">Rs 130<span class="text-label-sm font-normal text-on-surface-variant">/hr</span></span>
+</div>
+<h3 class="font-title-md text-body-lg text-on-surface font-bold truncate mt-0.5">Spacious Paved Driveway</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">600m away • Block C, Gulberg III</p>
+</div>
+<div class="flex items-center justify-between mt-2 pt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-surface-container-high text-primary font-bold font-label-sm text-[10px] flex items-center justify-center">AR</span>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate">Ahmed Raza</span>
+<span class="material-symbols-outlined text-secondary-container text-[12px]">verified</span>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-bold hover:bg-surface-container-highest transition-colors">
+              Details
+            </button>
+</div>
+</div>
+</article>
+<!-- CARD 3: Gated Plot Parking - MM Alam Road -->
+<article class="w-full bg-surface-container-lowest rounded-2xl p-space-sm shadow-[0_4px_16px_rgba(11,37,69,0.06)] flex gap-space-sm items-center transition-all duration-200 hover:shadow-md">
+<div class="relative w-28 h-28 rounded-xl overflow-hidden bg-surface-container shrink-0">
+<img class="w-full h-full object-cover" data-alt="Private gated commercial compound parking spot behind restaurant strip on MM Alam Road Lahore. Tarmac surface, white marked bays, security camera pole visible, bright daytime." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHeNdZgiz6ceog25TCUHL7yMItND6ghlEoOP9u_fPlM4EvLEYhFbCfmK6K6hJTf0Of_JbpVmUNQDQEpvvwDYsYvYrA2q03Hj9LGd6H_q432PiAv7_P8ecyBwFK669OKPh2QIScP6RSZ6wfiAgqJSE6nrLTCGM6NWYTOKkw0hHtHJFgZt4kdk6dXiOlLJRh00aMOAZDW_WscKe5dwXvKtLJO3vf5ZBxywSm-F9vAYD6"/>
+<span class="absolute bottom-1.5 left-1.5 bg-primary/80 text-white font-label-sm text-[10px] px-1.5 py-0.5 rounded">CCTV</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0 justify-between py-0.5">
+<div class="flex flex-col">
+<div class="flex items-center justify-between gap-1">
+<span class="font-label-sm text-[11px] font-semibold text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">videocam</span> Monitored
+              </span>
+<span class="font-price-display text-title-md text-primary font-bold">Rs 180<span class="text-label-sm font-normal text-on-surface-variant">/hr</span></span>
+</div>
+<h3 class="font-title-md text-body-lg text-on-surface font-bold truncate mt-0.5">Gated MM Alam Plot</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant truncate">900m away • Off MM Alam Road</p>
+</div>
+<div class="flex items-center justify-between mt-2 pt-1">
+<div class="flex items-center gap-1.5">
+<span class="w-5 h-5 rounded-full bg-surface-container-high text-primary font-bold font-label-sm text-[10px] flex items-center justify-center">BK</span>
+<span class="font-label-sm text-label-sm text-on-surface font-medium truncate">Bilal Khan</span>
+<span class="material-symbols-outlined text-secondary-container text-[12px]">verified</span>
+</div>
+<button class="px-3 py-1.5 rounded-full bg-surface-container-high text-primary font-label-sm text-label-sm font-bold hover:bg-surface-container-highest transition-colors">
+              Details
+            </button>
+</div>
+</div>
+</article>
+</div>
+<!-- P2P Trust Banner / Lahore Assurance -->
+<div class="w-full mt-space-xs p-space-md rounded-2xl bg-surface-container flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[22px]">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h4 class="font-title-md text-body-md font-bold text-on-surface leading-tight">ParkYaar Safety Guarantee</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant">All driveways physically inspected & CNIC vetted for 100% vehicle peace of mind.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Micro-interaction for toggle segment control
+  const togglePrivate = document.getElementById('togglePrivate');
+  const togglePublic = document.getElementById('togglePublic');
+
+  if (togglePrivate && togglePublic) {
+    togglePrivate.addEventListener('click', () => {
+      togglePrivate.className = 'flex-1 py-1.5 px-3 rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200';
+      togglePublic.className = 'flex-1 py-1.5 px-3 rounded-full text-on-surface-variant font-label-lg text-label-sm flex items-center justify-center gap-1.5 transition-all duration-200';
+    });
+
+    togglePublic.addEventListener('click', () => {
+      togglePublic.className = 'flex-1 py-1.5 px-3 rounded-full bg-secondary-container text-on-secondary font-label-lg text-label-sm flex items-center justify-center gap-1.5 shadow-sm transition-all duration-200';
+      togglePrivate.className = 'flex-1 py-1.5 px-3 rounded-full text-on-surface-variant font-label-lg text-label-sm flex items-center justify-center gap-1.5 transition-all duration-200';
+    });
+  }
+</script></main><nav class="fixed bottom-0 w-full z-50 pb-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(11,37,69,0.08)]" data-active-classes="text-secondary bg-surface-container/60"><div class="flex items-center justify-around h-16 px-space-xs"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[68px] h-12 rounded-xl transition-all text-secondary bg-surface-container/60" data-path="explore" href="#"><span class="material-symbols-outlined text-[22px]">explore</span><span class="font-label-sm text-label-sm">Explore</span></a><a class="flex flex-col items-center justify-center min-w-[68px] h-12 rounded-xl text-on-surface-variant transition-all" data-path="bookings" href="#"><span class="material-symbols-outlined text-[22px]">confirmation_number</span><span class="font-label-sm text-label-sm">Bookings</span></a><a class="flex flex-col items-center justify-center min-w-[68px] h-12 rounded-xl text-on-surface-variant transition-all relative" data-path="host" href="#"><span class="material-symbols-outlined text-[22px]">vpn_key</span><span class="font-label-sm text-label-sm flex items-center gap-1">Host<span class="bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-[9px] px-1 py-0.2 rounded-full font-bold uppercase leading-tight">Earn</span></span></a><a class="flex flex-col items-center justify-center min-w-[68px] h-12 rounded-xl text-on-surface-variant transition-all relative" data-path="profile" href="#"><span class="material-symbols-outlined text-[22px]">account_circle</span><span class="font-label-sm text-label-sm">Profile</span></a></div></nav></body></html>

@@ -1,18 +1,25 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useColorScheme } from 'react-native';
+import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
+import React from 'react';
 
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
-import AppTabs from '@/components/app-tabs';
+import { WebContainer } from '@/components/WebContainer';
 
-SplashScreen.preventAutoHideAsync();
-
-export default function TabLayout() {
-  const colorScheme = useColorScheme();
+export default function RootLayout() {
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <AnimatedSplashOverlay />
-      <AppTabs />
-    </ThemeProvider>
+    <WebContainer>
+      <StatusBar style="dark" />
+      <Stack screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
+        <Stack.Screen name="index" />
+        <Stack.Screen name="(auth)" options={{ animation: 'fade' }} />
+        <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+        <Stack.Screen name="listing/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="booking/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="booking-confirmed/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="payment" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="public-spot/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="qr-scan" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="add-listing" options={{ presentation: 'modal' }} />
+      </Stack>
+    </WebContainer>
   );
 }

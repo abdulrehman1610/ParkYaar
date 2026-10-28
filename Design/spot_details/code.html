@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Outfit:wght@100..900&display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior:none;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary-fixed-dim": "#ffb955", "on-primary-fixed-variant": "#314769", "secondary-container": "#1f6feb", "background": "#f8f9ff", "surface-tint": "#495f82", "on-error-container": "#93000a", "on-tertiary-fixed": "#291800", "on-secondary-fixed-variant": "#004299", "surface-container-lowest": "#ffffff", "surface-container": "#e5eeff", "on-secondary": "#ffffff", "on-secondary-container": "#fefcff", "tertiary-container": "#362000", "on-primary": "#ffffff", "surface-variant": "#d3e4fe", "on-background": "#0b1c30", "on-primary-fixed": "#001c3b", "primary-container": "#0b2545", "secondary-fixed-dim": "#afc6ff", "inverse-primary": "#b1c7f0", "on-secondary-fixed": "#001944", "secondary-fixed": "#d9e2ff", "inverse-surface": "#213145", "error-container": "#ffdad6", "on-tertiary-container": "#c07e00", "inverse-on-surface": "#eaf1ff", "surface-container-high": "#dce9ff", "surface": "#f8f9ff", "tertiary": "#190d00", "surface-container-highest": "#d3e4fe", "on-tertiary-fixed-variant": "#633f00", "outline": "#74777f", "primary-fixed": "#d5e3ff", "surface-bright": "#f8f9ff", "on-surface": "#0b1c30", "primary-fixed-dim": "#b1c7f0", "on-error": "#ffffff", "on-surface-variant": "#44474e", "surface-container-low": "#eff4ff", "on-primary-container": "#778db2", "outline-variant": "#c4c6cf", "error": "#ba1a1a", "secondary": "#0056c3", "surface-dim": "#cbdbf5", "on-tertiary": "#ffffff", "primary": "#001026", "tertiary-fixed": "#ffddb4" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-md": "1rem", "margin": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "price-display": ["Outfit"], "body-lg": ["Inter"], "body-sm": ["Inter"], "headline-lg": ["Outfit"], "title-md": ["Outfit"], "body-md": ["Inter"], "headline-md": ["Outfit"], "label-sm": ["Inter"], "label-md": ["Inter"], "display-lg": ["Outfit"], "label-lg": ["Outfit"] }, fontSize: { "price-display": ["20px", {"lineHeight": "24px", "fontWeight": "700"}], "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}], "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}], "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "700"}], "title-md": ["18px", {"lineHeight": "24px", "fontWeight": "600"}], "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}], "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}], "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "600"}], "label-md": ["12px", {"lineHeight": "16px", "fontWeight": "500"}], "display-lg": ["32px", {"lineHeight": "40px", "fontWeight": "700"}], "label-lg": ["16px", {"lineHeight": "22px", "fontWeight": "600"}] } } } }</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface min-h-screen flex flex-col font-body-md text-body-md"><header class="fixed top-0 w-full z-50 pt-safe bg-surface-container-lowest/90 backdrop-blur-xl shadow-[0_4px_16px_rgba(11,37,69,0.06)]"><div class="h-16 px-gutter flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Go back" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container text-on-surface transition-colors" onclick="history.back()"><span class="material-symbols-outlined">arrow_back</span></button><img alt="ParkYaar App Logo" class="h-7 w-auto object-contain hidden" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC1MxCJrdTtQVMt_Xcef4ZE5R3D5eEZgAxYqZUGN8ScmimAj8Rfa02XSSRLOzOoR8QbvdDRUH-1daUVYqTgWqjiUlK4b9Kbl-sw8iqAA7LoAiD8alRywg9ToRWaSsQjRSxgIDP5pHfhr8yOzrOkN2DstJ7wD61AoEjHugNSgdcYSz3qBb5ifkKlwPgHUwgNIBvkP7ZFicTSsTrsTNXDXfZEtuaQoMOw9gyA0ItXYkn-"/><h1 class="font-headline-md text-headline-md text-primary tracking-tight truncate max-w-[200px]">Spot Details</h1></div><div class="flex items-center gap-space-xs shrink-0"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCeuGJP6XS9WaPvGxU10xRaNMYBAEnQr5Mf4Hqz1IrXu74vrpmW6rnPfA_Qq1RQVKmTuYXQrOFSu5iFlkuZU44Ad1QYKOT268FrCrbGmmSrBE2p8ZIfxogTLhGySq70DV-xG7bugk7nKlx6Rlc5A9n9Kuoy1bqAVVWKeI6qAfUj9FISRg-TVNRmbR8HR2syNXIOHKhICYyQrsGsDpw5eO7zUFgWonbeytckcxDtEtbY"/><button aria-label="Share or options" class="w-11 h-11 flex items-center justify-center rounded-full hover:bg-surface-container text-on-surface-variant transition-colors"><span class="material-symbols-outlined">more_vert</span></button></div></div></header><main class="flex flex-col relative w-full pt-16 bg-surface min-h-screen"><div class="flex flex-col w-full pb-32">
+<!-- Top Visual Gallery Hero -->
+<div class="relative w-full h-72 bg-surface-container overflow-hidden">
+<img class="w-full h-full object-cover transition-opacity duration-300" data-alt="Modern upscale residential covered porch garage in Gulberg III Lahore, elegant grey interlocking floor tiles, bright daytime ambient sunlight with shaded car port, gated driveway with contemporary black metal sliding gate, secure, spotless and organized urban parking sanctuary" id="main-carousel-img" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB76Q3emfZjxjwJPh_j5lqu6ugK9DEYvmuJ1cIoMzUapxmxcBlX9qGtanPcy6Bsw2kdFJwa-pQ5f5PdowK4DCmX5437MFgY9l4Rvi2LPNwQy8daVrT92ZEsONibJ63MamRyUWrMZXhDWXcbv-L-txwp-CbwVIId7okVzSWSknnq8RTP_iOwp1cR3feFghitqbJ-_PzuOcWCmFPAQejc-yRWtJsSrKKSg65lkOnVufCu"/>
+<!-- Gradient Overlay for Contrast -->
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-primary/20 pointer-events-none"></div>
+<!-- Top Badges Floating Over Media -->
+<div class="absolute top-4 left-4 right-4 flex items-center justify-between pointer-events-none">
+<div class="flex items-center gap-space-xs pointer-events-auto">
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-secondary-container text-on-secondary text-label-sm font-label-sm shadow-md backdrop-blur-md">
+<span class="material-symbols-outlined text-[14px]">bolt</span>
+          Instant Book
+        </span>
+<span class="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-primary-container text-on-secondary text-label-sm font-label-sm shadow-md backdrop-blur-md">
+<span class="material-symbols-outlined text-[14px]">videocam</span>
+          CCTV Monitored
+        </span>
+</div>
+<button aria-label="Save listing" class="w-9 h-9 rounded-full bg-surface-container-lowest/80 backdrop-blur-md text-on-surface flex items-center justify-center shadow-md active:scale-90 transition-transform pointer-events-auto" id="bookmark-btn">
+<span class="material-symbols-outlined text-[20px]" id="bookmark-icon">favorite_border</span>
+</button>
+</div>
+<!-- Bottom Carousel Indicators & Gallery Pill -->
+<div class="absolute bottom-3 left-4 right-4 flex items-center justify-between pointer-events-auto">
+<div class="flex items-center gap-1.5 bg-primary/40 backdrop-blur-md px-2.5 py-1 rounded-full">
+<button class="carousel-dot w-2 h-2 rounded-full bg-surface transition-all duration-300" onclick="setSlide(0)"></button>
+<button class="carousel-dot w-2 h-2 rounded-full bg-surface/40 transition-all duration-300" onclick="setSlide(1)"></button>
+<button class="carousel-dot w-2 h-2 rounded-full bg-surface/40 transition-all duration-300" onclick="setSlide(2)"></button>
+<button class="carousel-dot w-2 h-2 rounded-full bg-surface/40 transition-all duration-300" onclick="setSlide(3)"></button>
+</div>
+<div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest/90 text-primary text-label-sm font-label-sm shadow-sm backdrop-blur-sm">
+<span class="material-symbols-outlined text-[16px]">photo_camera</span>
+<span id="slide-counter">1 of 4 photos</span>
+</div>
+</div>
+</div>
+<!-- Primary Content Sheet -->
+<div class="px-margin flex flex-col gap-space-lg pt-space-md">
+<!-- Title & Location Header -->
+<section class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container-high text-secondary text-label-sm font-label-sm font-semibold">
+<span class="material-symbols-outlined text-[14px]">local_parking</span>
+          Private Driveway
+        </span>
+<span class="text-label-sm font-label-sm text-on-surface-variant flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary-fixed-dim"></span>
+          Available Now
+        </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight leading-tight">
+        Covered Garage near Liberty Market
+      </h2>
+<p class="font-body-md text-body-md text-on-surface-variant flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-secondary">distance</span>
+<span>Sector B-3, Gulberg III, Lahore • 350m to Liberty Roundabout</span>
+</p>
+<!-- Rating & Quality Bar -->
+<div class="mt-1 flex items-center flex-wrap gap-2 p-3 rounded-xl bg-surface-container-low shadow-sm">
+<div class="flex items-center gap-1 text-on-tertiary-container font-headline-md text-title-md">
+<span class="material-symbols-outlined text-[20px] text-tertiary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-price-display text-price-display text-primary">4.9</span>
+</div>
+<span class="text-on-surface-variant text-body-sm font-body-sm">(48 verified stays)</span>
+<span class="text-outline-variant">•</span>
+<div class="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-surface-container-highest text-primary text-label-sm font-label-sm font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified</span>
+          Top Rated Space
+        </div>
+</div>
+</section>
+<!-- Verified Host Card -->
+<section class="bg-surface-container-lowest rounded-xl p-4 shadow-[0_4px_16px_rgba(11,37,69,0.06)] flex flex-col gap-3">
+<div class="flex items-start justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="relative shrink-0">
+<img class="w-13 h-13 rounded-full object-cover shadow-sm w-12 h-12" data-alt="Friendly Pakistani female professional in mid 30s, Sana Malik, wearing warm earth-toned modest smart casual attire, gentle approachable smile, clean neutral bright background portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKEYcWDdzSYn6uACdr9Me8CxTAay5rGuh2S0JQjQ_ueE69DIpUD_lVd_lstWtPi76seoP3eoMqKHg9niTQ0sQ-1YMq0piuuyx8mY_qvp1ke-cpPL3PaBcr5oWJzyhq9aml5tccbqfT66D6cf-CuEJJPMyj5FiI4piR9QWNhAJmNWjeK9QBUJ6wu8t6OFkq_5xYADGx7-WgIl0zWm2rS4F2s48hURNAyfdQt-Ozb7uv"/>
+<span class="absolute -bottom-1 -right-1 w-5 h-5 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow" title="Verified Host">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-primary truncate">Sana Malik</h3>
+<span class="px-1.5 py-0.2 rounded bg-surface-container-high text-secondary text-label-sm font-label-sm font-semibold">Host</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1 truncate">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified</span>
+              CNIC & Physical Address Verified
+            </p>
+</div>
+</div>
+<button class="shrink-0 px-3 py-1.5 rounded-full bg-surface-container hover:bg-surface-container-high text-secondary text-label-md font-label-md font-medium active:scale-95 transition-all flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">chat</span>
+          Contact
+        </button>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2 bg-surface-container-low rounded-lg p-2.5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">history_toggle_off</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Response Time</span>
+<span class="font-label-md text-label-md text-primary">< 5 mins (Instant)</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">calendar_month</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Hosting Since</span>
+<span class="font-label-md text-label-md text-primary">March 2023</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Key Space Features & Amenities -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-primary">Amenities & Security</h3>
+<span class="text-label-sm font-label-sm text-secondary font-medium">6 Verified Features</span>
+</div>
+<div class="grid grid-cols-2 gap-2.5">
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">directions_car</span>
+</div>
+<span class="font-body-md text-body-md text-primary font-medium">Sedan & SUV friendly</span>
+</div>
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+</div>
+<span class="font-body-md text-body-md text-primary font-medium">Gated & Locked</span>
+</div>
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">videocam</span>
+</div>
+<span class="font-body-md text-body-md text-primary font-medium">24/7 CCTV Camera</span>
+</div>
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">roofing</span>
+</div>
+<span class="font-body-md text-body-md text-primary font-medium">Fully Covered Roof</span>
+</div>
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">electric_bolt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-body-md text-body-md text-primary font-medium">EV Charging</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Rs 30/kWh</span>
+</div>
+</div>
+<div class="flex items-center gap-2.5 p-3 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0">
+<span class="material-symbols-outlined text-[20px]">alt_route</span>
+</div>
+<span class="font-body-md text-body-md text-primary font-medium">Easy Street Access</span>
+</div>
+</div>
+</section>
+<!-- Tiered Pricing Selector -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="font-title-md text-title-md text-primary">Choose Duration Tier</h3>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Select to preview</span>
+</div>
+<div class="flex flex-col gap-2.5" id="pricing-tier-group">
+<!-- Hourly Option (Default Selected) -->
+<label class="relative flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm cursor-pointer border-none transition-all" id="tier-hourly-container">
+<div class="flex items-center gap-3">
+<input checked="" class="w-5 h-5 accent-secondary cursor-pointer" name="pricing_tier" onchange="updateTier('hourly', 'Rs 150 / hr')" type="radio" value="150"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-primary font-semibold">Hourly Parking</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-secondary text-label-sm font-label-sm font-medium">Standard</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Pay-as-you-go • Minimum 1 hr</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-price-display text-price-display text-primary">Rs 150</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">per hour</span>
+</div>
+</label>
+<!-- Daily Pass Option -->
+<label class="relative flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm cursor-pointer border-none transition-all" id="tier-daily-container">
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 accent-secondary cursor-pointer" name="pricing_tier" onchange="updateTier('daily', 'Rs 900 / day')" type="radio" value="900"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-primary font-semibold">Full Day Pass</span>
+<span class="px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed text-label-sm font-label-sm font-bold">Save 25%</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">12 hours continuous access</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-price-display text-price-display text-primary">Rs 900</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">per day</span>
+</div>
+</label>
+<!-- Monthly Option -->
+<label class="relative flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm cursor-pointer border-none transition-all" id="tier-monthly-container">
+<div class="flex items-center gap-3">
+<input class="w-5 h-5 accent-secondary cursor-pointer" name="pricing_tier" onchange="updateTier('monthly', 'Rs 15,000 / mo')" type="radio" value="15000"/>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-title-md text-title-md text-primary font-semibold">Monthly Reserved</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container-high text-primary text-label-sm font-label-sm font-medium">Dedicated Bay</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Dedicated designated spot 24/7</span>
+</div>
+</div>
+<div class="flex flex-col items-end">
+<span class="font-price-display text-price-display text-primary">Rs 15,000</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">per month</span>
+</div>
+</label>
+</div>
+</section>
+<!-- Location & Smart Access Info -->
+<section class="flex flex-col gap-space-sm">
+<h3 class="font-title-md text-title-md text-primary">Location & Access Protocol</h3>
+<!-- Mini Street Map Snapshot -->
+<div class="relative w-full h-44 rounded-xl overflow-hidden shadow-sm">
+<div class="w-full h-full bg-cover bg-center" data-location="Liberty Market Gulberg III Lahore" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCOv7Xa6eG9QJld6CmpZ4tCdfNb3J1kRAUPraEbqAe80CNWbMQd7WO863nqmS2SD_QpYfaCZABKenyVANxUBzohvEuB5cXPuLaPpppkvYD541ybEco0qGtMD3QsgQpGAwtTlax1bNGNy5QSb7t1EdieWfU4g2K0tsLuykG5rSTbMI_9NpmTTkiVwwlSGIGBb4SkUr1KKa1Hl3hBnJYA6Qw91-WfyG1IYEAfrh7aSeGr')"></div>
+<!-- Custom Interactive Direction Overlay -->
+<div class="absolute bottom-2.5 left-2.5 right-2.5 bg-surface-container-lowest/95 backdrop-blur-md p-2.5 rounded-lg flex items-center justify-between shadow-md">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-full bg-secondary-container text-on-secondary flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[16px]">navigation</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-primary font-semibold">3 mins drive from Liberty</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant">Direct asphalt route via Main Blvd</span>
+</div>
+</div>
+<button class="px-2.5 py-1 rounded bg-surface-container text-secondary text-label-sm font-label-sm font-semibold active:scale-95 transition-all">
+            Get Directions
+          </button>
+</div>
+</div>
+<!-- Access Instructions Card -->
+<div class="p-3.5 rounded-xl bg-surface-container-lowest shadow-sm flex items-start gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-container flex items-center justify-center text-secondary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[20px]">qr_code_scanner</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<h4 class="font-label-lg text-label-lg text-primary">Automated Driveway Gate</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+            Gate opens automatically via your in-app <span class="font-semibold text-primary">ParkYaar Digital QR Pass</span> or remote host buzzer upon proximity confirmation.
+          </p>
+</div>
+</div>
+</section>
+<!-- Guarantee & Cancellation Note -->
+<div class="p-3 rounded-xl bg-surface-container-low flex items-center gap-2.5 mb-2">
+<span class="material-symbols-outlined text-[22px] text-secondary shrink-0">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+<span class="font-semibold text-primary">ParkYaar SafePark Guarantee:</span> Free cancellation up to 15 mins before arrival time. Full host payout protection.
+      </p>
+</div>
+</div>
+<!-- Sticky Bottom Booking Bar (Anchored CTA) -->
+<div class="fixed bottom-0 left-0 right-0 z-40 bg-surface-container-lowest/95 backdrop-blur-xl shadow-[0_-4px_20px_rgba(11,37,69,0.08)] pb-safe">
+<div class="max-w-md mx-auto px-margin py-3 flex items-center justify-between gap-space-md">
+<!-- Price Summary -->
+<div class="flex flex-col">
+<div class="flex items-baseline gap-1">
+<span class="font-headline-md text-headline-md text-primary font-price-display font-bold" id="sticky-rate-text">Rs 150</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant" id="sticky-unit-text">/ hr</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-medium flex items-center gap-0.5">
+<span class="material-symbols-outlined text-[12px]">check_circle</span>
+          Taxes & fee included
+        </span>
+</div>
+<!-- Action Button (52px Full-width Pill Style) -->
+<button class="h-13 px-6 py-3 rounded-full bg-secondary-container hover:bg-secondary text-on-secondary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-lg active:scale-98 transition-all shrink-0 cursor-pointer" id="book-spot-btn" onclick="triggerBookingAnimation()" style="min-height: 52px;">
+<span id="btn-text">Book This Spot</span>
+<span class="material-symbols-outlined text-[20px] transition-transform group-hover:translate-x-1" id="btn-icon">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<script>
+  // Simple Micro-interactions for Gallery, Saved Spot & Dynamic Booking Updates
+  const photoUrls = [
+    "Modern upscale residential covered porch garage in Gulberg III Lahore, elegant grey interlocking floor tiles, bright daytime ambient sunlight with shaded car port, gated driveway with contemporary black metal sliding gate, secure, spotless and organized urban parking sanctuary",
+    "Close up perspective inside the covered garage showing clear high ceiling clearance, EV charging port mounted on white boundary wall, secure concrete flooring",
+    "View from driveway showing modern security gate with ParkYaar QR camera scanner box mounted near pillar, wide street access in Gulberg Lahore",
+    "Neighborhood perspective in Gulberg III Lahore, quiet lined residential road leading directly to wide residential driveway entrance"
+  ];
+
+  let currentSlide = 0;
+  function setSlide(index) {
+    currentSlide = index;
+    const img = document.getElementById('main-carousel-img');
+    const counter = document.getElementById('slide-counter');
+    const dots = document.querySelectorAll('.carousel-dot');
+
+    if (img && counter) {
+      img.style.opacity = '0.3';
+      setTimeout(() => {
+        img.setAttribute('data-alt', photoUrls[index]);
+        img.style.opacity = '1';
+      }, 150);
+      counter.innerText = (index + 1) + ' of 4 photos';
+    }
+
+    dots.forEach((dot, idx) => {
+      if (idx === index) {
+        dot.classList.remove('bg-surface/40');
+        dot.classList.add('bg-surface');
+      } else {
+        dot.classList.remove('bg-surface');
+        dot.classList.add('bg-surface/40');
+      }
+    });
+  }
+
+  // Dynamic Tier Update
+  function updateTier(type, label) {
+    const rateEl = document.getElementById('sticky-rate-text');
+    const unitEl = document.getElementById('sticky-unit-text');
+    if (!rateEl || !unitEl) return;
+
+    if (type === 'hourly') {
+      rateEl.innerText = 'Rs 150';
+      unitEl.innerText = '/ hr';
+    } else if (type === 'daily') {
+      rateEl.innerText = 'Rs 900';
+      unitEl.innerText = '/ day';
+    } else if (type === 'monthly') {
+      rateEl.innerText = 'Rs 15,000';
+      unitEl.innerText = '/ mo';
+    }
+  }
+
+  // Bookmark Heart toggle
+  const bookmarkBtn = document.getElementById('bookmark-btn');
+  const bookmarkIcon = document.getElementById('bookmark-icon');
+  let isSaved = false;
+  if (bookmarkBtn && bookmarkIcon) {
+    bookmarkBtn.addEventListener('click', () => {
+      isSaved = !isSaved;
+      if (isSaved) {
+        bookmarkIcon.innerText = 'favorite';
+        bookmarkIcon.classList.add('text-error');
+        bookmarkIcon.style.fontVariationSettings = "'FILL' 1";
+      } else {
+        bookmarkIcon.innerText = 'favorite_border';
+        bookmarkIcon.classList.remove('text-error');
+        bookmarkIcon.style.fontVariationSettings = "'FILL' 0";
+      }
+    });
+  }
+
+  // Booking CTA Visual Feedback
+  function triggerBookingAnimation() {
+    const btn = document.getElementById('book-spot-btn');
+    const btnText = document.getElementById('btn-text');
+    const btnIcon = document.getElementById('btn-icon');
+    if (!btn || !btnText || !btnIcon) return;
+
+    btnText.innerText = 'Reserving Spot...';
+    btnIcon.innerText = 'progress_activity';
+    btnIcon.classList.add('animate-spin');
+
+    setTimeout(() => {
+      btnText.innerText = 'Spot Reserved!';
+      btnIcon.classList.remove('animate-spin');
+      btnIcon.innerText = 'check_circle';
+      btn.classList.remove('bg-secondary-container');
+      btn.classList.add('bg-primary-container');
+    }, 900);
+  }
+</script></main></body></html>
